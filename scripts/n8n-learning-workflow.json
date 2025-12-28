@@ -1,0 +1,107 @@
+{
+    "name": "LUX Learning Engine",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "lux-learning",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "a1b2c3d4-1234-5678-9abc-def012345678",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Extrair dados do webhook\nconst input = $input.first().json;\n\nreturn {\n  event: input.event || 'unknown',\n  timestamp: input.timestamp || new Date().toISOString(),\n  message: input.last_user_message || '',\n  niche: input.context?.niche || 'Não detectado',\n  goal: input.context?.goal || 'Não detectado',\n  channel: input.context?.channel || 'Não detectado',\n  source: input.source || 'lx-demo-interface'\n};"
+            },
+            "id": "b2c3d4e5-2345-6789-abcd-ef0123456789",
+            "name": "Parse Data",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "INSERT INTO leads (external_id, niche, goal, channel)\nVALUES (\n  $1,\n  $2,\n  $3,\n  $4\n)\nON CONFLICT DO NOTHING;",
+                "options": {
+                    "queryReplacement": "={{ [$json.timestamp, $json.niche, $json.goal, $json.channel] }}"
+                }
+            },
+            "id": "c3d4e5f6-3456-789a-bcde-f01234567890",
+            "name": "Save Lead",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.4,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={\n  \"status\": \"received\",\n  \"event\": \"{{ $json.event }}\",\n  \"enriched\": true\n}"
+            },
+            "id": "d4e5f6a7-4567-89ab-cdef-012345678901",
+            "name": "Respond",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                900,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Data": {
+            "main": [
+                [
+                    {
+                        "node": "Save Lead",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Lead": {
+            "main": [
+                [
+                    {
+                        "node": "Respond",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "tags": [],
+    "triggerCount": 0
+}

@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DemoChat() {
-    const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+    const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -19,7 +19,7 @@ export default function DemoChat() {
     }, [messages]);
 
     return (
-        <div className="flex flex-col h-[600px] w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden relative">
+        <div className="flex flex-col h-[600px] w-full max-w-md bg-zinc-950 border-2 border-zinc-700/80 rounded-2xl shadow-[0_0_50px_-15px_rgba(59,130,246,0.3)] overflow-hidden relative ring-1 ring-white/10">
             {/* Premium Glass Header */}
             <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-zinc-900/90 to-transparent z-20 pointer-events-none" />
 
@@ -47,23 +47,29 @@ export default function DemoChat() {
                             <Bot className="w-10 h-10 text-zinc-700" />
                         </div>
                         <div className="text-center space-y-2">
-                            <p className="text-sm font-medium text-zinc-300">Modo de Demonstração</p>
-                            <p className="text-xs max-w-[200px] mx-auto text-zinc-500">
-                                Teste a capacidade de qualificação e agendamento da IA agora.
+                            <p className="text-sm font-medium text-zinc-300">Adaptável a qualquer negócio</p>
+                            <p className="text-xs max-w-[220px] mx-auto text-zinc-500">
+                                A I.A. entende regras de Varejo, Serviços, B2B e mais. Escolha um cenário ou digite o seu:
                             </p>
                         </div>
                         <div className="grid grid-cols-1 gap-2 w-full max-w-[240px]">
                             <button
-                                onClick={() => handleInputChange({ target: { value: "Tenho uma imobiliária" } } as any)}
-                                className="text-xs bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-2 rounded-lg text-zinc-400 transition-colors text-left"
+                                onClick={() => append({ role: 'user', content: "Tenho uma imobiliária e quero qualificar leads automaticamente." })}
+                                className="text-xs bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-lg text-zinc-400 transition-colors text-left hover:text-blue-400 hover:border-blue-500/30 flex items-center gap-2"
                             >
-                                "Tenho uma imobiliária..."
+                                <span>🏢</span> Simular Imobiliária
                             </button>
                             <button
-                                onClick={() => handleInputChange({ target: { value: "Sou médico e quero agendar" } } as any)}
-                                className="text-xs bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-2 rounded-lg text-zinc-400 transition-colors text-left"
+                                onClick={() => append({ role: 'user', content: "Sou médico e quero preencher minha agenda." })}
+                                className="text-xs bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-lg text-zinc-400 transition-colors text-left hover:text-blue-400 hover:border-blue-500/30 flex items-center gap-2"
                             >
-                                "Sou médico..."
+                                <span>⚕️</span> Simular Clínica/Consultório
+                            </button>
+                            <button
+                                onClick={() => append({ role: 'user', content: "Tenho um negócio de serviços e quero vender mais." })}
+                                className="text-xs bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 p-2.5 rounded-lg text-zinc-400 transition-colors text-left hover:text-green-400 hover:border-green-500/30 flex items-center gap-2"
+                            >
+                                <span>🚀</span> Outro Segmento (Testar)
                             </button>
                         </div>
                     </div>

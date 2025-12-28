@@ -1,0 +1,189 @@
+{
+    "name": "LUX Evolution Engine (Deep Learning)",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "hours",
+                            "triggerAtHour": 4
+                        }
+                    ]
+                }
+            },
+            "id": "trigger-evolution",
+            "name": "Daily Night Study",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM leads ORDER BY created_at DESC LIMIT 50;",
+                "options": {}
+            },
+            "id": "read-leads",
+            "name": "Fetch Recent Leads",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.4,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "POSTGRES_CREDENTIAL_ID_PLACEHOLDER",
+                    "name": "Local Postgres"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Prepare data for the Cognitive Engine\nconst leads = $input.all().map(item => item.json);\n\nconst summary = leads.map(l => \n  `- Lead (${l.niche}): Goal=${l.goal}, Channel=${l.channel}`\n).join('\\n');\n\nreturn {\n  prompt_context: summary,\n  lead_count: leads.length\n};"
+            },
+            "id": "format-context",
+            "name": "Format Context",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://openrouter.ai/api/v1/chat/completions",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "model",
+                            "value": "anthropic/claude-3-haiku"
+                        },
+                        {
+                            "name": "messages",
+                            "value": "={{ [{\"role\": \"system\", \"content\": \"You are the LUX EVOLUTION CORE. Analyze the provided lead data logs. Identify ONE major pattern and propose ONE tactical adjustment for the sales agents. Return JSON: { \\\"pattern\\\": \\\"...\\\", \\\"tactic\\\": \\\"...\\\", \\\"confidence\\\": 85 }\"}, {\"role\": \"user\", \"content\": $json.prompt_context }] }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "ai-analysis",
+            "name": "AI Pattern Analysis",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                900,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "OPENROUTER_CREDENTIAL_ID_PLACEHOLDER",
+                    "name": "OpenRouter API"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse AI Response\nconst aiContent = $input.first().json.choices[0].message.content;\n\n// Basic JSON extraction cleanup\nconst cleanJson = aiContent.replace(/```json/g, '').replace(/```/g, '').trim();\nconst parsed = JSON.parse(cleanJson);\n\nreturn parsed;"
+            },
+            "id": "parse-insight",
+            "name": "Parse Insight",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "INSERT INTO insights (pattern_detected, tactical_adjustment, confidence_score)\nVALUES ($1, $2, $3);",
+                "options": {
+                    "queryReplacement": "={{ [$json.pattern, $json.tactic, $json.confidence] }}"
+                }
+            },
+            "id": "save-insight",
+            "name": "Save Evolution",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.4,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "POSTGRES_CREDENTIAL_ID_PLACEHOLDER",
+                    "name": "Local Postgres"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Daily Night Study": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Recent Leads",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Recent Leads": {
+            "main": [
+                [
+                    {
+                        "node": "Format Context",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Context": {
+            "main": [
+                [
+                    {
+                        "node": "AI Analysis",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Analysis": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Insight",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Insight": {
+            "main": [
+                [
+                    {
+                        "node": "Save Evolution",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

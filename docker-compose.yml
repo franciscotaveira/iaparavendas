@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  # O APP: Interface de Vendas (Next.js)
+  app:
+    build: .
+    container_name: lx-sales-engine
+    ports:
+      - "3001:3000"
+    environment:
+      # MODO LOCAL (LUX-V1)
+      # Conecta ao host (seu Mac) onde o Ollama/LocalAI está rodando
+      # 'host.docker.internal' é a mágica que permite o Docker ver o Mac
+      - LUX_API_URL=http://host.docker.internal:11434/v1
+      - LUX_MODEL_ID=llama3
+      - LUX_API_KEY=lux-internal-key
+
+      # MODO NUVEM (Opcional - Descomente para testar OpenRouter)
+      # - OPENROUTER_API_KEY=sk-or-v1-....
+
+    # Monta o código localmente para que edições apareçam sem rebuildar (HMR)
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+
+    # Comando de Dev para hot-reload
+    command: npm run dev
+
+  # O CÉREBRO: OLLAMA (Opcional - Se quiser rodar a IA DENTRO do docker e não no Mac)
+  # Descomente abaixo se quiser isolar 100% (mas pesa 4GB+ de RAM)
+  # brain:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+# volumes:
+#   ollama_data:
