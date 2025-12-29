@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import KernelTerminal from '@/components/KernelTerminal';
 import { Terminal, Cpu, Activity, Shield, Zap, Users, Brain, Lock } from 'lucide-react';
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -139,8 +140,27 @@ export default function NeuralMatrix() {
         return () => clearInterval(interval);
     }, [isLooping]);
 
+
+
+    // Inside component
+    const [showTerminal, setShowTerminal] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+
+    const handleSecretTrigger = () => {
+        const newCount = clickCount + 1;
+        setClickCount(newCount);
+        if (newCount === 5) {
+            setShowTerminal(true);
+            setClickCount(0);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-black text-blue-400 font-mono p-6 relative overflow-hidden">
+            <AnimatePresence>
+                {showTerminal && <KernelTerminal onClose={() => setShowTerminal(false)} />}
+            </AnimatePresence>
+
             {/* Background Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
 
@@ -152,7 +172,12 @@ export default function NeuralMatrix() {
                         <div className={cn("absolute inset-0 bg-blue-500 blur-lg opacity-40", isLooping && "bg-red-500 opacity-60 animate-pulse")}></div>
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-white tracking-wider">LUX NEURAL CORE <span className="text-xs align-top text-blue-500 ml-1">v1.0</span></h1>
+                        <h1
+                            onClick={handleSecretTrigger}
+                            className="text-2xl font-bold text-white tracking-wider cursor-pointer select-none active:scale-95 transition-transform"
+                        >
+                            LUX NEURAL CORE <span className="text-xs align-top text-blue-500 ml-1">v1.0</span>
+                        </h1>
                         <p className="text-xs text-blue-600 flex items-center gap-2">
                             LIVE INTELLIGENCE FEED • {isLooping ? <span className="text-red-500 font-bold animate-pulse">TRAINING MODE ACTIVE</span> : "SECURE CONNECTION"}
                         </p>

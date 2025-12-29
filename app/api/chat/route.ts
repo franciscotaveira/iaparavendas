@@ -18,6 +18,7 @@ import {
     assessRisk,
     calculateScoreFit,
 } from '@/lib/humanization-engine';
+import { trackExternalInteraction } from '@/core/orchestrator';
 
 export const maxDuration = 30;
 
@@ -140,9 +141,16 @@ async function sendToN8n(payload: Record<string, unknown>) {
 // MAIN HANDLER
 // ============================================
 export async function POST(req: Request) {
-    const { messages } = await req.json();
+    const { messages, stream = true, sessionId } = await req.json();
     const lastUserMessage = messages.filter((m: Message) => m.role === 'user').pop();
     const lastUserContent = lastUserMessage?.content || '';
+
+    // Track for Dashboard (Safe Mode)
+    try {
+        trackExternalInteraction(sessionId || 'anonymous_web', 'sdr');
+    } catch (e) {
+        console.warn("Dashboard tracking failed (non-critical):", e);
+    }
 
     // ============================================
     // HUMANIZATION ENGINE INTEGRATION
@@ -205,7 +213,9 @@ export async function POST(req: Request) {
             console.log("Using Local Ollama");
         } else {
             console.log("No LLM configured - using smart fallback");
-            return streamResponse(getSmartFallback(messages));
+            const fallbackText = getSmartFallback(messages);
+            if (!stream) return Response.json({ text: fallbackText });
+            return streamResponse(fallbackText);
         }
 
         // ============================================
@@ -225,6 +235,7 @@ export async function POST(req: Request) {
                 source: 'lx-demo-interface'
             });
 
+            if (!stream) return Response.json({ text: handoffMessage });
             return streamResponse(handoffMessage);
         }
 
@@ -296,6 +307,23 @@ export async function POST(req: Request) {
             setTimeout(() => reject(new Error("AI_TIMEOUT")), 15000)
         );
 
+        if (!stream) {
+            const result = await Promise.race([
+                generateText({
+                    model: provider(modelName) as Parameters<typeof generateText>[0]['model'],
+                    system: systemPrompt,
+                    messages: convertToCoreMessages(messages),
+                    temperature: 0.3,
+                }),
+                timeoutPromise
+            ]) as Awaited<ReturnType<typeof generateText>>;
+
+            return Response.json({
+                text: result.text,
+                usage: result.usage
+            });
+        }
+
         const result = await Promise.race([
             streamText({
                 model: provider(modelName) as Parameters<typeof streamText>[0]['model'],
@@ -320,6 +348,8 @@ export async function POST(req: Request) {
             source: 'lx-demo-interface'
         });
 
-        return streamResponse(getSmartFallback(messages));
+        const fallback = getSmartFallback(messages);
+        if (!stream) return Response.json({ text: fallback });
+        return streamResponse(fallback);
     }
 }

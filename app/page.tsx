@@ -1,5 +1,6 @@
 'use client';
 
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import DemoChat from '@/components/DemoChat';
@@ -57,9 +58,9 @@ export default function LandingPage() {
                             disabled={n8nStatus === 'loading'}
                             title={n8nMessage || 'Testar conexão com N8n'}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded border transition-all ${n8nStatus === 'connected' ? 'border-green-500/50 bg-green-500/10 text-green-400' :
-                                    n8nStatus === 'error' ? 'border-red-500/50 bg-red-500/10 text-red-400' :
-                                        n8nStatus === 'loading' ? 'border-yellow-500/50 bg-yellow-500/10 text-yellow-400' :
-                                            'border-white/10 bg-white/5 text-gray-400 hover:border-blue-500/50 hover:text-blue-400'
+                                n8nStatus === 'error' ? 'border-red-500/50 bg-red-500/10 text-red-400' :
+                                    n8nStatus === 'loading' ? 'border-yellow-500/50 bg-yellow-500/10 text-yellow-400' :
+                                        'border-white/10 bg-white/5 text-gray-400 hover:border-blue-500/50 hover:text-blue-400'
                                 }`}
                         >
                             {n8nStatus === 'loading' ? (

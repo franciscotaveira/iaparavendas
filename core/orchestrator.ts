@@ -93,6 +93,11 @@ function updateState(sessionId: string, newAgent: AgentRole): void {
     state.current_agent = newAgent;
 }
 
+// Allow external routes (like /api/chat) to register stats
+export function trackExternalInteraction(sessionId: string, agentRole: AgentRole = 'sdr'): void {
+    updateState(sessionId, agentRole);
+}
+
 // ============================================
 // CLASSIFICAÇÃO HÍBRIDA (Online + Local)
 // ============================================
