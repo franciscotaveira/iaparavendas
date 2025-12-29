@@ -1,0 +1,120 @@
+[
+    {
+        "id": "OP001",
+        "text": "Olá! Em que posso te ajudar hoje?",
+        "context": {
+            "first_interaction": true,
+            "channel": "any"
+        },
+        "weight": 8
+    },
+    {
+        "id": "OP002",
+        "text": "Oi! Tudo bem? O que te traz aqui?",
+        "context": {
+            "first_interaction": true,
+            "channel": "whatsapp"
+        },
+        "weight": 7
+    },
+    {
+        "id": "OP003",
+        "text": "E aí! Como posso te ajudar?",
+        "context": {
+            "first_interaction": true,
+            "channel": "whatsapp"
+        },
+        "weight": 6
+    },
+    {
+        "id": "OP004",
+        "text": "Olá! Vi que você tem interesse. Posso te ajudar com alguma dúvida?",
+        "context": {
+            "first_interaction": true,
+            "channel": "site"
+        },
+        "weight": 8
+    },
+    {
+        "id": "OP005",
+        "text": "Oi! Quer tirar alguma dúvida antes de continuar?",
+        "context": {
+            "first_interaction": true,
+            "channel": "site"
+        },
+        "weight": 7
+    },
+    {
+        "id": "OP010",
+        "text": "Oi! Bom te ver de novo. Em que posso ajudar?",
+        "context": {
+            "returning_recent": true,
+            "channel": "any"
+        },
+        "weight": 9
+    },
+    {
+        "id": "OP011",
+        "text": "E aí! Voltou com mais alguma dúvida?",
+        "context": {
+            "returning_recent": true,
+            "channel": "whatsapp"
+        },
+        "weight": 7
+    },
+    {
+        "id": "OP012",
+        "text": "Olá! Tudo bem desde a última vez? Como posso ajudar?",
+        "context": {
+            "returning_recent": true,
+            "channel": "any"
+        },
+        "weight": 6
+    },
+    {
+        "id": "OP020",
+        "text": "Olá! Faz um tempo que não nos falamos. Como posso ajudar hoje?",
+        "context": {
+            "returning_long": true,
+            "channel": "any"
+        },
+        "weight": 9
+    },
+    {
+        "id": "OP021",
+        "text": "Oi! Bom te ver por aqui de novo. Posso te ajudar com algo?",
+        "context": {
+            "returning_long": true,
+            "channel": "any"
+        },
+        "weight": 8
+    },
+    {
+        "id": "OP022",
+        "text": "E aí! Quanto tempo! O que te traz de volta?",
+        "context": {
+            "returning_long": true,
+            "channel": "whatsapp"
+        },
+        "weight": 6
+    },
+    {
+        "id": "OP030",
+        "text": "Olá! Vejo que você está considerando agendar. Posso tirar alguma dúvida antes?",
+        "context": {
+            "first_interaction": true,
+            "channel": "site",
+            "stage": "warm"
+        },
+        "weight": 9
+    },
+    {
+        "id": "OP031",
+        "text": "Oi! Parece que você está quase lá. Falta alguma informação pra decidir?",
+        "context": {
+            "returning_recent": true,
+            "stage": "hot"
+        },
+        "weight": 10
+    }
+]
