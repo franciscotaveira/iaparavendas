@@ -1,4 +1,4 @@
-import { AgentContext } from '../types';
+import { Intent, RiskLevel, AgentContext, SessionState } from '../types';
 import { orchestrate } from '../orchestrator';
 
 // ============================================
@@ -31,21 +31,35 @@ export async function executeSalesWorkflow(
         steps.push('INIT');
         console.log(`[CORTEX] Iniciando fluxo para: ${inputData.contact.name || 'Anon'}`);
 
+        // Criar sessão válida
+        const session: SessionState = {
+            session_id: `ses_${inputData.contact.id}_${Date.now()}`,
+            lead_id: inputData.contact.id || 'unknown',
+            subscriber_id: inputData.contact.subscriber_id || 'unknown',
+            session_summary: '',
+            current_intent: 'duvida' as Intent,
+            risk_level: 'baixo' as RiskLevel,
+            message_count: 0,
+            objection_count: 0,
+            same_objection_count: 0,
+            last_objection: null,
+            first_interaction: true,
+            last_interaction_at: null,
+            days_since_last: 0,
+            lead_name: inputData.contact.name || null,
+            lead_niche: null,
+            lead_goal: null,
+            last_opener_id: null,
+            last_opener_date: null
+        };
+
         // Normalizar contexto
         const context: AgentContext = {
-            session: {
-                session_id: `ses_${inputData.contact.id}_${Date.now()}`,
-                customer_id: inputData.contact.id,
-                platform: inputData.platform as 'whatsapp' | 'instagram',
-                current_intent: 'unknown',
-                risk_level: 'baixo',
-                history: [] // Em prod, buscaria do Supabase
-            },
+            session,
             message: inputData.message,
-            metadata: {
-                source: 'workflow_engine_v1',
-                tone_preference: 'formal' // Poderia vir do CRM
-            }
+            channel: inputData.platform === 'whatsapp' ? 'whatsapp' : 'site',
+            source: 'workflow_engine_v1',
+            timestamp: new Date().toISOString()
         };
 
         // STEP 2: ORCHESTRATION (Substitui o "HTTP Request" do N8N para a API)

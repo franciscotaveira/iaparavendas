@@ -1,4 +1,4 @@
-import { AgentRole, AGENT_REGISTRY } from './agents';
+import { AgentRole } from './agents/types';
 
 // ============================================
 // LX AGENT DISPATCHER (Central Command)
@@ -14,6 +14,18 @@ interface DispatchResult {
     payload: Record<string, any>;
 }
 
+// Registry simples para nomes de exibição
+const AGENT_NAMES: Record<string, string> = {
+    'mkt_copywriter': 'Copywriter',
+    'mkt_social': 'Social Media',
+    'sdr': 'SDR',
+    'closer': 'Closer',
+    'ops_coo': 'COO',
+    'ops_cfo': 'CFO',
+    'dev_fullstack': 'Dev Fullstack',
+    'dev_architect': 'Arquiteto'
+};
+
 // Classificador de Intenção de Comando (Simples - v1)
 // Em produção, isso seria feito por LLM.
 export function classifyCommand(rawCommand: string): DispatchResult {
@@ -23,7 +35,7 @@ export function classifyCommand(rawCommand: string): DispatchResult {
     if (cmd.includes('instagram') || cmd.includes('post') || cmd.includes('conteúdo') || cmd.includes('conteudo')) {
         return {
             category: 'marketing',
-            agent: 'copywriter', // De agents.ts
+            agent: 'mkt_copywriter',
             action: 'GENERATE_POST_IDEA',
             payload: { platform: 'instagram', request: rawCommand }
         };
@@ -43,7 +55,7 @@ export function classifyCommand(rawCommand: string): DispatchResult {
     if (cmd.includes('contrato') || cmd.includes('assinatura') || cmd.includes('cliente novo')) {
         return {
             category: 'ops',
-            agent: 'onboarding_specialist',
+            agent: 'ops_coo',
             action: 'INITIATE_ONBOARDING',
             payload: { request: rawCommand }
         };
@@ -53,7 +65,7 @@ export function classifyCommand(rawCommand: string): DispatchResult {
     if (cmd.includes('boleto') || cmd.includes('pix') || cmd.includes('cobrança') || cmd.includes('pagamento')) {
         return {
             category: 'ops',
-            agent: 'onboarding_specialist',
+            agent: 'ops_cfo',
             action: 'GENERATE_INVOICE',
             payload: { request: rawCommand }
         };
@@ -63,7 +75,7 @@ export function classifyCommand(rawCommand: string): DispatchResult {
     if (cmd.includes('bug') || cmd.includes('erro') || cmd.includes('ajuste') || cmd.includes('corrigir') || cmd.includes('deploy')) {
         return {
             category: 'dev',
-            agent: 'tech_lead',
+            agent: 'dev_architect',
             action: 'FIX_ISSUE',
             payload: { request: rawCommand }
         };
@@ -72,7 +84,7 @@ export function classifyCommand(rawCommand: string): DispatchResult {
     // FALLBACK
     return {
         category: 'general',
-        agent: 'sdr', // Default
+        agent: 'sdr',
         action: 'CLARIFY',
         payload: { request: rawCommand }
     };
@@ -80,7 +92,7 @@ export function classifyCommand(rawCommand: string): DispatchResult {
 
 // Executa a ação do agente (Placeholder para v2)
 export async function executeAgentAction(dispatch: DispatchResult): Promise<string> {
-    const agentName = AGENT_REGISTRY[dispatch.agent]?.name || dispatch.agent;
+    const agentName = AGENT_NAMES[dispatch.agent] || dispatch.agent;
 
     switch (dispatch.action) {
         case 'GENERATE_POST_IDEA':
