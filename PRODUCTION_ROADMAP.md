@@ -1,96 +1,124 @@
-# PRODUCTION ROADMAP: LX AGENTS v1.0 (GO-LIVE)
+# 🎯 PRODUCTION ROADMAP — LUX GROWTH IA
 
-**Status:** INICIADO
-**Meta:** Transformar protótipo funcional em Produto SaaS Escalável.
-**Última Atualização:** 2025-12-29 09:30
-
----
-
-## 1. INFRAESTRUTURA & DADOS (Prioridade Alta)
-
-- [ ] **Migração Supabase:**
-  - [x] Configurar URL e Key no `.env.local`. ✅ FEITO
-  - [ ] Executar `scripts/supabase-schema.sql` no SQL Editor do Supabase.
-  - [ ] Desligar `mockAgents` e `mockMemory`.
-  - [ ] Conectar Dashboard aos dados vivos.
-- [ ] **Deploy Vercel:**
-  - [ ] Configurar domínio `mycodingteam.com`.
-  - [ ] Configurar variáveis de ambiente de produção.
+**Última atualização:** 29/12/2024 19:58
+**Status:** 🔥 SPRINT VIRADA 2026
 
 ---
 
-## 2. AUDITORIA UI/UX (O "Polimento")
+## 📊 STATUS GERAL
 
-- [x] **Correção de Links (Erro 404):**
-  - [ ] "Automações" -> Rota quebrada ou vazia.
-  - [x] "Configurações" -> CRIADA (Em Construção).
-  - [ ] "Memória Corp" -> Layout quebrado.
-- [ ] **Harmonização Visual:**
-  - [ ] Padronizar a paleta "Cyberpunk Clean" (remover cores soltas).
-  - [ ] Melhorar contraste de leitura em dispositivos móveis.
-- [ ] **Responsividade:**
-  - [ ] Verificar Menu Hambúrguer no Mobile.
-  - [ ] Verificar tabelas no Mobile.
-
----
-
-## 3. TELEGRAM COMMAND CENTER (The "God Mode")
-
-- [x] **Bot "Meu Sócio":**
-  - [x] Criar endpoint `/api/hooks/telegram`. (FEITO)
-  - [ ] Configurar Token do BotFather no `.env`.
-  - [ ] Configurar Webhook no Telegram.
-  - [ ] Comandos: `/status`, `/deploy`, `/fix [bug]`.
-  - [ ] Suporte a Áudio (Transcrição Whisper).
-  - [ ] Suporte a Imagem (Visão GPT-4o).
+| Componente | Status | Observação |
+|------------|--------|------------|
+| Site mycodingteam.com | ✅ Online | Site completo + Analytics |
+| Demo Chat | ✅ Funcionando | IA respondendo |
+| Telegram Bot | ✅ Online | "Meu Sócio" operacional |
+| Supabase | ✅ Conectado | Schema criado |
+| Vercel Deploy | ✅ Automático | Push → Deploy |
+| GTM/GA4/Clarity | ✅ Instalados | Tracking ativo |
+| Pixel Meta | ⏳ Aguardando ID | Precisa instalar |
+| Calendly | ⚠️ Ajustar | Link no site precisa atualização |
 
 ---
 
-## 4. LANDING PAGE & COMUNICAÇÃO
+## 🚀 SPRINT ATUAL: VIRADA 2026
 
-- [ ] **Refatoração `mycodingteam.com`:**
-  - [ ] Transformar em "Holding de IA".
-  - [ ] Criar subdomínio/rota `demo` para o Simulador.
-  - [ ] Copywriting focado em autoridade e tecnologia proprietária.
+### Prioridade P0 (HOJE - 29/12)
 
----
+| # | Tarefa | Responsável | Status |
+|---|--------|-------------|--------|
+| 1 | Instalar Pixel Meta no site | Antigravity | ⏳ Aguardando ID |
+| 2 | Ajustar WhatsApp no CTA | Antigravity | A fazer |
+| 3 | Ajustar Calendly no CTA | Antigravity | A fazer |
+| 4 | Criar campanhas no Meta Ads | CEO | A fazer |
+| 5 | Ligar anúncios | CEO | A fazer |
 
-## 5. SISTEMA MULTI-AGENTE (Dispatcher Central)
+### Prioridade P1 (30-31/12)
 
-- [x] **Dispatcher Central (`core/dispatcher-central.ts`):** (FEITO)
-  - [x] Classificar comandos por categoria (Marketing, Sales, Ops, Dev).
-  - [x] Rotear para o Agente correto.
-- [ ] **Agente de Marketing:**
-  - [ ] Gerar ideias de post para Instagram.
-  - [ ] (Futuro) Integrar com API do Meta para postar direto.
-- [ ] **Agente de Vendas (SDR):**
-  - [ ] Enviar formulário de Briefing via WhatsApp.
-  - [ ] Qualificar lead e calcular Score.
-- [ ] **Agente de Operações:**
-  - [ ] Coletar dados para contrato.
-  - [ ] Gerar cobrança (boleto/PIX).
+| # | Tarefa | Responsável | Status |
+|---|--------|-------------|--------|
+| 6 | Monitorar conversões | Ambos | - |
+| 7 | Criar remarketing 31/12 | CEO | - |
+| 8 | Responder leads WhatsApp | CEO | - |
+| 9 | Agendar calls | CEO | - |
 
----
+### Prioridade P2 (01-02/01)
 
-## 6. INTEGRAÇÕES EXTERNAS (APIs de Terceiros)
-
-- [ ] **Asaas (Pagamentos):**
-  - [ ] Criar endpoint `/api/integrations/asaas`.
-  - [ ] Gerar Boleto/PIX via API.
-  - [ ] Receber Webhook de confirmação de pagamento.
-- [ ] **Clicksign / Autentique (Contratos):**
-  - [ ] Criar endpoint `/api/integrations/contracts`.
-  - [ ] Enviar contrato para assinatura digital.
-  - [ ] Receber Webhook de assinatura concluída.
-- [ ] **Instagram Graph API (Marketing):**
-  - [ ] (Fase 2) Postar conteúdo gerado pelo Marketing Agent.
+| # | Tarefa | Responsável | Status |
+|---|--------|-------------|--------|
+| 10 | Mensagem Ano Novo para base | Antigravity | - |
+| 11 | Calls de vendas | CEO | - |
+| 12 | Fechar primeiros clientes | CEO | - |
 
 ---
 
-## CHECKLIST DE VALIDAÇÃO (DOER)
+## 💰 CLIENTE PILOTO
 
-1. O usuário consegue se cadastrar? (Auth)
-2. O usuário consegue conectar o WhatsApp dele? (Onboarding)
-3. A IA responde rápido sem travar? (Performance)
-4. O dinheiro cai na conta? (Asaas - Fase 2)
-5. O contrato é assinado digitalmente? (Clicksign - Fase 2)
+| Cliente | Status | Próximo Passo |
+|---------|--------|---------------|
+| **Jadiel (Massa Promotora)** | Proposta enviada | Aguardar resposta |
+
+---
+
+## 🔧 BACKLOG TÉCNICO
+
+### Crítico (para atender Jadiel)
+
+- [ ] Endpoint de import CSV
+- [ ] Integração Meta WhatsApp API
+- [ ] Fluxo de disparo em massa
+- [ ] Dashboard de campanhas
+
+### Importante
+
+- [ ] Niche Packs em JSON
+- [ ] Motor de Openers (variação)
+- [ ] Report Generator (PDF)
+- [ ] Modo Risco implementado
+
+### Nice to Have
+
+- [ ] Multi-tenant
+- [ ] Painel self-service cliente
+- [ ] Learning loop por nicho
+
+---
+
+## 📈 METAS DE JANEIRO/2025
+
+| Métrica | Meta |
+|---------|------|
+| Visitantes únicos | 2.000+ |
+| Leads capturados | 200+ |
+| Demos realizadas | 50+ |
+| Calls agendadas | 30+ |
+| Clientes fechados | 5-10 |
+| MRR | R$ 6.000+ |
+
+---
+
+## 📁 DOCUMENTAÇÃO
+
+| Documento | Localização |
+|-----------|-------------|
+| Master Blueprint | `/knowledge/LX_MASTER_BLUEPRINT.md` |
+| Operational Master | `/knowledge/LX_OPERATIONAL_MASTER.md` |
+| Customer Journey | `/knowledge/CUSTOMER_JOURNEY.md` |
+| SOPs | `/knowledge/SOPs/` |
+| Propostas | `/docs/proposals/` |
+| Campanhas | `/docs/campaigns/` |
+
+---
+
+## 🔐 CREDENCIAIS CONFIGURADAS
+
+| Serviço | Status |
+|---------|--------|
+| OpenRouter API | ✅ Configurado |
+| Supabase | ✅ Configurado |
+| Telegram Bot | ✅ Configurado |
+| Meta WhatsApp API | ⏳ Pendente (Jadiel) |
+| Asaas | ⏳ Pendente |
+
+---
+
+*Roadmap atualizado em tempo real. Próxima revisão: 02/01/2025*

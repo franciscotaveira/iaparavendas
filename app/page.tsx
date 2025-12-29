@@ -82,7 +82,7 @@ export default function LandingPage() {
                             </span>
                         </div>
 
-                        <div className="hidden md:flex items-center gap-8 text-sm text-gray-400">
+                        <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
                             <a href="#problema" className="hover:text-white transition-colors">O Problema</a>
                             <a href="#solucao" className="hover:text-white transition-colors">Solução</a>
                             <a href="#como-funciona" className="hover:text-white transition-colors">Como Funciona</a>
@@ -96,9 +96,9 @@ export default function LandingPage() {
                                 disabled={n8nStatus === 'loading'}
                                 title={n8nMessage || 'Status do Sistema'}
                                 className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded border transition-all text-xs ${n8nStatus === 'connected' ? 'border-green-500/50 bg-green-500/10 text-green-400' :
-                                        n8nStatus === 'error' ? 'border-red-500/50 bg-red-500/10 text-red-400' :
-                                            n8nStatus === 'loading' ? 'border-yellow-500/50 bg-yellow-500/10 text-yellow-400' :
-                                                'border-white/10 bg-white/5 text-gray-400 hover:border-blue-500/50'
+                                    n8nStatus === 'error' ? 'border-red-500/50 bg-red-500/10 text-red-400' :
+                                        n8nStatus === 'loading' ? 'border-yellow-500/50 bg-yellow-500/10 text-yellow-400' :
+                                            'border-white/10 bg-white/5 text-gray-300 hover:border-blue-500/50'
                                     }`}
                             >
                                 {n8nStatus === 'loading' ? <Loader2 className="w-3 h-3 animate-spin" /> :
@@ -128,7 +128,7 @@ export default function LandingPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase shadow-[0_0_15px_-5px_rgba(59,130,246,0.5)]">
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-blue-500/10 border border-blue-500/40 text-blue-400 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase shadow-[0_0_15px_-5px_rgba(59,130,246,0.5)]">
                                     <Zap className="w-3 h-3 text-yellow-500" />
                                     Engenharia de Vendas Autônoma
                                 </div>
@@ -140,14 +140,14 @@ export default function LandingPage() {
                                     </span>
                                 </h1>
 
-                                <p className="text-lg text-gray-400 leading-relaxed max-w-xl border-l-4 border-blue-600 pl-6 my-8">
-                                    O <strong>Lux Sales Core</strong> não apenas responde. Ele <span className="text-white font-bold">interroga, qualifica e converte</span>.
+                                <p className="text-lg text-gray-200 leading-relaxed max-w-xl border-l-4 border-blue-500 pl-6 my-8">
+                                    O <strong className="text-white">Lux Sales Core</strong> não apenas responde. Ele <span className="text-blue-400 font-bold">interroga, qualifica e converte</span>.
                                     Instale um cérebro comercial no seu WhatsApp e pare de rasgar dinheiro com quem só está "dando uma olhadinha".
                                 </p>
 
                                 {/* Feature Cards */}
                                 <div className="grid grid-cols-1 gap-4 mb-10">
-                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-red-900/10 to-transparent border border-red-500/20 hover:border-red-500/50 transition-all">
+                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-red-950/30 to-transparent border border-red-500/40 hover:border-red-500/50 transition-all">
                                         <div className="bg-red-500/20 p-2 rounded-lg">
                                             <Shield className="w-6 h-6 text-red-500" />
                                         </div>
@@ -156,11 +156,11 @@ export default function LandingPage() {
                                                 Escudo Anti-Curioso
                                                 <span className="text-[10px] bg-red-500 text-white px-1.5 rounded font-mono">93% Block Rate</span>
                                             </h4>
-                                            <p className="text-sm text-gray-500 mt-1">Identifica e barra leads sem budget antes que eles consumam o tempo da sua equipe.</p>
+                                            <p className="text-sm text-gray-300 mt-1">Identifica e barra leads sem budget antes que eles consumam o tempo da sua equipe.</p>
                                         </div>
                                     </div>
 
-                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-900/10 to-transparent border border-blue-500/20 hover:border-blue-500/50 transition-all">
+                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-950/30 to-transparent border border-blue-500/40 hover:border-blue-500/50 transition-all">
                                         <div className="bg-blue-500/20 p-2 rounded-lg">
                                             <Brain className="w-6 h-6 text-blue-500" />
                                         </div>
@@ -169,7 +169,7 @@ export default function LandingPage() {
                                                 Raio-X de Intenção
                                                 <span className="text-[10px] bg-blue-500 text-white px-1.5 rounded font-mono">Real-Time</span>
                                             </h4>
-                                            <p className="text-sm text-gray-500 mt-1">Analisa o nível de consciência e urgência do lead a cada mensagem enviada.</p>
+                                            <p className="text-sm text-gray-300 mt-1">Analisa o nível de consciência e urgência do lead a cada mensagem enviada.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@ export default function LandingPage() {
                                     >
                                         Testar Filtro ao Vivo ⚡
                                     </button>
-                                    <p className="text-xs text-gray-500 max-w-[150px] leading-tight opacity-70">
+                                    <p className="text-xs text-gray-400 max-w-[150px] leading-tight opacity-70">
                                         *Nenhum cartão necessário para testar a I.A.
                                     </p>
                                 </div>
@@ -206,7 +206,7 @@ export default function LandingPage() {
                                             <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
                                             <div className="w-2 h-2 rounded-full bg-green-500/50" />
                                         </div>
-                                        <div className="text-[10px] font-mono text-gray-500 tracking-widest">
+                                        <div className="text-[10px] font-mono text-gray-400 tracking-widest">
                                             SECURE_CHANNEL_V1
                                         </div>
                                         <Bot className="w-4 h-4 text-blue-500" />
@@ -226,7 +226,7 @@ export default function LandingPage() {
 
                     {/* Scroll Indicator */}
                     <div className="flex justify-center mt-12">
-                        <a href="#problema" className="flex flex-col items-center text-gray-500 hover:text-white transition-colors">
+                        <a href="#problema" className="flex flex-col items-center text-gray-400 hover:text-white transition-colors">
                             <span className="text-xs mb-2">Ver mais</span>
                             <ArrowDown className="w-5 h-5 animate-bounce" />
                         </a>
@@ -241,7 +241,7 @@ export default function LandingPage() {
                             <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6">
                                 Você reconhece algum desses cenários?
                             </h2>
-                            <p className="text-gray-400 max-w-2xl mx-auto">
+                            <p className="text-gray-300 max-w-2xl mx-auto">
                                 Se você gasta mais tempo com curiosos do que fechando negócios, o problema não é seu produto — é seu filtro.
                             </p>
                         </div>
@@ -259,11 +259,11 @@ export default function LandingPage() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="p-6 rounded-xl bg-red-950/20 border border-red-500/20 hover:border-red-500/40 transition-all"
+                                    className="p-6 rounded-xl bg-red-950/20 border border-red-500/40 hover:border-red-500/40 transition-all"
                                 >
                                     <item.icon className="w-10 h-10 text-red-500 mb-4" />
                                     <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                                    <p className="text-sm text-gray-400">{item.desc}</p>
+                                    <p className="text-sm text-gray-300">{item.desc}</p>
                                 </motion.div>
                             ))}
                         </div>
@@ -278,7 +278,7 @@ export default function LandingPage() {
                             <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6">
                                 IA que <span className="text-blue-500">qualifica</span>, não só responde
                             </h2>
-                            <p className="text-gray-400 max-w-2xl mx-auto">
+                            <p className="text-gray-300 max-w-2xl mx-auto">
                                 Diferente de bots genéricos, nosso sistema entende intenção, aplica políticas comerciais e só passa para você quem realmente quer comprar.
                             </p>
                         </div>
@@ -316,7 +316,7 @@ export default function LandingPage() {
                                         <item.icon className={`w-7 h-7 text-${item.color}-500`} />
                                     </div>
                                     <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                                    <p className="text-gray-400">{item.desc}</p>
+                                    <p className="text-gray-300">{item.desc}</p>
                                 </motion.div>
                             ))}
                         </div>
@@ -351,7 +351,7 @@ export default function LandingPage() {
                                         {item.step}
                                     </div>
                                     <h3 className="text-xl font-bold text-white mt-6 mb-3">{item.title}</h3>
-                                    <p className="text-gray-400">{item.desc}</p>
+                                    <p className="text-gray-300">{item.desc}</p>
                                 </motion.div>
                             ))}
                         </div>
@@ -366,7 +366,7 @@ export default function LandingPage() {
                             <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6">
                                 Quanto custa <span className="text-green-500">não ter</span> isso?
                             </h2>
-                            <p className="text-gray-400 max-w-2xl mx-auto">
+                            <p className="text-gray-300 max-w-2xl mx-auto">
                                 Menos que um SDR. Mais resultado que uma equipe inteira de atendimento.
                             </p>
                         </div>
@@ -383,11 +383,11 @@ export default function LandingPage() {
                                 </div>
 
                                 <h3 className="text-2xl font-bold text-white mb-2">Lux Sales Core</h3>
-                                <p className="text-gray-400 mb-6">Sistema completo de automação comercial</p>
+                                <p className="text-gray-300 mb-6">Sistema completo de automação comercial</p>
 
                                 <div className="flex items-end gap-2 mb-6">
                                     <span className="text-5xl font-bold text-white">R$ 1.197</span>
-                                    <span className="text-gray-400 mb-2">/mês</span>
+                                    <span className="text-gray-300 mb-2">/mês</span>
                                 </div>
 
                                 <div className="space-y-3 mb-8">
@@ -409,10 +409,10 @@ export default function LandingPage() {
 
                                 <div className="p-4 rounded-xl bg-white/5 border border-white/10 mb-6">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-gray-400">Setup + Implantação</span>
+                                        <span className="text-gray-300">Setup + Implantação</span>
                                         <span className="text-white font-bold">R$ 2.997</span>
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-1">Pagamento único. Inclui configuração, personalização e treinamento.</p>
+                                    <p className="text-xs text-gray-400 mt-1">Pagamento único. Inclui configuração, personalização e treinamento.</p>
                                 </div>
 
                                 <a
@@ -452,10 +452,10 @@ export default function LandingPage() {
                                         className="w-full p-6 text-left flex justify-between items-center bg-white/5 hover:bg-white/10 transition-colors"
                                     >
                                         <span className="font-medium text-white">{faq.q}</span>
-                                        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
+                                        <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
                                     </button>
                                     {openFaq === i && (
-                                        <div className="p-6 pt-0 text-gray-400">
+                                        <div className="p-6 pt-0 text-gray-300">
                                             {faq.a}
                                         </div>
                                     )}
@@ -471,7 +471,7 @@ export default function LandingPage() {
                         <h2 className="text-4xl lg:text-5xl font-bold mb-6">
                             Pronto para parar de perder leads?
                         </h2>
-                        <p className="text-xl text-gray-400 mb-10">
+                        <p className="text-xl text-gray-300 mb-10">
                             Teste o agente agora mesmo. Sem cartão, sem compromisso.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -503,14 +503,14 @@ export default function LandingPage() {
                                     </div>
                                     <span className="text-sm font-bold text-white">LuxGrowth.IA</span>
                                 </div>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-gray-400">
                                     Automação comercial inteligente para empresas que querem escalar sem aumentar equipe.
                                 </p>
                             </div>
 
                             <div>
                                 <h4 className="text-white font-bold mb-4">Navegação</h4>
-                                <ul className="space-y-2 text-sm text-gray-400">
+                                <ul className="space-y-2 text-sm text-gray-300">
                                     <li><a href="#problema" className="hover:text-white transition-colors">O Problema</a></li>
                                     <li><a href="#solucao" className="hover:text-white transition-colors">Solução</a></li>
                                     <li><a href="#como-funciona" className="hover:text-white transition-colors">Como Funciona</a></li>
@@ -520,7 +520,7 @@ export default function LandingPage() {
 
                             <div>
                                 <h4 className="text-white font-bold mb-4">Legal</h4>
-                                <ul className="space-y-2 text-sm text-gray-400">
+                                <ul className="space-y-2 text-sm text-gray-300">
                                     <li><a href="/privacy" className="hover:text-white transition-colors">Política de Privacidade</a></li>
                                     <li><a href="/terms" className="hover:text-white transition-colors">Termos de Uso</a></li>
                                 </ul>
@@ -528,7 +528,7 @@ export default function LandingPage() {
 
                             <div>
                                 <h4 className="text-white font-bold mb-4">Contato</h4>
-                                <ul className="space-y-2 text-sm text-gray-400">
+                                <ul className="space-y-2 text-sm text-gray-300">
                                     <li className="flex items-center gap-2">
                                         <Mail className="w-4 h-4" />
                                         <span>contato@luxgrowth.ia</span>
