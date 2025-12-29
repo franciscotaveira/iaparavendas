@@ -416,7 +416,7 @@ export default function LandingPage() {
                                 </div>
 
                                 <a
-                                    href="https://wa.me/5599999999999?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Lux%20Sales%20Core"
+                                    href="https://wa.me/5549988447562?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Lux%20Sales%20Core"
                                     target="_blank"
                                     className="block w-full py-4 bg-blue-600 hover:bg-blue-500 text-white text-center font-bold rounded-xl transition-all"
                                 >
@@ -482,7 +482,7 @@ export default function LandingPage() {
                                 Testar Agente ao Vivo
                             </a>
                             <a
-                                href="https://wa.me/5599999999999?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Lux%20Sales%20Core"
+                                href="https://wa.me/5549988447562?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Lux%20Sales%20Core"
                                 target="_blank"
                                 className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-all border border-white/20"
                             >
@@ -535,7 +535,7 @@ export default function LandingPage() {
                                     </li>
                                     <li className="flex items-center gap-2">
                                         <Phone className="w-4 h-4" />
-                                        <span>+55 (99) 99999-9999</span>
+                                        <span>+55 (49) 98844-7562</span>
                                     </li>
                                 </ul>
                             </div>
