@@ -90,6 +90,9 @@ export interface AgentPersona {
 
     // Base de conhecimento (opcional)
     knowledge_base?: string[];
+
+    // Ferramentas permitidas (Novo: Capacidade de Execução)
+    allowed_tools?: string[];
 }
 
 // ============================================
