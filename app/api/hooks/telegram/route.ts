@@ -3,6 +3,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import * as fs from 'fs';
 import * as path from 'path';
+import { supabase } from '@/lib/supabase';
 
 // ============================================
 // MEU SÓCIO v4.0 - CLONE ANTIGRAVITY
@@ -11,6 +12,62 @@ import * as path from 'path';
 // Consciência Comercial Artificial ativa
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+
+// Salvar mensagem no Supabase
+async function saveTelegramMessage(chatId: number, userName: string, userMessage: string, botResponse: string) {
+    if (!supabase) return;
+
+    try {
+        const sessionId = `telegram_${chatId}`;
+
+        // Verificar/criar conversa
+        let { data: conversation } = await supabase
+            .from('conversations')
+            .select('id')
+            .eq('session_id', sessionId)
+            .single();
+
+        if (!conversation) {
+            const { data: newConv } = await supabase
+                .from('conversations')
+                .insert({
+                    session_id: sessionId,
+                    platform: 'telegram',
+                    status: 'active',
+                    message_count: 0
+                })
+                .select()
+                .single();
+            conversation = newConv;
+        }
+
+        if (conversation?.id) {
+            // Salvar mensagem do usuário
+            await supabase.from('messages').insert({
+                conversation_id: conversation.id,
+                role: 'user',
+                content: userMessage
+            });
+
+            // Salvar resposta do bot
+            await supabase.from('messages').insert({
+                conversation_id: conversation.id,
+                role: 'assistant',
+                content: botResponse
+            });
+
+            // Atualizar contador
+            await supabase
+                .from('conversations')
+                .update({ message_count: (conversation as any).message_count + 2 })
+                .eq('id', conversation.id);
+        }
+
+        console.log(`[SUPABASE] Telegram msg salva: ${sessionId}`);
+    } catch (e) {
+        console.warn('[SUPABASE] Erro ao salvar telegram msg:', e);
+    }
+}
 
 // Carregar conhecimento da base (em runtime)
 function loadKnowledge(): string {
@@ -182,6 +239,9 @@ Quer que eu detalhe algo, Sócio?`;
         // Processar com IA
         const response = await processWithAI(chatId, text, firstName);
         await sendTelegramMessage(chatId, response);
+
+        // Salvar no Supabase (non-blocking)
+        saveTelegramMessage(chatId, firstName, text, response).catch(() => { });
 
         return NextResponse.json({ status: 'processed' });
 
