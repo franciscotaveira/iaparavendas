@@ -140,7 +140,7 @@ export default function LandingPage() {
                                     </span>
                                 </h1>
 
-                                <p className="text-lg text-gray-200 leading-relaxed max-w-xl border-l-4 border-blue-500 pl-6 my-8">
+                                <p className="text-xl text-gray-100 leading-relaxed max-w-xl border-l-4 border-blue-500 pl-6 my-8">
                                     O <strong className="text-white">Lux Sales Core</strong> não apenas responde. Ele <span className="text-blue-400 font-bold">interroga, qualifica e converte</span>.
                                     Instale um cérebro comercial no seu WhatsApp e pare de rasgar dinheiro com quem só está "dando uma olhadinha".
                                 </p>
@@ -152,11 +152,11 @@ export default function LandingPage() {
                                             <Shield className="w-6 h-6 text-red-500" />
                                         </div>
                                         <div>
-                                            <h4 className="text-base font-bold text-white flex items-center gap-2">
+                                            <h4 className="text-lg font-bold text-white flex items-center gap-2">
                                                 Escudo Anti-Curioso
                                                 <span className="text-[10px] bg-red-500 text-white px-1.5 rounded font-mono">93% Block Rate</span>
                                             </h4>
-                                            <p className="text-sm text-gray-300 mt-1">Identifica e barra leads sem budget antes que eles consumam o tempo da sua equipe.</p>
+                                            <p className="text-base text-gray-200 mt-1">Identifica e barra leads sem budget antes que eles consumam o tempo da sua equipe.</p>
                                         </div>
                                     </div>
 
@@ -165,11 +165,11 @@ export default function LandingPage() {
                                             <Brain className="w-6 h-6 text-blue-500" />
                                         </div>
                                         <div>
-                                            <h4 className="text-base font-bold text-white flex items-center gap-2">
+                                            <h4 className="text-lg font-bold text-white flex items-center gap-2">
                                                 Raio-X de Intenção
                                                 <span className="text-[10px] bg-blue-500 text-white px-1.5 rounded font-mono">Real-Time</span>
                                             </h4>
-                                            <p className="text-sm text-gray-300 mt-1">Analisa o nível de consciência e urgência do lead a cada mensagem enviada.</p>
+                                            <p className="text-base text-gray-200 mt-1">Analisa o nível de consciência e urgência do lead a cada mensagem enviada.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* ==================== PROBLEMA SECTION ==================== */}
-                <section id="problema" className="py-20 bg-gradient-to-b from-transparent to-red-950/10">
+                <section id="problema" className="py-20 bg-gradient-to-b from-[#050505] via-red-950/20 to-[#0a0a0a]">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8">
                         <div className="text-center mb-16">
                             <span className="text-red-500 text-sm font-bold tracking-widest uppercase">O Problema</span>
@@ -271,7 +271,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* ==================== SOLUÇÃO SECTION ==================== */}
-                <section id="solucao" className="py-20 bg-gradient-to-b from-red-950/10 to-blue-950/10">
+                <section id="solucao" className="py-20 bg-gradient-to-b from-[#0a0a0a] via-blue-950/20 to-[#080812]">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8">
                         <div className="text-center mb-16">
                             <span className="text-blue-500 text-sm font-bold tracking-widest uppercase">A Solução</span>
@@ -324,7 +324,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* ==================== COMO FUNCIONA SECTION ==================== */}
-                <section id="como-funciona" className="py-20">
+                <section id="como-funciona" className="py-20 bg-gradient-to-b from-[#080812] via-purple-950/20 to-[#0a0a0a]">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8">
                         <div className="text-center mb-16">
                             <span className="text-purple-500 text-sm font-bold tracking-widest uppercase">Como Funciona</span>

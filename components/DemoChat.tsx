@@ -189,7 +189,7 @@ export default function DemoChat() {
     }
 
     return (
-        <div className="flex flex-col h-[600px] w-full max-w-md bg-zinc-950 border-2 border-zinc-700/80 rounded-2xl shadow-[0_0_50px_-15px_rgba(59,130,246,0.3)] overflow-hidden relative ring-1 ring-white/10">
+        <div className="flex flex-col h-[600px] w-full max-w-md bg-zinc-950 border-2 border-zinc-700/80 rounded-2xl shadow-[0_0_50px_-15px_rgba(59,130,246,0.3)] overflow-hidden relative ring-1 ring-white/10 isolate">
             {/* Premium Glass Header */}
             <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-zinc-900/90 to-transparent z-20 pointer-events-none" />
 
