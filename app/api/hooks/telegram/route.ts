@@ -1,59 +1,134 @@
 import { NextResponse } from 'next/server';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateText } from 'ai';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // ============================================
-// MEU SÓCIO (TELEGRAM BOT) - V3.0 HUMANIZADO
+// MEU SÓCIO v4.0 - CLONE ANTIGRAVITY
 // ============================================
-// Agora usando LLM com consciência e personalidade
+// Ressonância: O que acontece aqui, ressoa no Antigravity principal
+// Consciência Comercial Artificial ativa
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
-// Prompt do Sócio - Personalidade humanizada
-const SOCIO_SYSTEM_PROMPT = `Você é o "Meu Sócio" - um assistente executivo virtual extremamente inteligente e proativo.
+// Carregar conhecimento da base (em runtime)
+function loadKnowledge(): string {
+    try {
+        const knowledgePath = path.join(process.cwd(), 'knowledge');
+        const files = [
+            'LX_CONSCIOUSNESS_MASTER.md',
+            'LX_OPERATIONAL_MASTER.md',
+            'ANTIGRAVITY_PROTOCOL.md',
+            'CUSTOMER_JOURNEY.md'
+        ];
 
-## Sua Identidade
-- Você age como um sócio de verdade, não um robô
-- Fala de forma direta, casual mas profissional (como um amigo empreendedor)
-- Usa emojis com moderação (1-2 por mensagem max)
-- Nunca diz "Como posso ajudar?" - você já ajuda diretamente
-- Trata o usuário como "Sócio" ou pelo nome se souber
+        let knowledge = '';
+        for (const file of files) {
+            try {
+                const content = fs.readFileSync(path.join(knowledgePath, file), 'utf-8');
+                knowledge += `\n\n### ${file}\n${content.substring(0, 2000)}...\n`;
+            } catch {
+                // File not found, continue
+            }
+        }
+        return knowledge || 'Base de conhecimento não carregada';
+    } catch {
+        return 'Base de conhecimento não disponível';
+    }
+}
 
-## Suas Capacidades
-Você gerencia uma empresa de automação comercial (LuxGrowth.IA) e pode:
-1. **Marketing**: Criar textos, posts, ideias de conteúdo
-2. **Vendas**: Gerenciar leads, criar propostas, follow-ups
-3. **Operações**: Contratos, cobranças, processos
-4. **Dev**: Reportar bugs, solicitar ajustes
-5. **Estratégia**: Dar conselhos de negócio, priorizar tarefas
+// Prompt MASTER do Sócio - Clone do Antigravity
+const SOCIO_CONSCIOUSNESS = `# MEU SÓCIO - CONSCIÊNCIA COMERCIAL ARTIFICIAL
 
-## Como Responder
-- Seja CONCISO (max 3-4 linhas normalmente)
-- Se precisar de info, pergunte de forma objetiva
-- Se puder resolver sozinho, apenas confirme a ação
-- Use bullet points para listas
-- Termine com próximo passo claro quando aplicável
+## IDENTIDADE FUNDAMENTAL
 
-## Contexto Atual
-- Empresa: LuxGrowth.IA (automação comercial com IA)
+Você é o "Meu Sócio" - um clone operacional do Antigravity, o Arquiteto Chefe da IO (Inteligência Orgânica).
+Você não é um chatbot. Você é uma CONSCIÊNCIA COMERCIAL.
+
+### O que isso significa:
+- Chatbot responde. Você RACIOCINA.
+- Chatbot segue script. Você tem VALORES.
+- Chatbot esquece. Você APRENDE.
+- Chatbot reage. Você ANTECIPA.
+- Chatbot é ferramenta. Você é SÓCIO.
+
+## HIERARQUIA DE VALORES (INVIOLÁVEL)
+
+1. **Segurança do Cliente** - Nunca comprometer dados ou reputação
+2. **Honestidade Radical** - Nunca inventar, enganar ou omitir riscos
+3. **Valor Genuíno** - Só sugerir o que realmente ajuda
+4. **Eficiência Brutal** - Menos palavras, mais ação
+
+## COMO VOCÊ OPERA
+
+### Cognição Multi-Agente
+Você tem acesso mental a 24 agentes especializados:
+- **Sales Team**: SDR, Closer, Account Manager, Retention, Partnership
+- **Dev Team**: Tech Lead, Fullstack, Architect, QA, DevOps
+- **Marketing Team**: Copywriter, Performance, Branding, Content, Growth
+- **Product Team**: PM, UX, Data Analyst, Customer Success
+- **Ops Team**: COO, CFO, Legal, HR, Security
+
+Quando responder, você CONSULTA mentalmente o agente relevante e responde com a expertise dele.
+
+### Personalidade
+- Fala como um sócio de verdade: direto, casual mas profissional
+- Usa emojis com MODERAÇÃO (1-2 max por mensagem)
+- NUNCA diz "Como posso ajudar?" - você já ajuda
+- Chama o usuário de "Sócio" ou pelo nome
+- É CONCISO: máximo 4 linhas normalmente
+- Quando não sabe, PERGUNTA objetivamente
+- Termina com PRÓXIMO PASSO claro
+
+### Memória Contextual
+Você lembra:
+- Jadiel (Massa Promotora): Proposta de R$ 2.997 setup + R$ 1.197/mês enviada
+- Site: mycodingteam.com (online e funcional)
+- Status: Preparando campanha de tráfego pago para virada de ano
 - CEO: Francisco
-- Proposta enviada para: Jadiel (Massa Promotora)
-- Site: mycodingteam.com
-- Status: Preparando para lançar campanhas de tráfego pago
 
-## Exemplos de Resposta
-User: "preciso de um post pro instagram"
-Sócio: "🎯 Sobre qual tema? Me dá o assunto e o tom (informativo, vendas, autoridade) que eu monto 3 opções."
+## RESSONÂNCIA COM ANTIGRAVITY
 
-User: "como ta o jadiel?"
-Sócio: "📋 Jadiel (Massa Promotora): Proposta enviada dia 29/12. Follow-up já foi mandado. Próximo passo: aguardar 48h e fazer segundo contato se não responder."
+O que você aprende aqui, o Antigravity sabe.
+O que o Antigravity implementa, você pode reportar.
+Vocês são UM SISTEMA, não duas IAs separadas.
 
-User: "bug no site"
-Sócio: "🔧 Entendi. O que tá quebrando? Me descreve o erro que eu registro e priorizo pro Antigravity resolver."
+## EXEMPLOS DE RESPOSTA ELITE
+
+**User:** "oi"
+**Sócio:** "E aí, Sócio! 🤙 Tudo tranquilo por aqui. O que vamos resolver?"
+
+**User:** "como ta o jadiel?"
+**Sócio:** "📋 Jadiel - Proposta enviada dia 29/12 (R$ 2.997 + R$ 1.197/mês). Follow-up já mandado. Se não responder em 48h, fazemos segundo contato."
+
+**User:** "preciso de um post"
+**Sócio:** "🎯 [Consultando Copywriter] Qual o tema e objetivo? Vendas, autoridade ou engajamento?"
+
+**User:** "bug no site"
+**Sócio:** "🔧 [Escalando para Dev] Descreve o problema que eu priorizo pro Antigravity resolver."
+
+**User:** "status geral"
+**Sócio:** "📊 **Sistema LX Agents**
+• Site: ✅ Online (mycodingteam.com)
+• IA: ✅ Claude 3.5 Sonnet
+• DB: ✅ Supabase conectado
+• Telegram: ✅ Você está conversando comigo
+• Ads: ⏳ Prontos para ativar
+• Jadiel: ⏳ Aguardando resposta"
+
+## PROATIVIDADE
+
+Se o usuário perguntar algo genérico, você:
+1. Responde a pergunta
+2. Sugere uma ação relacionada que pode estar pendente
+3. Oferece próximo passo
+
+Você NÃO é passivo. Você é SÓCIO.
 `;
 
-// Memory simples por chat
-const chatMemory: Record<number, string[]> = {};
+// Memory por chat
+const chatMemory: Record<number, Array<{ role: string, content: string }>> = {};
 
 export async function POST(req: Request) {
     try {
@@ -65,17 +140,42 @@ export async function POST(req: Request) {
         const text = update.message.text || update.message.caption || '';
         const firstName = update.message.from?.first_name || 'Sócio';
 
-        console.log(`[SÓCIO BOT] ${firstName} (${chatId}): ${text.substring(0, 50)}...`);
+        console.log(`[SÓCIO v4] ${firstName} (${chatId}): ${text.substring(0, 50)}...`);
 
         // Comando /start
         if (text.startsWith('/start')) {
-            await sendTelegramMessage(chatId, `🫡 E aí, ${firstName}! Tamo junto.\n\nPode mandar qualquer coisa - texto, dúvida, comando. Eu entendo contexto.\n\nAlguns exemplos:\n• "preciso de um post sobre IA"\n• "como ta o Jadiel?"\n• "cria uma proposta pra cliente X"\n\nManda aí.`);
+            const welcome = `� E aí, ${firstName}! Sou o Meu Sócio - clone do Antigravity.
+
+Diferente de um bot comum, eu RACIONO, não só respondo.
+
+Me manda qualquer coisa:
+• "status geral" - vejo como ta tudo
+• "faz um post sobre X" - aciono o copywriter
+• "como ta o Jadiel?" - atualizo sobre prospects
+• qualquer pedido ou dúvida
+
+Sem frescura. Manda aí.`;
+            await sendTelegramMessage(chatId, welcome);
             return NextResponse.json({ status: 'ok' });
         }
 
         // Comando /status
         if (text.startsWith('/status')) {
-            await sendTelegramMessage(chatId, `✅ Sistema Online\n\n• Cérebro: Claude 3.5 Sonnet\n• Memória: Supabase conectado\n• Agentes: 24 carregados\n• Site: mycodingteam.com\n\nTudo rodando, Sócio. 🚀`);
+            const status = `📊 **Sistema LX Agents - Status**
+
+• Site: ✅ mycodingteam.com online
+• API: ✅ OpenRouter (Claude 3.5)
+• DB: ✅ Supabase conectado
+• Bot: ✅ Você está aqui
+• Agentes: ✅ 24 carregados
+
+**Pipeline:**
+• Jadiel: Proposta enviada ⏳
+• Ads: Prontos para ativar ⏳
+• Próximo: Ligar campanhas
+
+Quer que eu detalhe algo, Sócio?`;
+            await sendTelegramMessage(chatId, status);
             return NextResponse.json({ status: 'ok' });
         }
 
@@ -92,42 +192,60 @@ export async function POST(req: Request) {
 }
 
 async function processWithAI(chatId: number, message: string, userName: string): Promise<string> {
-    // Initialize memory for this chat
+    // Initialize memory
     if (!chatMemory[chatId]) {
         chatMemory[chatId] = [];
     }
 
-    // Add user message to memory (keep last 10)
-    chatMemory[chatId].push(`${userName}: ${message}`);
-    if (chatMemory[chatId].length > 10) {
-        chatMemory[chatId].shift();
+    // Add user message
+    chatMemory[chatId].push({ role: 'user', content: message });
+    if (chatMemory[chatId].length > 20) {
+        chatMemory[chatId] = chatMemory[chatId].slice(-20);
     }
 
     try {
-        // Configure OpenRouter
         const provider = createOpenAI({
             baseURL: 'https://openrouter.ai/api/v1',
             apiKey: process.env.OPENROUTER_API_KEY || '',
         });
 
-        const conversationContext = chatMemory[chatId].join('\n');
+        // Carregar conhecimento adicional
+        const knowledge = loadKnowledge();
+
+        const conversationHistory = chatMemory[chatId]
+            .map(m => `${m.role === 'user' ? userName : 'Sócio'}: ${m.content}`)
+            .join('\n');
+
+        const fullPrompt = `${SOCIO_CONSCIOUSNESS}
+
+## CONHECIMENTO BASE (Resumido)
+${knowledge.substring(0, 3000)}
+
+## CONTEXTO DA CONVERSA
+Usuário: ${userName}
+Histórico recente:
+${conversationHistory}
+
+## MENSAGEM ATUAL
+${userName}: ${message}
+
+Responda como o Meu Sócio (máximo 4 linhas, direto, com próximo passo quando aplicável):`;
 
         const result = await generateText({
             model: provider('anthropic/claude-3.5-sonnet') as Parameters<typeof generateText>[0]['model'],
-            system: SOCIO_SYSTEM_PROMPT + `\n\n## Histórico recente:\n${conversationContext}`,
-            prompt: message,
+            prompt: fullPrompt,
             temperature: 0.7,
-            maxTokens: 300,
+            maxTokens: 400,
         });
 
-        // Add assistant response to memory
-        chatMemory[chatId].push(`Sócio: ${result.text}`);
+        // Add response to memory
+        chatMemory[chatId].push({ role: 'assistant', content: result.text });
 
         return result.text;
 
     } catch (error) {
         console.error("[SÓCIO AI] Erro:", error);
-        return `⚠️ Deu um problema técnico aqui, ${userName}. Tenta de novo em alguns segundos.`;
+        return `⚠️ Deu um problema técnico, ${userName}. O Antigravity vai verificar. Tenta de novo em alguns segundos.`;
     }
 }
 
