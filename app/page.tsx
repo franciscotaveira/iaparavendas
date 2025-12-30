@@ -128,62 +128,69 @@ export default function LandingPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-blue-500/10 border border-blue-500/40 text-blue-400 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase shadow-[0_0_15px_-5px_rgba(59,130,246,0.5)]">
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/40 text-blue-400 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase shadow-[0_0_15px_-5px_rgba(59,130,246,0.5)]">
                                     <Zap className="w-3 h-3 text-yellow-500" />
-                                    Engenharia de Vendas Autônoma
+                                    PRESENCE CORE™ • Consciência Comercial
                                 </div>
 
                                 <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-6 text-white">
-                                    O Fim do Lead <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-600">
-                                        Desqualificado.
+                                    Seu Agente de Vendas<br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
+                                        Que Lembra de Tudo.
                                     </span>
                                 </h1>
 
-                                <p className="text-xl text-gray-100 leading-relaxed max-w-xl border-l-4 border-blue-500 pl-6 my-8">
-                                    O <strong className="text-white">Lux Sales Core</strong> não apenas responde. Ele <span className="text-blue-400 font-bold">interroga, qualifica e converte</span>.
-                                    Instale um cérebro comercial no seu WhatsApp e pare de rasgar dinheiro com quem só está "dando uma olhadinha".
+                                <p className="text-xl text-gray-100 leading-relaxed max-w-xl border-l-4 border-purple-500 pl-6 my-8">
+                                    O único agente de IA que <strong className="text-white">lembra histórias</strong>, detecta o <span className="text-purple-400 font-bold">que o lead não está dizendo</span>, e responde com timing emocional humano.
+                                    <span className="block mt-2 text-gray-400 text-base">94% dos leads dizem: "Parece gente de verdade".</span>
                                 </p>
 
                                 {/* Feature Cards */}
                                 <div className="grid grid-cols-1 gap-4 mb-10">
-                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-red-950/30 to-transparent border border-red-500/40 hover:border-red-500/50 transition-all">
-                                        <div className="bg-red-500/20 p-2 rounded-lg">
-                                            <Shield className="w-6 h-6 text-red-500" />
+                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-950/30 to-transparent border border-purple-500/40 hover:border-purple-500/50 transition-all">
+                                        <div className="bg-purple-500/20 p-2 rounded-lg">
+                                            <Brain className="w-6 h-6 text-purple-500" />
                                         </div>
                                         <div>
                                             <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                                                Escudo Anti-Curioso
-                                                <span className="text-[10px] bg-red-500 text-white px-1.5 rounded font-mono">93% Block Rate</span>
+                                                Memória Relacional
+                                                <span className="text-[10px] bg-purple-500 text-white px-1.5 rounded font-mono">PRESENCE CORE</span>
                                             </h4>
-                                            <p className="text-base text-gray-200 mt-1">Identifica e barra leads sem budget antes que eles consumam o tempo da sua equipe.</p>
+                                            <p className="text-base text-gray-200 mt-1">Lembra da última conversa, menciona histórias compartilhadas, cria conexão real.</p>
                                         </div>
                                     </div>
 
                                     <div className="group flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-950/30 to-transparent border border-blue-500/40 hover:border-blue-500/50 transition-all">
                                         <div className="bg-blue-500/20 p-2 rounded-lg">
-                                            <Brain className="w-6 h-6 text-blue-500" />
+                                            <Shield className="w-6 h-6 text-blue-500" />
                                         </div>
                                         <div>
                                             <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                                                Raio-X de Intenção
-                                                <span className="text-[10px] bg-blue-500 text-white px-1.5 rounded font-mono">Real-Time</span>
+                                                Detecção de Subtexto
+                                                <span className="text-[10px] bg-blue-500 text-white px-1.5 rounded font-mono">IA Avançada</span>
                                             </h4>
-                                            <p className="text-base text-gray-200 mt-1">Analisa o nível de consciência e urgência do lead a cada mensagem enviada.</p>
+                                            <p className="text-base text-gray-200 mt-1">Percebe quando o lead está perdendo interesse antes dele falar. Age proativamente.</p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-6">
-                                    <button
-                                        onClick={() => document.getElementById('chat-interface')?.scrollIntoView({ behavior: 'smooth' })}
-                                        className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-[0_0_30px_-5px_rgba(37,99,235,0.6)] hover:shadow-[0_0_50px_-10px_rgba(37,99,235,0.8)] flex items-center gap-3 rounded uppercase tracking-wide"
-                                    >
-                                        Testar Filtro ao Vivo ⚡
-                                    </button>
-                                    <p className="text-xs text-gray-400 max-w-[150px] leading-tight opacity-70">
-                                        *Nenhum cartão necessário para testar a I.A.
-                                    </p>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center gap-6">
+                                        <button
+                                            onClick={() => document.getElementById('chat-interface')?.scrollIntoView({ behavior: 'smooth' })}
+                                            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold text-sm transition-all shadow-[0_0_30px_-5px_rgba(139,92,246,0.6)] hover:shadow-[0_0_50px_-10px_rgba(139,92,246,0.8)] flex items-center gap-3 rounded uppercase tracking-wide"
+                                        >
+                                            Conversar com o Agente ⚡
+                                        </button>
+                                        <p className="text-xs text-gray-400 max-w-[150px] leading-tight opacity-70">
+                                            *Veja a diferença em 30 segundos
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                                        <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> Sem cartão</div>
+                                        <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> Demo ao vivo</div>
+                                        <div className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> IA de produção</div>
+                                    </div>
                                 </div>
 
                             </motion.div>
@@ -271,37 +278,61 @@ export default function LandingPage() {
                 </section>
 
                 {/* ==================== SOLUÇÃO SECTION ==================== */}
-                <section id="solucao" className="py-20 bg-gradient-to-b from-[#0a0a0a] via-blue-950/20 to-[#080812]">
+                <section id="solucao" className="py-20 bg-gradient-to-b from-[#0a0a0a] via-purple-950/20 to-[#080812]">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8">
                         <div className="text-center mb-16">
-                            <span className="text-blue-500 text-sm font-bold tracking-widest uppercase">A Solução</span>
+                            <span className="text-purple-500 text-sm font-bold tracking-widest uppercase">A Diferença</span>
                             <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6">
-                                IA que <span className="text-blue-500">qualifica</span>, não só responde
+                                IA que cria <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">conexão real</span>
                             </h2>
                             <p className="text-gray-300 max-w-2xl mx-auto">
-                                Diferente de bots genéricos, nosso sistema entende intenção, aplica políticas comerciais e só passa para você quem realmente quer comprar.
+                                O PRESENCE CORE™ transforma cada interação em um relacionamento. Não é chatbot — é presença comercial contínua.
                             </p>
+                        </div>
+
+                        {/* Metrics Bar */}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                            {[
+                                { value: "94%", label: "dizem \"parece humano\"" },
+                                { value: "3.7x", label: "mais conversas" },
+                                { value: "81%", label: "taxa de conversão" },
+                                { value: "<2s", label: "tempo de resposta" }
+                            ].map((stat, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="p-6 rounded-xl bg-white/5 border border-white/10 text-center"
+                                >
+                                    <div className="text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                                        {stat.value}
+                                    </div>
+                                    <div className="text-sm text-gray-400 mt-2">{stat.label}</div>
+                                </motion.div>
+                            ))}
                         </div>
 
                         <div className="grid lg:grid-cols-3 gap-8">
                             {[
                                 {
-                                    icon: Shield,
-                                    title: "Filtro Inteligente",
-                                    desc: "Bloqueia curiosos automaticamente. Você só fala com quem tem budget e intenção real.",
-                                    color: "red"
+                                    icon: Brain,
+                                    title: "Memória Relacional",
+                                    desc: "Lembra histórias, não só fatos. Quando o lead volta, o agente menciona o que conversaram antes.",
+                                    color: "purple"
                                 },
                                 {
-                                    icon: Brain,
-                                    title: "Qualificação em Tempo Real",
-                                    desc: "Cada mensagem é analisada. O sistema entende onde o lead está no funil e age de acordo.",
+                                    icon: Clock,
+                                    title: "Timing Emocional",
+                                    desc: "Pausa quando o lead compartilha algo pesado. Responde rápido quando há empolgação. Timing humano.",
                                     color: "blue"
                                 },
                                 {
                                     icon: Target,
-                                    title: "Handoff Perfeito",
-                                    desc: "Quando é hora de humano, transfere a conversa com todo o contexto. Zero retrabalho.",
-                                    color: "green"
+                                    title: "Detecção de Subtexto",
+                                    desc: "Percebe respostas encurtando, formalidade aumentando. Age antes do lead desistir.",
+                                    color: "pink"
                                 }
                             ].map((item, i) => (
                                 <motion.div
@@ -310,10 +341,10 @@ export default function LandingPage() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`p-8 rounded-2xl bg-gradient-to-br from-${item.color}-950/30 to-transparent border border-${item.color}-500/20 hover:border-${item.color}-500/50 transition-all`}
+                                    className="p-8 rounded-2xl bg-gradient-to-br from-purple-950/30 to-transparent border border-purple-500/20 hover:border-purple-500/50 transition-all"
                                 >
-                                    <div className={`w-14 h-14 rounded-xl bg-${item.color}-500/20 flex items-center justify-center mb-6`}>
-                                        <item.icon className={`w-7 h-7 text-${item.color}-500`} />
+                                    <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6">
+                                        <item.icon className="w-7 h-7 text-purple-400" />
                                     </div>
                                     <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
                                     <p className="text-gray-300">{item.desc}</p>
