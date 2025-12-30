@@ -20,6 +20,7 @@ import {
 } from '@/lib/humanization-engine';
 import { trackExternalInteraction } from '@/core/orchestrator';
 import { saveMessage, createConversation, getConversationBySessionId } from '@/lib/supabase';
+import { processForRapport, RapportResult } from '@/core/rapport/engine';
 
 // Persist message to Supabase (non-blocking)
 async function persistMessage(sessionId: string, role: 'user' | 'assistant', content: string, intent?: string) {
@@ -209,6 +210,19 @@ export async function POST(req: Request) {
         channel: allUserText.includes('whats') ? 'WhatsApp' : undefined,
     });
 
+    // ============================================
+    // URE - UNIVERSAL RAPPORT ENGINE
+    // ============================================
+    let rapportContext: RapportResult | null = null;
+    try {
+        rapportContext = await processForRapport(lastUserContent, messages.length);
+        if (rapportContext) {
+            console.log('[URE] Rapport detectado:', rapportContext.opening.substring(0, 50));
+        }
+    } catch (e) {
+        console.warn('[URE] Error (non-critical):', e);
+    }
+
     // Log enriched event
     sendToN8n({
         event: 'chat_message',
@@ -219,6 +233,7 @@ export async function POST(req: Request) {
         intent,
         risk_level: risk.level,
         score_fit: scoreFit,
+        rapport_detected: !!rapportContext,
         source: 'lx-demo-interface'
     });
 
@@ -327,7 +342,23 @@ export async function POST(req: Request) {
 
             systemPrompt = `${kernelPrompt}\n---\n${filledDemoPrompt}\n---\n${CONFIDENCE_PROMPT}\n---\n${CONVERSION_PROMPT}`;
         } else {
-            systemPrompt = ONBOARDING_PROMPT;
+            // Add rapport context if detected
+            let rapportInstructions = '';
+            if (rapportContext) {
+                rapportInstructions = `
+
+## RAPPORT DETECTADO (USE NA SUA RESPOSTA!)
+O lead mencionou algo que você CONHECE. Use isso para criar conexão:
+
+ABERTURA SUGERIDA: "${rapportContext.opening}"
+FOLLOW-UP SUGERIDO: "${rapportContext.followUp}"
+
+IMPORTANTE: Inclua naturalmente essa informação na sua resposta para gerar o efeito "como você sabe disso?!"
+Não copie literalmente - adapte ao seu estilo.
+`;
+            }
+
+            systemPrompt = ONBOARDING_PROMPT + rapportInstructions;
         }
 
         // ============================================
