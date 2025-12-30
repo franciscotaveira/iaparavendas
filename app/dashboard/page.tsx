@@ -246,11 +246,14 @@ export default function DashboardOverview() {
 }
 
 function MetricCard({ label, value, icon, trend, color }: any) {
-    const colorClasses = {
+    const colorClasses: Record<string, string> = {
         purple: "bg-purple-500/10 text-purple-400 border-purple-500/20",
         emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
         blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-    } as any;
+        cyan: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+        green: "bg-green-500/10 text-green-400 border-green-500/20",
+        orange: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+    };
 
     return (
         <div className="bg-[#0B1120] border border-slate-800 rounded-xl p-6 relative overflow-hidden group hover:border-slate-700 transition-all duration-300">
