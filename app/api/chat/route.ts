@@ -19,6 +19,32 @@ import {
     calculateScoreFit,
 } from '@/lib/humanization-engine';
 import { trackExternalInteraction } from '@/core/orchestrator';
+import { saveMessage, createConversation, getConversationBySessionId } from '@/lib/supabase';
+
+// Persist message to Supabase (non-blocking)
+async function persistMessage(sessionId: string, role: 'user' | 'assistant', content: string, intent?: string) {
+    try {
+        // Get or create conversation
+        let conversation = await getConversationBySessionId(sessionId);
+        if (!conversation) {
+            conversation = await createConversation({
+                session_id: sessionId,
+                status: 'active',
+            });
+        }
+
+        if (conversation?.id) {
+            await saveMessage({
+                conversation_id: conversation.id,
+                role,
+                content,
+                intent_detected: intent,
+            });
+        }
+    } catch (e) {
+        console.warn('[Supabase] Persist message failed (non-critical):', e);
+    }
+}
 
 export const maxDuration = 30;
 
@@ -151,6 +177,10 @@ export async function POST(req: Request) {
     } catch (e) {
         console.warn("Dashboard tracking failed (non-critical):", e);
     }
+
+    // Persist user message to Supabase (non-blocking)
+    const currentSessionId = sessionId || `web_${Date.now()}`;
+    persistMessage(currentSessionId, 'user', lastUserContent, classifyIntent(lastUserContent)).catch(() => { });
 
     // ============================================
     // HUMANIZATION ENGINE INTEGRATION
