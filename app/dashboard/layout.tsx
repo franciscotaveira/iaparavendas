@@ -13,7 +13,9 @@ import {
     Activity,
     Zap,
     ShieldAlert,
-    MessageSquare
+    MessageSquare,
+    CheckSquare,
+    BarChart3
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -67,6 +69,7 @@ export default function DashboardLayout({
                     <NavItem href="/dashboard/agents" icon={<Users />} label="Tropa de Agentes" />
                     <NavItem href="/dashboard/memory" icon={<Database />} label="Memória Corp." />
                     <NavItem href="/dashboard/workflows" icon={<Zap />} label="Automações" />
+                    <NavItem href="/dashboard/tasks" icon={<CheckSquare />} label="Tarefas" />
 
                     <div className="pt-4 pb-2">
                         <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
