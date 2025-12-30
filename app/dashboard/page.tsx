@@ -38,23 +38,38 @@ interface Agent {
     category: string;
 }
 
+interface MetricsData {
+    total_conversations: number;
+    total_messages: number;
+    total_leads: number;
+    messages_last_24h: number;
+    by_platform: Record<string, number>;
+}
+
 export default function DashboardOverview() {
     const [health, setHealth] = useState<HealthData | null>(null);
     const [agents, setAgents] = useState<Agent[]>([]);
+    const [metrics, setMetrics] = useState<MetricsData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [healthRes, agentsRes] = await Promise.all([
+                const [healthRes, agentsRes, metricsRes] = await Promise.all([
                     fetch('/api/health'),
-                    fetch('/api/agents')
+                    fetch('/api/agents'),
+                    fetch('/api/metrics')
                 ]);
 
                 const healthData = await healthRes.json();
                 const agentsData = await agentsRes.json();
+                const metricsData = await metricsRes.json();
 
                 setHealth(healthData);
+
+                if (metricsData.success) {
+                    setMetrics(metricsData.metrics);
+                }
 
                 // Flatten agents for display
                 const allAgents: Agent[] = [];
@@ -103,7 +118,7 @@ export default function DashboardOverview() {
             </div>
 
             {/* Metrics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <MetricCard
                     label="Agentes Ativos"
                     value={health?.agents.total || 0}
@@ -112,18 +127,39 @@ export default function DashboardOverview() {
                     color="purple"
                 />
                 <MetricCard
-                    label="Economia (Local LLM)"
-                    value={`$${getCost().toFixed(2)}`}
-                    icon={<DollarSign className="w-5 h-5 text-emerald-400" />}
-                    trend="vs cloud APIs"
-                    color="emerald"
+                    label="Conversas"
+                    value={metrics?.total_conversations || 0}
+                    icon={<Activity className="w-5 h-5 text-cyan-400" />}
+                    trend="Total"
+                    color="cyan"
                 />
                 <MetricCard
-                    label="Sessões Ativas"
-                    value={health?.orchestration.active_sessions || 0}
+                    label="Mensagens"
+                    value={metrics?.total_messages || 0}
                     icon={<Zap className="w-5 h-5 text-blue-400" />}
-                    trend="Última hora"
+                    trend="Total"
                     color="blue"
+                />
+                <MetricCard
+                    label="Leads"
+                    value={metrics?.total_leads || 0}
+                    icon={<Target className="w-5 h-5 text-green-400" />}
+                    trend="Qualificados"
+                    color="green"
+                />
+                <MetricCard
+                    label="Msgs 24h"
+                    value={metrics?.messages_last_24h || 0}
+                    icon={<TrendingUp className="w-5 h-5 text-orange-400" />}
+                    trend="Últimas 24h"
+                    color="orange"
+                />
+                <MetricCard
+                    label="Economia"
+                    value={`$${getCost().toFixed(0)}`}
+                    icon={<DollarSign className="w-5 h-5 text-emerald-400" />}
+                    trend="vs Cloud"
+                    color="emerald"
                 />
             </div>
 
