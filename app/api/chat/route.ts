@@ -365,7 +365,7 @@ export async function POST(req: Request) {
             timeoutPromise
         ]) as Awaited<ReturnType<typeof streamText>>;
 
-        return result.toDataStreamResponse();
+        return result.toAIStreamResponse();
 
     } catch (error) {
         console.error("LUX CORE ERROR:", error);
