@@ -76,6 +76,7 @@ export interface PresenceState {
         formalityLevel: number;
         emojiUsage: number;
         responseLength: 'short' | 'medium' | 'long';
+        detectedGeneration?: 'legacy' | 'modern' | 'unknown';
     };
 }
 
@@ -231,6 +232,45 @@ const SUBTEXT_PATTERNS: SubtextPattern[] = [
 ];
 
 // ============================================
+// SENIORITY / GENERATION DETECTION (1960s-1980s Filter)
+// ============================================
+
+function detectGeneration(message: string): 'legacy' | 'modern' {
+    const lower = message.toLowerCase();
+
+    // Marcadores de Senioridade (Gen X / Boomer)
+    // Foco: Formalidade, termos corporativos antigos, cortesia excessiva, clareza estrutural
+    const legacyMarkers = [
+        'gostaria de', 'prezado', 'bom dia', 'boa tarde', 'boa noite',
+        'compreender', 'proposta', 'agendar uma reunião', 'conversar com',
+        'telefone', 'falar ao telefone', 'ligação',
+        'empresa', 'negócio', 'parceria', 'investimento',
+        'grato', 'atenciosamente', 'cordialmente',
+        'senhor', 'senhora'
+    ];
+
+    // Marcadores de Modernidade (Gen Z / Millennial)
+    // Foco: Agilidade, gírias, abreviações, emojis
+    const modernMarkers = [
+        'vc', 'vcs', 'zap', 'whats', 'link', 'app',
+        'tá', 'to', 'né', 'kkk', 'rs', 'blz', 'valeu',
+        'top', 'daora', 'manda ai', 'preço?', 'valor?'
+    ];
+
+    let legacyScore = 0;
+    let modernScore = 0;
+
+    legacyMarkers.forEach(m => { if (lower.includes(m)) legacyScore++; });
+    modernMarkers.forEach(m => { if (lower.includes(m)) modernScore++; });
+
+    // Se houver indícios claros de senioridade E ausência de gírias modernas
+    if (legacyScore >= 1 && modernScore === 0) return 'legacy';
+
+    // Default moderno/neutro
+    return 'modern';
+}
+
+// ============================================
 // EMOTION DETECTION
 // ============================================
 
@@ -286,30 +326,105 @@ export class PresenceCore {
         this.agentPersona = agentPersona;
     }
 
+    // Carregar estado do banco
+    private async loadState(leadId: string): Promise<PresenceState> {
+        if (!supabase) return this.getInitialState();
+
+        try {
+            const { data, error } = await supabase
+                .from('lxc_presence_state')
+                .select('*')
+                .eq('lead_id', leadId)
+                .single();
+
+            if (error || !data) return this.getInitialState();
+
+            return {
+                relationshipDepth: data.relationship_depth,
+                trustLevel: data.trust_level,
+                lastInteraction: new Date(data.last_interaction),
+                emotionalTrajectory: Array.isArray(data.emotional_trajectory) ? data.emotional_trajectory : [],
+                communicationPrefs: {
+                    formalityLevel: 0.5,
+                    emojiUsage: 0.5,
+                    responseLength: 'medium',
+                    detectedGeneration: data.detected_generation || 'unknown' // Campo novo (precisa de migração no banco se for persistir)
+                }
+            };
+        } catch (e) {
+            console.error('[Presence] Error loading state:', e);
+            return this.getInitialState();
+        }
+    }
+
+    private getInitialState(): PresenceState {
+        return {
+            relationshipDepth: 0,
+            trustLevel: 0.3,
+            lastInteraction: new Date(),
+            emotionalTrajectory: [],
+            emotionalTrajectory: [],
+            communicationPrefs: {
+                formalityLevel: 0.5,
+                emojiUsage: 0.5,
+                responseLength: 'medium',
+                detectedGeneration: 'unknown'
+            }
+        };
+    }
+
     // Processar interação completa
-    async processInteraction(leadId: string, message: Message): Promise<{
+    async processInteraction(sessionId: string, message: Message, externalHistory?: Message[]): Promise<{
         emotion: EmotionalState;
         subtextInsights: SubtextAnalysis;
         relevantMemories: MemoryEntry[];
         timing: { delayMs: number; typingIndicator: boolean; preResponse: string | null };
         relationshipState: PresenceState;
+        legacyMode: boolean; // Flag para o Chat API
     }> {
-        // Inicializar estado se necessário
-        if (!this.presenceState.has(leadId)) {
-            this.presenceState.set(leadId, {
-                relationshipDepth: 0,
-                trustLevel: 0.3,
-                lastInteraction: new Date(),
-                emotionalTrajectory: [],
-                communicationPrefs: {
-                    formalityLevel: 0.5,
-                    emojiUsage: 0.5,
-                    responseLength: 'medium'
-                }
-            });
+        // leadId é necessário (vamos tentar extrair do session ou default)
+        // Nota: Idealmente sessionId seria mapeado para leadId antes
+        // Aqui assumimos que quem chama já resolveu o leadId ou estamos criando um temporário
+        const leadId = await this.resolveLeadId(sessionId);
+        if (!leadId) {
+            console.warn('[Presence] No lead ID found for session', sessionId);
+            return this.getFallbackResponse();
         }
 
-        // Atualizar histórico
+        // 1. Carregar Estado
+        let relationshipState = await this.loadState(leadId);
+        this.presenceState.set(leadId, relationshipState);
+
+        // 2. Carregar Memórias
+        if (supabase) {
+            const { data: memories } = await supabase
+                .from('lxc_memories')
+                .select('*')
+                .eq('lead_id', leadId)
+                .eq('is_active', true);
+
+            if (memories) {
+                const mappedMemories = memories.map((m: any) => ({
+                    id: m.id,
+                    type: m.memory_type as MemoryType,
+                    content: m.content,
+                    emotionalWeight: m.emotional_weight,
+                    timestamp: new Date(m.created_at),
+                    contextSnapshot: m.context_snapshot || {},
+                    lastAccessed: new Date(m.last_accessed),
+                    accessCount: m.access_count,
+                    decayRate: m.decay_rate
+                }));
+                this.memoryStore.set(leadId, mappedMemories);
+            }
+        }
+
+        // Injetar histórico externo
+        if (externalHistory) {
+            this.conversationHistory.set(leadId, [...externalHistory]);
+        }
+
+        // Atualizar histórico local
         this.updateHistory(leadId, message);
         const history = this.conversationHistory.get(leadId) || [];
 
@@ -322,15 +437,65 @@ export class PresenceCore {
         // Buscar memórias relevantes
         const relevantMemories = this.getRelevantMemories(leadId, { emotion, topics: message.topics || [] });
 
+        // Detectar Geração (se ainda não detectado ou para recalibrar)
+        const currentGeneration = detectGeneration(message.content);
+        if (relationshipState.communicationPrefs.detectedGeneration === 'unknown' ||
+            (relationshipState.communicationPrefs.detectedGeneration === 'modern' && currentGeneration === 'legacy')) {
+            relationshipState.communicationPrefs.detectedGeneration = currentGeneration;
+        }
+
         // Calcular timing
         const timing = this.calculateTiming(emotion, message.content.length);
 
-        // Atualizar estado de presença
-        this.updatePresenceState(leadId, emotion, subtextInsights);
+        // Atualizar estado de presença (memória + banco)
+        await this.updatePresenceState(leadId, emotion, subtextInsights);
 
-        const relationshipState = this.presenceState.get(leadId)!;
+        // Reload state to get updated values
+        relationshipState = this.presenceState.get(leadId)!;
 
-        return { emotion, subtextInsights, relevantMemories, timing, relationshipState };
+        // Persistir log de subtexto
+        if (subtextInsights.confidence > 0.5 && supabase) {
+            await supabase.from('lxc_subtext_logs').insert({
+                session_id: sessionId,
+                lead_id: leadId,
+                pattern_name: subtextInsights.detectedPatterns[0]?.pattern || 'unknown',
+                confidence: subtextInsights.confidence,
+                meanings: subtextInsights.detectedPatterns[0]?.meanings || [],
+                actions_taken: subtextInsights.actionRecommendations,
+                severity: subtextInsights.detectedPatterns[0]?.severity || 1,
+                outcome: 'neutral'
+            });
+        }
+
+        return {
+            emotion,
+            subtextInsights,
+            relevantMemories,
+            timing,
+            relationshipState,
+            legacyMode: relationshipState.communicationPrefs.detectedGeneration === 'legacy'
+        };
+    }
+
+    private async resolveLeadId(sessionId: string): Promise<string | null> {
+        if (!supabase) return 'temp_lead';
+        // Tentar buscar lead pela sessão
+        const { data } = await supabase
+            .from('conversations')
+            .select('lead_id')
+            .eq('session_id', sessionId)
+            .single();
+        return data?.lead_id || null;
+    }
+
+    private getFallbackResponse() {
+        return {
+            emotion: EmotionalState.NEUTRAL,
+            subtextInsights: { detectedPatterns: [], overallSentiment: 'neutral', confidence: 0, actionRecommendations: [] },
+            relevantMemories: [],
+            timing: { delayMs: 1000, typingIndicator: true, preResponse: null },
+            relationshipState: this.getInitialState()
+        };
     }
 
     private updateHistory(leadId: string, message: Message): void {
@@ -441,7 +606,7 @@ export class PresenceCore {
         };
     }
 
-    private updatePresenceState(leadId: string, emotion: EmotionalState, subtext: SubtextAnalysis): void {
+    private async updatePresenceState(leadId: string, emotion: EmotionalState, subtext: SubtextAnalysis): Promise<void> {
         const state = this.presenceState.get(leadId)!;
 
         // Atualizar profundidade do relacionamento
@@ -472,20 +637,43 @@ export class PresenceCore {
         }
 
         state.lastInteraction = new Date();
+        this.presenceState.set(leadId, state);
+
+        // PERSISTIR NO SUPABASE
+        if (supabase) {
+            try {
+                // Atualizar trajetória via RPC ou update direto
+                // Usando a função update_presence_state que criamos no SQL
+                const { error } = await supabase.rpc('update_presence_state', {
+                    p_lead_id: leadId,
+                    p_emotion: emotion,
+                    p_intensity: subtext.confidence || 0.5
+                });
+
+                if (error) {
+                    // Fallback para update manual se RPC falhar
+                    await supabase.from('lxc_presence_state').upsert({
+                        lead_id: leadId,
+                        relationship_depth: state.relationshipDepth,
+                        trust_level: state.trustLevel,
+                        last_interaction: state.lastInteraction.toISOString(),
+                        emotional_trajectory: state.emotionalTrajectory
+                    }, { onConflict: 'lead_id' });
+                }
+            } catch (e) {
+                console.error('[Presence] Error persisting state:', e);
+            }
+        }
     }
 
     // Armazenar memória relacional
-    storeMemory(leadId: string, data: {
+    async storeMemory(leadId: string, data: {
         type?: MemoryType;
         content: Record<string, unknown>;
         emotionalWeight: number;
         topics?: string[];
         emotion?: string;
-    }): void {
-        if (!this.memoryStore.has(leadId)) {
-            this.memoryStore.set(leadId, []);
-        }
-
+    }): Promise<void> {
         const memory: MemoryEntry = {
             id: `mem_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
             type: data.type || MemoryType.RELATIONAL,
@@ -502,7 +690,27 @@ export class PresenceCore {
             decayRate: 0.01
         };
 
+        // Cache local
+        if (!this.memoryStore.has(leadId)) {
+            this.memoryStore.set(leadId, []);
+        }
         this.memoryStore.get(leadId)!.push(memory);
+
+        // PERSISTIR NO BANCO
+        if (supabase) {
+            try {
+                await supabase.from('lxc_memories').insert({
+                    lead_id: leadId,
+                    memory_type: memory.type,
+                    content: memory.content,
+                    emotional_weight: memory.emotionalWeight,
+                    context_snapshot: memory.contextSnapshot,
+                    is_active: true
+                });
+            } catch (e) {
+                console.error('[Presence] Failed to persist memory:', e);
+            }
+        }
     }
 
     // Gerar abertura relacional

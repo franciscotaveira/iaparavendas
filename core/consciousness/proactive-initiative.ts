@@ -46,7 +46,7 @@ export interface LeadContext {
 // INITIATIVE TRIGGERS
 // ============================================
 
-const INITIATIVE_TRIGGERS: InitiativeTrigger[] = [
+export const INITIATIVE_TRIGGERS: InitiativeTrigger[] = [
     // Follow-up prometido
     {
         name: 'follow_up_prometido',
@@ -82,9 +82,10 @@ const INITIATIVE_TRIGGERS: InitiativeTrigger[] = [
         },
         generate: (lead) => {
             const openers = [
-                `Oi ${lead.name}! Tudo bem por aí?`,
-                `E aí ${lead.name}, sumiu! Tá tudo certo?`,
-                `${lead.name}! Lembrei de você, como estão as coisas?`
+                `Oi ${lead.name}, espero que esteja tudo bem com você!`,
+                `Oi ${lead.name}, espero que esteja tudo bem por aí.`,
+                `Passando aqui só para desejar que esteja tudo bem, ${lead.name}.`,
+                `Oi ${lead.name}, espero que a semana esteja sendo ótima por aí!`
             ];
             return openers[Math.floor(Math.random() * openers.length)];
         },

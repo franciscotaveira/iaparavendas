@@ -225,6 +225,80 @@ export default function DashboardOverview() {
                 </div>
             </div>
 
+            {/* LIVE CONNECTION & CHATS SECTION */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* QR Code / Connection Status */}
+                <div className="bg-[#0B1120] border border-slate-800 rounded-xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition">
+                    <h3 className="text-lg font-semibold text-slate-100 mb-6 flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-emerald-400" />
+                        Status da Conexão
+                    </h3>
+
+                    <div className="flex flex-col items-center justify-center p-6 bg-black/20 rounded-lg border border-slate-800">
+                        {/* QR Code Placeholder */}
+                        <div className="w-48 h-48 bg-white p-4 rounded-lg flex items-center justify-center mb-4 relative">
+                            <div className="absolute inset-0 border-2 border-dashed border-slate-300 rounded-lg animate-pulse"></div>
+                            <p className="text-slate-900 font-bold text-center text-xs">
+                                QR CODE<br />WPPCONNECT<br />(AGUARDANDO INTEGRACAO)
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-emerald-400">
+                            <span className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            Aguardando Leitura
+                        </div>
+                        <p className="text-xs text-slate-500 mt-2 text-center max-w-[200px]">
+                            Abra o WhatsApp > Aparelhos Conectados > Conectar Aparelho
+                        </p>
+                    </div>
+                </div>
+
+                {/* Active Chats Feed */}
+                <div className="md:col-span-2 bg-[#0B1120] border border-slate-800 rounded-xl p-6 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                            <Users className="w-5 h-5 text-blue-400" />
+                            Chats em Tempo Real
+                        </h3>
+                        <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded border border-blue-500/20">
+                            Ao Vivo
+                        </span>
+                    </div>
+
+                    <div className="space-y-3 overflow-y-auto max-h-[300px] pr-2 scrollbar-thin scrollbar-thumb-slate-700">
+                        {[
+                            { name: 'Marcos Silva', status: 'negotiating', lastMsg: 'Vou ver com meu sócio e te retorno.', time: '2m atrás', emoji: '🤔' },
+                            { name: 'Ana Costa', status: 'interested', lastMsg: 'Qual o valor da implementação?', time: '5m atrás', emoji: '😊' },
+                            { name: 'Roberto Junior', status: 'cold', lastMsg: 'Não tenho interesse agora.', time: '12m atrás', emoji: '😐' },
+                            { name: 'Carla Dias', status: 'closed', lastMsg: 'Pagamento enviado! Obrigado.', time: '1h atrás', emoji: '🚀' },
+                        ].map((chat, i) => (
+                            <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-sm">
+                                        {chat.emoji}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-200">{chat.name}</p>
+                                        <p className="text-xs text-slate-500 truncate max-w-[200px]">{chat.lastMsg}</p>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <span className={`text-[10px] px-2 py-0.5 rounded uppercase tracking-wide font-semibold ${chat.status === 'closed' ? 'bg-emerald-500/10 text-emerald-400' :
+                                            chat.status === 'negotiating' ? 'bg-yellow-500/10 text-yellow-400' :
+                                                'bg-slate-500/10 text-slate-400'
+                                        }`}>
+                                        {chat.status}
+                                    </span>
+                                    <p className="text-[10px] text-slate-600 mt-1">{chat.time}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {/* System Status Banner */}
             <div className="bg-slate-900/30 border border-slate-800 rounded-lg p-4 flex items-center justify-between text-xs text-slate-500">
                 <div className="flex gap-4">

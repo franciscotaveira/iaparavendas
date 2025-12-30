@@ -107,8 +107,9 @@ const HIGH_RISK_PATTERNS = [
     { pattern: /garanti.*retorno|quanto.*ganhar|rentabilidade/, sector: 'financeiro', reason: 'Expectativa de garantia de retorno' },
     // Saúde
     { pattern: /diagnóstico|medicamento|receita|sintoma.*grave/, sector: 'saude', reason: 'Solicitação médica' },
-    // Jurídico
-    { pattern: /processo.*ganhar|chance.*vitória|recomenda.*advogado/, sector: 'juridico', reason: 'Aconselhamento legal específico' },
+    // Jurídico & Ameaças (CRITICAL)
+    { pattern: /processo.*ganhar|judicial|liminar|intimação|audiência/, sector: 'juridico', reason: 'Assunto jurídico complexo' },
+    { pattern: /advogado|procon|justiça|vou processar|meus direitos|pequenas causas/, sector: 'todos', reason: 'Ameaça legal ou menção a órgãos de defesa' },
     // Fraude/Emergência
     { pattern: /fraude|golpe|perdi.*acesso|roubaram|hackearam/, sector: 'todos', reason: 'Possível fraude ou emergência' },
 ];

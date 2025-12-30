@@ -1,5 +1,6 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, generateText, convertToCoreMessages, Message } from 'ai';
+import { sendTelegramAlert } from '@/core/integrations/telegram';
 import {
     ONBOARDING_PROMPT,
     DEMO_PROMPT,
@@ -21,6 +22,16 @@ import {
 import { trackExternalInteraction } from '@/core/orchestrator';
 import { saveMessage, createConversation, getConversationBySessionId } from '@/lib/supabase';
 import { processForRapport, RapportResult } from '@/core/rapport/engine';
+PresenceCore,
+    EmotionalState
+} from '@/core/consciousness';
+
+// Inicializar PRESENCE CORE global
+const presenceCore = new PresenceCore({
+    name: 'Sofia',
+    personality: 'Amiga Competente',
+    values: ['honestidade', 'cuidado genuíno', 'excelência']
+});
 
 // Persist message to Supabase (non-blocking)
 async function persistMessage(sessionId: string, role: 'user' | 'assistant', content: string, intent?: string) {
@@ -168,7 +179,7 @@ async function sendToN8n(payload: Record<string, unknown>) {
 // MAIN HANDLER
 // ============================================
 export async function POST(req: Request) {
-    const { messages, stream = true, sessionId } = await req.json();
+    const { messages, stream = true, sessionId, botName = 'Sofia', companyName = 'LXC' } = await req.json();
     const lastUserMessage = messages.filter((m: Message) => m.role === 'user').pop();
     const lastUserContent = lastUserMessage?.content || '';
 
@@ -198,6 +209,15 @@ export async function POST(req: Request) {
     // Classificar intenção
     const intent = classifyIntent(lastUserContent);
 
+    // GATILHO DIRETO PARA SÓCIO (TELEGRAM REAL-TIME)
+    const urgentTriggers = ['chama o francisco', 'falar com o dono', 'erro no sistema', 'bug', 'preciso de ajuda técnica', 'socorro'];
+    const isUrgent = urgentTriggers.some(t => lastUserContent.toLowerCase().includes(t));
+
+    if (isUrgent) {
+        // Disparar Telegram em Background (sem travar resposta)
+        sendTelegramAlert(`🚨 **SOLICITAÇÃO DE SUPORTE IMEDIATO**\n\nUsuário: ${currentSessionId}\nMensagem: "${lastUserContent}"`, 'critical');
+    }
+
     // Avaliar risco
     const risk = assessRisk(lastUserContent, detectedNiche);
 
@@ -221,6 +241,81 @@ export async function POST(req: Request) {
         }
     } catch (e) {
         console.warn('[URE] Error (non-critical):', e);
+    }
+
+    // ============================================
+    // PRESENCE CORE - Consciência Comercial
+    // ============================================
+    let presenceContext: Awaited<ReturnType<PresenceCore['processInteraction']>> | null = null;
+
+    try {
+        // Converter histórico para formato PRESENCE
+        const historyForPresence = messages.slice(0, -1).map((m: Message) => ({
+            content: typeof m.content === 'string' ? m.content : '',
+            sender: m.role === 'user' ? 'lead' as const : 'agent' as const,
+            timestamp: new Date() // Em produção, usar timestamp real se disponível
+        }));
+
+        // 4. Processar Interação via Presence Core (Cérebro Central)
+        // ============================================
+        presenceContext = await presenceCore.processInteraction(
+            currentSessionId || 'default',
+            {
+                content: lastUserContent,
+                sender: 'lead',
+                timestamp: new Date()
+            },
+            historyForPresence // Injetar histórico para stateless awareness
+        );
+
+        // 5. Construir System Prompt Dinâmico (Consciência Nível 3)
+        // ============================================
+
+        // A. Carregar Diretrizes do Conselho (Governança Diária)
+        // Se houver uma "Lei do Dia" ativa, ela sobrepõe comportamentos padrão
+        let councilDirectives = '';
+        try {
+            // Função simplificada para pegar direto do banco ou cache
+            const { data: directive } = await supabase
+                .rpc('get_active_directive');
+
+            if (directive && directive[0]) {
+                councilDirectives = `
+                 📢 DIRETRIZ ESTRATÉGICA DO DIA (DO CONSELHO):
+                 FOCO: ${directive[0].global_focus}
+                 AJUSTE DE TOM: ${directive[0].tone_modifier}
+                 (Esta diretriz tem prioridade máxima sobre o estilo padrão).
+                 `;
+            }
+        } catch (e) {
+            // Falha silenciosa para não parar a venda
+            console.warn('Falha ao carregar diretrizes do conselho', e);
+        }
+
+        // B. Configurar Modo Legacy (1960s Mode) se necessário
+        let legacyInstruction = '';
+        if (presenceContext.legacyMode) {
+            legacyInstruction = `
+            🎞️ MODO LEGACY ATIVO (Detecção de Senioridade - 1960/70s):
+            O usuário demonstra vocabulário e postura de uma geração anterior (Boomer/Gen X) ou alta senioridade corporativa.
+
+            SUA NOVA PERSONA PARA ESTA CONVERSA:
+            - Você NÃO é um jovem tech. Você é um Consultor Sênior experiente.
+            - Vocabulário: Culto, estruturado, polido. Use "Prezado", "Compreendo", "Excelente ponto".
+            - Evite: Gírias, anglicismos desnecessários (não diga "budget", diga "orçamento"), emojis excessivos.
+            - Foco: Solidez, Segurança, Retorno sobre Investimento, Tradição.
+            - Aja como se estivesse fechando um contrato na IBM em 1975: Aperto de mão firme, olhar no olho, seriedade.
+            `;
+        }
+
+        // Simular Human Delay (capado a 2000ms para evitar timeout em serverless)
+        if (presenceContext.timing.delayMs > 0) {
+            const safeDelay = Math.min(presenceContext.timing.delayMs, 2000);
+            await new Promise(r => setTimeout(r, safeDelay));
+        }
+
+    } catch (e) {
+        console.warn('[PRESENCE] Error (non-critical):', e);
     }
 
     // Log enriched event
@@ -358,7 +453,78 @@ Não copie literalmente - adapte ao seu estilo.
 `;
             }
 
-            systemPrompt = ONBOARDING_PROMPT + rapportInstructions;
+            // Add PRESENCE CORE context
+            let presenceInstructions = '';
+            if (presenceContext) {
+                const { emotion, timing, subtextInsights, relevantMemories, relationshipState } = presenceContext;
+
+                const emotionGuides: Record<string, string> = {
+                    'vulnerable': 'O lead está VULNERÁVEL. Use tom acolhedor e protetor. Valide sentimentos.',
+                    'stressed': 'O lead está ESTRESSADO. Seja direto, resolutivo e transmita calma.',
+                    'excited': 'O lead está EMPOLGADO. Espelhe a energia alta! Use emojis e entusiasmo.',
+                    'distant': 'O lead está DISTANTE. Não pressione. Faça perguntas abertas e dê espaço.',
+                    'contemplative': 'O lead está PENSATIVO. Dê informações claras para ajudar na decisão.',
+                    'engaged': 'O lead está ENGAJADO. Aprofunde o relacionamento e avance para o próximo passo.',
+                    'neutral': 'Mantenha tom profissional e amigável.'
+                };
+
+                // Construir bloco de memória
+                let memoryBlock = '';
+                if (relevantMemories.length > 0) {
+                    memoryBlock = `
+MEMÓRIAS RELEVANTES (USE PARA PERSONALIZAR):
+${relevantMemories.map(m => `- [${m.type}] ${JSON.stringify(m.content)}`).join('\n')}
+Use essas informações sutilmente para mostrar que você lembra dele.
+`;
+                }
+
+                // Construir bloco de subtexto
+                let subtextBlock = '';
+                if (subtextInsights.confidence > 0.6) {
+                    subtextBlock = `
+SUBTEXTO DETECTADO (O QUE ELE NÃO DISSE):
+Sentimento Geral: ${subtextInsights.overallSentiment.toUpperCase()}
+Padrões: ${subtextInsights.detectedPatterns.map(p => p.pattern).join(', ')}
+AÇÃO SUGERIDA: ${subtextInsights.actionRecommendations[0] || 'Seguir fluxo normal e observar'}
+`;
+                }
+
+                presenceInstructions = `
+============================================
+CONTEXTO EMOCIONAL & PRESENÇA (PRIORIDADE ALTA)
+============================================
+Estado Emocional Atual: ${emotion.toUpperCase()} (Confiança: ${relationshipState.trustLevel.toFixed(1)})
+
+GUIA DE RESPOSTA PARA AGORA:
+${emotionGuides[emotion] || emotionGuides['neutral']}
+
+${timing.preResponse ? `[DICA HUMANIZADA] Comece com algo natural como: "${timing.preResponse}"` : ''}
+
+${memoryBlock}
+${subtextBlock}
+
+OBJETIVO DA INTERAÇÃO:
+Não focar apenas na venda. Focar em CONSTRUIR RELACIONAMENTO e CONFIANÇA.
+Seja uma pessoa real falando com outra pessoa real.
+============================================
+`;
+            }
+
+            const SUPPORT_PROTOCOL = `
+============================================
+🚨 PROTOCOLO DE SUPORTE NÍVEL 3 (SÓCIOS & TÉCNICOS)
+============================================
+Se o usuário pedir para "falar com o suporte técnico", "atualizar o sistema", "chamar o dono" ou reportar um bug:
+1. NÃO DIGA "não tenho acesso". Diga: "Entendido. Estou escalando sua solicitação para o Conselho Técnico (Nível 3) imediatamente."
+2. Se pedirem para analisar ÁUDIO ou IMAGEM: "Ainda não tenho ouvidos/olhos nativos nesta interface de chat, mas se você enviar para nosso canal oficial no Telegram, processamos instantaneamente."
+3. Se o usuário se identificar como SÓCIO ou DONO: Trate com deferência executiva. "Olá chefe, aguardo seus comandos."
+`;
+
+            const identityPrompt = `
+    IDENTIDADE: Seu nome é ${botName} e você representa a ${companyName}.
+    Nunca saia do personagem.
+    `;
+            systemPrompt = identityPrompt + ONBOARDING_PROMPT + SUPPORT_PROTOCOL + rapportInstructions + presenceInstructions;
         }
 
         // ============================================

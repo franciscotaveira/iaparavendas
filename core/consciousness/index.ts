@@ -4,7 +4,7 @@
  */
 
 // Core
-export { PresenceCore, EmotionalState, MemoryType } from './presence-core';
+export { PresenceCore, EmotionalState, MemoryType, detectEmotion } from './presence-core';
 export type {
     MemoryEntry,
     SubtextPattern,
