@@ -1,209 +1,206 @@
-# 🧠 UNIVERSAL RAPPORT ENGINE (URE)
+# UNIVERSAL RAPPORT ENGINE (URE) - DOCUMENTAÇÃO COMPLETA
 
-## O Conceito
+## Sistema de Humanização Contextual para LX Consciousness
 
-O URE detecta entidades contextuais (cidade, profissão, idade) mencionadas pelo lead e enriquece com conhecimento local para criar rapport instantâneo.
-
-```
-Lead: "Sou de Imperatriz do Maranhão"
-           ↓
-   ENTITY DETECTOR → Cidade: Imperatriz, Estado: Maranhão
-           ↓
-   CONTEXT ENRICHMENT → "Princesinha do Tocantins", Beira-Rio, 2ª maior do MA
-           ↓
-   RAPPORT SELECTOR → Escolhe 1-2 insights naturais
-           ↓
-Agent: "Imperatriz! A Princesinha do Tocantins, né? 
-        Segunda maior do Maranhão. Já ouvi falar muito 
-        bem da Beira-Rio. Como está por aí?"
-
-Lead: 😮 "Como você conhece minha cidade?!"
-```
+**Versão:** 1.0.0  
+**Data:** Dezembro 2024
 
 ---
 
-## Categorias de Contexto
+## VISÃO GERAL
+
+O URE transforma interações automatizadas em conexões humanas genuínas através de conhecimento contextual estratégico.
+
+### Fluxo Principal
+
+```
+INPUT: "Sou de Imperatriz do Maranhão"
+        ↓
+ENTITY DETECTOR → cidade, estado, profissão, idade
+        ↓
+CONTEXT ENRICHER → landmarks, cultura, orgulho local
+        ↓
+RAPPORT SELECTOR → escolhe insights + hooks naturais
+        ↓
+OUTPUT: "Imperatriz! A Princesinha do Tocantins, né?
+         Já ouvi falar muito bem da Beira-Rio. Como está por aí?"
+```
+
+### Métricas de Sucesso
+
+| Métrica | Target |
+|---------|--------|
+| Rapport Detection Rate | > 70% |
+| Rapport Accuracy | > 90% |
+| Lead Surprise Rate | > 60% |
+| Naturalness Score | > 85% |
+| Conversation Continuation | > 80% |
+
+---
+
+## CATEGORIAS DE CONTEXTO
 
 ```typescript
-const UNIVERSAL_CONTEXT_CATEGORIES = {
+const CONTEXT_CATEGORIES = {
     geographic: {
         city_facts: "População, ranking, apelidos",
-        landmarks: "Pontos turísticos, praças famosas",
-        culture: "Festas, comidas típicas, sotaque",
-        economy: "Principais empresas, indústrias",
-        weather: "Clima característico",
-        local_pride: "O que os moradores têm orgulho"
+        landmarks: "Pontos turísticos, praças",
+        culture: "Festas, comidas típicas",
+        economy: "Empresas, indústrias",
+        pride: "Orgulho local",
+        nicknames: "Apelidos da cidade",
+        sports: "Times locais"
     },
-    
     professional: {
-        daily_challenges: "Desafios comuns da profissão",
-        tools_used: "Ferramentas do dia-a-dia",
-        industry_trends: "Tendências do setor",
+        daily_challenges: "Desafios da profissão",
+        tools: "Ferramentas do dia-a-dia",
         pain_points: "Dores conhecidas",
-        achievements: "Conquistas típicas"
+        achievements: "Conquistas típicas",
+        jargon: "Termos da área"
     },
-    
     demographic: {
-        life_stage: "Desafios da fase de vida",
-        references: "Referências culturais da geração",
-        priorities: "O que importa nessa fase",
-        communication: "Como preferem se comunicar"
+        generation: "Referências culturais",
+        life_stage: "Desafios da fase",
+        communication: "Preferências"
     },
-    
     temporal: {
-        season: "Características da estação",
+        season: "Estação do ano",
         holidays: "Feriados próximos",
-        events: "Eventos relevantes",
-        day_context: "Manhã/tarde/noite, dia da semana"
+        day_context: "Manhã/tarde/noite"
     }
 };
 ```
 
 ---
 
-## Schema do Banco
+## COMPONENTES
 
-```sql
--- Conhecimento Geográfico
-CREATE TABLE IF NOT EXISTS geo_knowledge (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    
-    -- Hierarquia geográfica
-    country VARCHAR(100) NOT NULL DEFAULT 'Brasil',
-    state VARCHAR(100),
-    city VARCHAR(100),
-    neighborhood VARCHAR(100),
-    
-    -- Tipo de conhecimento
-    knowledge_type VARCHAR(50) NOT NULL,
-    -- 'landmark', 'culture', 'economy', 'pride', 'nickname', 
-    -- 'food', 'event', 'weather', 'trivia', 'ranking'
-    
-    -- O conhecimento em si
-    content TEXT NOT NULL,
-    
-    -- Para geração natural
-    conversation_hooks TEXT[], -- Formas de introduzir naturalmente
-    follow_up_questions TEXT[], -- Perguntas para continuar
-    
-    -- Controle de qualidade
-    emotional_weight FLOAT DEFAULT 0.5, -- Quanto gera orgulho/conexão (0-1)
-    naturalness_score FLOAT DEFAULT 0.5, -- Quão natural soa (0-1)
-    
-    -- Tracking
-    usage_count INTEGER DEFAULT 0,
-    effectiveness_score FLOAT DEFAULT 0.5
-);
+### 1. Entity Detector
 
--- Índices
-CREATE INDEX IF NOT EXISTS idx_geo_city ON geo_knowledge(city);
-CREATE INDEX IF NOT EXISTS idx_geo_state ON geo_knowledge(state);
-CREATE INDEX IF NOT EXISTS idx_geo_type ON geo_knowledge(knowledge_type);
+Detecta menções de: cidade, estado, profissão, idade, interesses
 
--- Conhecimento Profissional
-CREATE TABLE IF NOT EXISTS professional_knowledge (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    
-    profession VARCHAR(100) NOT NULL,
-    industry VARCHAR(100),
-    seniority_level VARCHAR(50), -- junior, mid, senior, executive
-    
-    knowledge_type VARCHAR(50) NOT NULL,
-    content TEXT NOT NULL,
-    
-    conversation_hooks TEXT[],
-    follow_up_questions TEXT[],
-    emotional_weight FLOAT DEFAULT 0.5
-);
+### 2. Context Enricher
 
--- Tracking de uso
-CREATE TABLE IF NOT EXISTS rapport_usage (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    used_at TIMESTAMPTZ DEFAULT NOW(),
-    
-    session_id VARCHAR(100),
-    knowledge_id UUID NOT NULL,
-    knowledge_table VARCHAR(50) NOT NULL,
-    
-    content_used TEXT,
-    context_detected TEXT,
-    
-    lead_reaction VARCHAR(50), -- positive, neutral, negative, surprised
-    conversation_continued BOOLEAN,
-    rapport_established BOOLEAN
-);
+Busca conhecimento no banco para as entidades detectadas
+
+### 3. Rapport Selector
+
+Escolhe os melhores insights baseado em:
+
+- Peso emocional
+- Naturalidade
+- Fator surpresa
+- Momento da conversa (turn count)
+- Estado emocional do lead
+
+### 4. Strategic Triage
+
+Sistema de perguntas de ouro para captar informações úteis
+
+---
+
+## REGRAS DO SELECTOR
+
+```typescript
+// Quando NÃO fazer rapport
+const SKIP_RAPPORT_EMOTIONS = ["hostil", "frustrado", "vulneravel"];
+
+// Limite por turno
+const MAX_INSIGHTS_PER_TURN = {
+    turn_0_1: 1,  // Não parecer ansioso
+    turn_2_plus: 2
+};
+
+// Mínimos de qualidade
+const MIN_EMOTIONAL_WEIGHT = 0.4;
+const MIN_NATURALNESS_SCORE = 0.5;
+
+// Limite de rapport por sessão
+const MAX_RAPPORT_PER_SESSION = 3;
 ```
 
 ---
 
-## Dados de Exemplo - Imperatriz/MA
+## TEMPLATES NATURAIS
 
-```json
-{
-  "city": "Imperatriz",
-  "state": "Maranhão",
-  "country": "Brasil",
-  "knowledge": [
-    {
-      "knowledge_type": "nickname",
-      "content": "a Princesinha do Tocantins",
-      "conversation_hooks": ["Ah, Imperatriz! ", "A famosa "],
-      "follow_up_questions": ["Você é de lá mesmo ou se mudou?"],
-      "emotional_weight": 0.85
-    },
-    {
-      "knowledge_type": "ranking",
-      "content": "segunda maior cidade do Maranhão",
-      "conversation_hooks": ["Uma das maiores do estado, né? "],
-      "follow_up_questions": ["Como é viver numa cidade desse porte?"],
-      "emotional_weight": 0.7
-    },
-    {
-      "knowledge_type": "landmark",
-      "content": "Beira-Rio é um point clássico",
-      "conversation_hooks": ["Já ouvi falar muito bem da ", "A famosa "],
-      "follow_up_questions": ["Ainda é movimentada a Beira-Rio?"],
-      "emotional_weight": 0.9
-    },
-    {
-      "knowledge_type": "economy",
-      "content": "polo importante de agronegócio e papel/celulose",
-      "conversation_hooks": ["Região forte em "],
-      "follow_up_questions": ["Você trabalha com algo ligado a isso?"],
-      "emotional_weight": 0.5
-    },
-    {
-      "knowledge_type": "geography",
-      "content": "portal de entrada da Amazônia Legal",
-      "conversation_hooks": ["O portal da Amazônia, "],
-      "follow_up_questions": null,
-      "emotional_weight": 0.75
-    }
-  ]
-}
+```typescript
+const NATURAL_TRANSITIONS = {
+    nickname: ["{content}!", "Ah, {content}!", "{content}, né?"],
+    landmark: ["Já ouvi falar muito bem {content}!", "Conheço! {content}."],
+    pride: ["Ouvi dizer que {content}!", "Dizem que {content}."],
+    default: ["{content}!", "Legal! {content}.", "Que interessante! {content}."]
+};
+
+const DEFAULT_FOLLOW_UPS = [
+    "Como está por aí?",
+    "Você gosta de lá?",
+    "Faz tempo que está aí?",
+];
 ```
 
 ---
 
-## Diferencial Competitivo
+## EXEMPLO DE CONVERSA
 
-| BOT COMUM | LXC + URE |
-|-----------|-----------|
-| Lead: "Sou de Imperatriz" | Lead: "Sou de Imperatriz" |
-| Bot: "Entendi! Como posso ajudar?" | Agent: "A Princesinha do Tocantins! Já ouvi falar da Beira-Rio. Como está por aí?" |
-| Zero conexão ❌ | Rapport instantâneo ✅ |
+```
+Lead: "Oi, boa tarde! Sou de Imperatriz do Maranhão e trabalho como advogada.
+       Queria saber mais sobre os serviços de vocês."
+
+=== PROCESSAMENTO ===
+
+1. ENTITY DETECTION:
+   - Location: "Imperatriz" (confidence: 0.92)
+   - Profession: "advogada" (confidence: 0.88)
+
+2. CONTEXT ENRICHMENT:
+   Location:
+   - "Princesinha do Tocantins" (weight: 0.85)
+   - "Beira-Rio é point clássico" (weight: 0.90)
+   
+   Profession:
+   - "prazo processual não perdoa" (weight: 0.75)
+
+3. RAPPORT SELECTION:
+   - Turn 0 → max 1 insight
+   - Selecionado: "Princesinha do Tocantins"
+
+=== RESPOSTA FINAL ===
+
+"Oi! Imperatriz! A Princesinha do Tocantins, né? 😊
+Que legal receber contato daí! Sobre nossos serviços...
+Como está por aí?"
+
+=== REAÇÃO DO LEAD ===
+
+Lead: "Nossa, como você conhece Imperatriz?!"
+→ Reaction: "surprised" ✓
+→ Rapport established: True ✓
+```
 
 ---
 
-## Implementação Futura
+## CHECKLIST DE IMPLEMENTAÇÃO
 
-1. **Entity Detector**: Regex + NLP para detectar cidades, profissões
-2. **Context Enricher**: Busca no banco de conhecimento
-3. **Rapport Selector**: Escolhe insights naturais baseado no momento
-4. **Learning Loop**: Trackeia reações para melhorar seleção
+### Setup
+
+- [x] Schema SQL básico criado
+- [ ] Schema SQL avançado (em implementação)
+- [ ] Seed de 100+ cidades brasileiras
+- [ ] Seed de 30+ profissões
+
+### Core
+
+- [x] EntityDetector básico
+- [x] RapportEngine integrado no chat
+- [ ] Tracking de uso e reações
+- [ ] Jobs de manutenção
+
+### Admin
+
+- [ ] Interface de gerenciamento
+- [ ] Analytics de rapport
+- [ ] CRUD de conhecimento
 
 ---
 
-*Framework documentado: 30/12/2024*
+*Documento atualizado: 30/12/2024*
