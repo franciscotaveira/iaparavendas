@@ -73,6 +73,7 @@ export default function DashboardLayout({
                             Sistema
                         </p>
                     </div>
+                    <NavItem href="/dashboard/neural" icon={<BrainCircuit />} label="Neural Core" />
                     <NavItem href="/api/health" icon={<Activity />} label="Health Status" external />
                     <NavItem href="/settings" icon={<Settings />} label="Configurações" />
                 </nav>
