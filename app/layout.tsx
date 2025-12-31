@@ -6,22 +6,22 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LX Agent Factory | Governança e Infraestrutura de Agentes",
-  description: "Nós projetamos, validamos e operamos agentes de IA no WhatsApp com governança e infraestrutura oficial Meta Cloud API. Software compilado, não chatbot.",
-  keywords: ["agent factory", "infraestrutura IA", "meta cloud api", "governança de ia", "agentes whatsapp"],
-  authors: [{ name: "Lux Growth IA" }],
+  title: "LUMAX | Assistente Inteligente para Clínicas",
+  description: "Assistente de WhatsApp com IA para clínicas e consultórios. Agende consultas, qualifique pacientes e responda 24h. Infraestrutura oficial Meta Cloud API.",
+  keywords: ["assistente whatsapp", "ia para clínicas", "agendamento automático", "whatsapp médico", "atendimento 24h"],
+  authors: [{ name: "LUMAX" }],
   openGraph: {
-    title: "LX Agent Factory | O Fim do Chatbot de Prompt",
-    description: "Nós projetamos, validamos e operamos agentes de IA no WhatsApp com governança e infraestrutura oficial Meta Cloud API.",
+    title: "LUMAX | Sua Recepção Inteligente 24h",
+    description: "Assistente de WhatsApp com IA para clínicas e consultórios. Agende consultas e qualifique pacientes automaticamente.",
     url: "https://mycodingteam.com",
-    siteName: "LX Agent Factory",
+    siteName: "LUMAX",
     locale: "pt_BR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "LX Agent Factory | Governança e Infraestrutura",
-    description: "Nós projetamos, validamos e operamos agentes de IA no WhatsApp.",
+    title: "LUMAX | Assistente Inteligente para Clínicas",
+    description: "Assistente de WhatsApp com IA para clínicas e consultórios.",
   },
   robots: {
     index: true,

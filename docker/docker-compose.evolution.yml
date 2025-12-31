@@ -1,0 +1,44 @@
+services:
+  evolution-api:
+    image: atendai/evolution-api:v1.8.2
+    container_name: lx-evolution-api
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      # Configurações Básicas
+      - SERVER_URL=http://localhost:8080
+      - AUTHENTICATION_API_KEY=lx-evolution-secret-key-2024
+      - AUTHENTICATION_TYPE=apikey
+
+      # Webhook para LX Agents
+      - WEBHOOK_GLOBAL_URL=http://host.docker.internal:3000/api/webhooks/evolution
+      - WEBHOOK_GLOBAL_ENABLED=true
+      - WEBHOOK_EVENTS_APPLICATION_STARTUP=true
+      - WEBHOOK_EVENTS_QRCODE_UPDATED=true
+      - WEBHOOK_EVENTS_MESSAGES_SET=true
+      - WEBHOOK_EVENTS_MESSAGES_UPSERT=true
+      - WEBHOOK_EVENTS_MESSAGES_UPDATE=true
+      - WEBHOOK_EVENTS_SEND_MESSAGE=true
+      - WEBHOOK_EVENTS_CONNECTION_UPDATE=true
+
+      # Instância
+      - CONFIG_SESSION_PHONE_CLIENT=LX Agent
+      - CONFIG_SESSION_PHONE_NAME=Chrome
+
+      # Usar store local (sem banco externo)
+      - STORE_MESSAGES=true
+      - STORE_MESSAGE_UP=true
+      - STORE_CONTACTS=true
+      - STORE_CHATS=true
+
+      # Logs
+      - LOG_LEVEL=WARN
+
+    volumes:
+      - evolution_instances:/evolution/instances
+      - evolution_store:/evolution/store
+
+volumes:
+  evolution_instances:
+  evolution_store:

@@ -57,8 +57,8 @@ export default function DashboardLayout({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <span className="font-bold text-sm tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
-                    LX FACTORY HQ
+                <span className="font-bold text-sm tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+                    LUMAX
                 </span>
                 <div className="w-10" /> {/* Spacer for centering */}
             </div>
@@ -73,11 +73,11 @@ export default function DashboardLayout({
                 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
                 <div className="p-6 flex items-center gap-2 border-b border-slate-800/50">
-                    <div className="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center">
-                        <Database className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center shadow-md">
+                        <span className="text-white font-bold text-sm">L</span>
                     </div>
-                    <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
-                        LX FACTORY HQ
+                    <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+                        LUMAX
                     </span>
                     {/* Close button for mobile */}
                     <button

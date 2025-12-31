@@ -83,11 +83,11 @@ export default function LandingPage() {
                 <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-blue-50 border border-blue-100 rounded flex items-center justify-center">
-                                <Factory className="w-4 h-4 text-blue-600" />
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-teal-500 rounded-lg flex items-center justify-center shadow-md">
+                                <span className="text-white font-bold text-sm">L</span>
                             </div>
-                            <span className="text-sm font-bold tracking-widest uppercase text-slate-700">
-                                LX <span className="text-blue-600">AGENT FACTORY</span>
+                            <span className="text-lg font-bold tracking-tight text-slate-900">
+                                LUMAX
                             </span>
                         </div>
 
@@ -138,19 +138,19 @@ export default function LandingPage() {
                             >
                                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase shadow-sm">
                                     <Cog className="w-3 h-3 text-blue-600 animate-spin-slow" />
-                                    AGENT FACTORY OS v2.0
+                                    ASSISTENTE INTELIGENTE 24H
                                 </div>
 
                                 <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-6 text-slate-900">
-                                    Agent Factory para WhatsApp — <br />
+                                    Sua Recepção <br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-teal-500 to-blue-600">
-                                        no número da sua marca.
+                                        nunca mais dorme.
                                     </span>
                                 </h1>
 
                                 <p className="text-xl text-slate-600 leading-relaxed max-w-xl border-l-4 border-blue-600 pl-6 my-8">
-                                    Nós projetamos, validamos e operamos agentes com <strong>governança, auditabilidade e versionamento.</strong>
-                                    <span className="block mt-4 text-slate-500 text-base">Você não configura nada. Você só aprova.</span>
+                                    Atendimento 24h no WhatsApp da sua clínica. <strong>Agendamentos, qualificação e dúvidas</strong> — tudo automático.
+                                    <span className="block mt-4 text-slate-500 text-base">Você foca no paciente. A LUMAX cuida do resto.</span>
                                 </p>
 
                                 {/* Feature Cards */}
@@ -161,9 +161,9 @@ export default function LandingPage() {
                                         </div>
                                         <div>
                                             <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                                O problema do Chatbot
+                                                O problema
                                             </h4>
-                                            <p className="text-sm text-slate-500 mt-1">Prompt instável, alucinações e risco de banimento. Software sem governança vira ruído.</p>
+                                            <p className="text-sm text-slate-500 mt-1">Pacientes ligam fora do horário, WhatsApp lotado, secretária sobrecarregada.</p>
                                         </div>
                                     </div>
 
@@ -173,9 +173,9 @@ export default function LandingPage() {
                                         </div>
                                         <div>
                                             <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                                A Solução Factory
+                                                A solução LUMAX
                                             </h4>
-                                            <p className="text-sm text-slate-500 mt-1">Agentes compilados, auditados e rodando em Infraestrutura Oficial (WABA).</p>
+                                            <p className="text-sm text-slate-500 mt-1">Assistente inteligente que responde, agenda e qualifica — 24h por dia.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -517,42 +517,42 @@ export default function LandingPage() {
                         <div className="grid md:grid-cols-4 gap-8 mb-12">
                             <div>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-8 h-8 bg-blue-50 border border-blue-100 rounded flex items-center justify-center">
-                                        <Factory className="w-4 h-4 text-blue-600" />
+                                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-teal-500 rounded-lg flex items-center justify-center shadow-md">
+                                        <span className="text-white font-bold text-sm">L</span>
                                     </div>
-                                    <span className="text-sm font-bold text-slate-900">LX Agent Factory</span>
+                                    <span className="text-lg font-bold text-slate-900">LUMAX</span>
                                 </div>
                                 <p className="text-sm text-slate-500">
-                                    Infraestrutura de Agentes de IA Enterprise.
-                                    <br />Não é Chatbot. É Engenharia.
+                                    Assistente inteligente para clínicas.
+                                    <br />Atendimento 24h no seu WhatsApp.
                                 </p>
                             </div>
                         </div>
 
                         <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-                            <p>© 2025 LX Agent Factory OS. Todos os direitos reservados.</p>
+                            <p>© 2025 LUMAX. Todos os direitos reservados.</p>
                             <div className="flex gap-4">
-                                <span>Factory Online</span>
+                                <span>Sistema Online</span>
                                 <span className="flex items-center gap-2 text-green-600">
                                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                                    Operational
+                                    Operacional
                                 </span>
                             </div>
                         </div>
                     </div>
                 </footer>
 
-                {/* TRUST BADGES SECTION (Added by CEO Directive) */}
+                {/* TRUST BADGES SECTION */}
                 <div className="border-t border-slate-100 bg-slate-50 py-4">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-center gap-8 opacity-70 text-[10px] uppercase tracking-widest text-slate-400">
                         <div className="flex items-center gap-2">
-                            <Lock className="w-3 h-3" /> SOC2 Compliant (Design)
+                            <Lock className="w-3 h-3" /> Dados Protegidos
                         </div>
                         <div className="flex items-center gap-2">
-                            <Brain className="w-3 h-3" /> Factory OS v1.0
+                            <Brain className="w-3 h-3" /> IA Treinada
                         </div>
                         <div className="flex items-center gap-2">
-                            <Wifi className="w-3 h-3" /> Meta Official Partner API
+                            <Wifi className="w-3 h-3" /> Meta Cloud API
                         </div>
                     </div>
                 </div>
