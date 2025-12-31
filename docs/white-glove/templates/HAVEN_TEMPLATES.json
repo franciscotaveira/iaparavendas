@@ -1,0 +1,75 @@
+{
+    "tenant": "haven_escovaria",
+    "category": "UTILITY",
+    "templates": [
+        {
+            "name": "haven_confirmacao_agenda_v1",
+            "language": "pt_BR",
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "Oi {{1}}! ✨ Tudo certo para o seu glow up!\n\n🗓 *{{2}} às {{3}}*\n💇‍♀️ Serviço: {{4}}\n📍 Local: Haven Escovaria\n\nPodemos confirmar sua cadeira? Responda SIM para garantir. 💖"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Sim, confirmado! ✅"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Preciso reagendar 🔄"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "haven_followup_24h_v1",
+            "language": "pt_BR",
+            "components": [
+                {
+                    "type": "BODY",
+                    "text": "Ei {{1}}, a Bella aqui! 👋\n\nVi que você se interessou pela {{2}} ontem mas não finalizamos o agendamento.\n\nTenho um horário livre amanhã às {{3}}. Quer que eu segure pra você brilhar? ✨"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Quero esse horário! 🙋‍♀️"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Ver outras opções 📅"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "haven_reativacao_sumida_v1",
+            "language": "pt_BR",
+            "components": [
+                {
+                    "type": "HEADER",
+                    "format": "IMAGE"
+                },
+                {
+                    "type": "BODY",
+                    "text": "Oi sumida! 💖\n\nFaz tempo que seus fios não veem a gente. Estamos com saudade!\n\nPreparamos um *Voucher de R$ 20* pra sua próxima Hidratação Glow. Vamos agendar essa semana pra aproveitar? 💆‍♀️"
+                },
+                {
+                    "type": "BUTTONS",
+                    "buttons": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "text": "Eu quero! 🤩"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

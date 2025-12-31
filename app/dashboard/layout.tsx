@@ -15,7 +15,8 @@ import {
     ShieldAlert,
     MessageSquare,
     CheckSquare,
-    BarChart3
+    BarChart3,
+    Smartphone
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -25,6 +26,7 @@ export default function DashboardLayout({
 }) {
     const [isWarRoomOpen, setIsWarRoomOpen] = useState(false);
     const [isSingularityOpen, setIsSingularityOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Mock Data for the modals (until we fetch real data)
     const mockAgents = {
@@ -37,48 +39,90 @@ export default function DashboardLayout({
     return (
         <div className="flex h-screen bg-[#020617] text-slate-100 overflow-hidden font-sans relative">
 
+            {/* Mobile Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-30 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
+            {/* Mobile Header */}
+            <div className="fixed top-0 left-0 right-0 h-14 bg-[#0B1120] border-b border-slate-800 flex items-center justify-between px-4 z-40 md:hidden">
+                <button
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <span className="font-bold text-sm tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+                    LX FACTORY HQ
+                </span>
+                <div className="w-10" /> {/* Spacer for centering */}
+            </div>
+
             {/* Sidebar */}
-            <aside className="w-64 border-r border-slate-800 bg-[#0B1120] flex flex-col z-20">
+            <aside className={`
+                fixed md:relative
+                w-64 h-full
+                border-r border-slate-800 bg-[#0B1120] 
+                flex flex-col z-40
+                transform transition-transform duration-300 ease-in-out
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+            `}>
                 <div className="p-6 flex items-center gap-2 border-b border-slate-800/50">
-                    <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                        <BrainCircuit className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center">
+                        <Database className="w-5 h-5 text-white" />
                     </div>
-                    <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                        LX AGENTS
+                    <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
+                        LX FACTORY HQ
                     </span>
+                    {/* Close button for mobile */}
+                    <button
+                        onClick={() => setIsSidebarOpen(false)}
+                        className="ml-auto p-1.5 hover:bg-slate-800 rounded-lg md:hidden"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                    <NavItem href="/dashboard" icon={<LayoutDashboard />} label="Visão Geral" />
-                    <NavItem href="/dashboard/simulator" icon={<MessageSquare />} label="Simulador WhatsApp" />
-
-                    {/* War Room Action Button (Modal Trigger) */}
-                    <button
-                        onClick={() => setIsWarRoomOpen(true)}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors mt-2 mb-2 border border-dashed border-red-900/50 group"
-                    >
-                        <ShieldAlert className="w-4 h-4 group-hover:animate-pulse" />
-                        War Room (Council)
-                    </button>
-
-                    <div className="pt-4 pb-2">
-                        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            Operações
+                    <div className="pb-2">
+                        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Clientes & Produção
                         </p>
+                        <NavItem href="/dashboard" icon={<LayoutDashboard />} label="Visão Geral" onClick={() => setIsSidebarOpen(false)} />
+                        <NavItem href="/dashboard/clients" icon={<Users />} label="Carteira de Clientes" onClick={() => setIsSidebarOpen(false)} />
+                        <NavItem href="/dashboard/connect" icon={<Smartphone />} label="Conexões WABA" onClick={() => setIsSidebarOpen(false)} />
                     </div>
-                    <NavItem href="/dashboard/agents" icon={<Users />} label="Tropa de Agentes" />
-                    <NavItem href="/dashboard/memory" icon={<Database />} label="Memória Corp." />
-                    <NavItem href="/dashboard/workflows" icon={<Zap />} label="Automações" />
-                    <NavItem href="/dashboard/tasks" icon={<CheckSquare />} label="Tarefas" />
 
-                    <div className="pt-4 pb-2">
-                        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                            Sistema
+                    <div className="pt-4 pb-2 border-t border-slate-800/50">
+                        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Staff Interno (Council)
                         </p>
+                        {/* War Room agora é ferramenta interna de gestão */}
+                        <button
+                            onClick={() => { setIsWarRoomOpen(true); setIsSidebarOpen(false); }}
+                            className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-indigo-400 hover:bg-indigo-500/10 hover:text-indigo-300 transition-colors mb-2 border border-dashed border-indigo-900/50 group"
+                        >
+                            <BrainCircuit className="w-4 h-4 group-hover:animate-pulse" />
+                            Consultar o Conselho
+                        </button>
+                        <NavItem href="/dashboard/marketing" icon={<BarChart3 />} label="Marketing Ops" onClick={() => setIsSidebarOpen(false)} />
+                        <NavItem href="/dashboard/tasks" icon={<CheckSquare />} label="Tarefas Internas" onClick={() => setIsSidebarOpen(false)} />
                     </div>
-                    <NavItem href="/dashboard/neural" icon={<BrainCircuit />} label="Neural Core" />
-                    <NavItem href="/api/health" icon={<Activity />} label="Health Status" external />
-                    <NavItem href="/settings" icon={<Settings />} label="Configurações" />
+
+                    <div className="pt-4 pb-2 border-t border-slate-800/50">
+                        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Admin
+                        </p>
+                        <NavItem href="/settings" icon={<Settings />} label="Configurações" onClick={() => setIsSidebarOpen(false)} />
+                        <NavItem href="/api/health" icon={<Activity />} label="System Status" external onClick={() => setIsSidebarOpen(false)} />
+                    </div>
                 </nav>
 
                 <div className="p-4 border-t border-slate-800 bg-[#050B14]">
@@ -105,7 +149,7 @@ export default function DashboardLayout({
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto relative">
+            <main className="flex-1 overflow-auto relative pt-14 md:pt-0">
                 {/* Background Grid CSS Pattern */}
                 <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"
                     style={{
@@ -114,7 +158,7 @@ export default function DashboardLayout({
                     }}>
                 </div>
 
-                <div className="relative z-10 p-8 min-h-full">
+                <div className="relative z-10 p-4 md:p-8 min-h-full">
                     {children}
                 </div>
             </main>
@@ -134,10 +178,10 @@ export default function DashboardLayout({
     );
 }
 
-function NavItem({ href, icon, label, active, external }: any) {
+function NavItem({ href, icon, label, active, external, onClick }: any) {
     return (
         external ? (
-            <a href={href} target="_blank" className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-200 ${active
+            <a href={href} target="_blank" onClick={onClick} className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-200 ${active
                 ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-600/20 shadow-[0_0_10px_rgba(79,70,229,0.1)]'
                 : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
                 }`}>
@@ -145,7 +189,7 @@ function NavItem({ href, icon, label, active, external }: any) {
                 {label}
             </a>
         ) : (
-            <Link href={href} className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-200 ${active
+            <Link href={href} onClick={onClick} className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all duration-200 ${active
                 ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-600/20 shadow-[0_0_10px_rgba(79,70,229,0.1)]'
                 : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
                 }`}>

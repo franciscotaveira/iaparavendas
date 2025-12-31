@@ -8,9 +8,11 @@ import {
     Zap,
     TrendingUp,
     Cpu,
-    Target
+    Target,
+    Database
 } from 'lucide-react';
-import { Card } from '@/components/ui/card'; // Assuming these exist or I'll use raw divs if not
+import { Card } from '@/components/ui/card';
+import Link from 'next/link';
 // Checking previously seen files, I recall `components/ui/card` usage in war-room.
 // If not, I'll use standard divs. I saw `import { Card } from '@/components/ui/card';` in war-room/page.tsx.
 
@@ -56,7 +58,7 @@ export default function DashboardOverview() {
         const fetchData = async () => {
             try {
                 const [healthRes, agentsRes, metricsRes] = await Promise.all([
-                    fetch('/api/health'),
+                    fetch('/api/monitor/status'), // Usando Monitor Real
                     fetch('/api/agents'),
                     fetch('/api/metrics')
                 ]);
@@ -94,11 +96,15 @@ export default function DashboardOverview() {
     }, []);
 
     // Helper to get cost safely
-    const getCost = () => {
-        const cost = health?.local_llm?.cost_savings;
-        if (typeof cost === 'number') return cost;
-        if (typeof cost === 'object' && cost?.total_saved_usd) return cost.total_saved_usd;
-        return 12.50; // Fallback based on prompt example
+    // Helper to get cost safely
+    const getCost = () => 12.50; // Temporário enquanto não temos API de custo real
+
+    // Helper para status real
+    const getSystemStatus = () => {
+        if (!health) return { label: 'Conectando...', color: 'bg-yellow-500' };
+        if ((health as any).status === 'ONLINE') return { label: 'ONLINE', color: 'bg-emerald-500' };
+        if ((health as any).status === 'DEGRADED') return { label: 'DEGRADED', color: 'bg-orange-500' };
+        return { label: 'OFFLINE', color: 'bg-red-500' };
     };
 
     if (loading) {
@@ -121,7 +127,7 @@ export default function DashboardOverview() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <MetricCard
                     label="Agentes Ativos"
-                    value={health?.agents.total || 0}
+                    value={health?.agents?.total || 0}
                     icon={<Users className="w-5 h-5 text-purple-400" />}
                     trend="+2 novos"
                     color="purple"
@@ -182,7 +188,7 @@ export default function DashboardOverview() {
                         </div>
 
                         <div className="space-y-3">
-                            {health?.agents.by_category && Object.entries(health.agents.by_category).map(([cat, count], i) => (
+                            {health?.agents?.by_category && Object.entries(health.agents.by_category).map(([cat, count], i) => (
                                 <div key={cat} className="flex items-center gap-3 text-sm">
                                     <div className={`w-3 h-3 rounded-full ${['bg-indigo-500', 'bg-purple-500', 'bg-emerald-500', 'bg-blue-500'][i % 4]}`} />
                                     <span className="text-slate-300 capitalize">{cat}</span>
@@ -228,18 +234,18 @@ export default function DashboardOverview() {
             {/* LIVE CONNECTION & CHATS SECTION */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* QR Code / Connection Status */}
-                <div className="bg-[#0B1120] border border-slate-800 rounded-xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition">
+                <Link href="/dashboard/connect" className="bg-[#0B1120] border border-slate-800 rounded-xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition block cursor-pointer">
                     <h3 className="text-lg font-semibold text-slate-100 mb-6 flex items-center gap-2">
                         <Activity className="w-5 h-5 text-emerald-400" />
                         Status da Conexão
                     </h3>
 
-                    <div className="flex flex-col items-center justify-center p-6 bg-black/20 rounded-lg border border-slate-800">
+                    <div className="flex flex-col items-center justify-center p-6 bg-black/20 rounded-lg border border-slate-800 group-hover:bg-slate-900/50 transition-colors">
                         {/* QR Code Placeholder */}
-                        <div className="w-48 h-48 bg-white p-4 rounded-lg flex items-center justify-center mb-4 relative">
-                            <div className="absolute inset-0 border-2 border-dashed border-slate-300 rounded-lg animate-pulse"></div>
+                        <div className="w-48 h-48 bg-white p-4 rounded-lg flex items-center justify-center mb-4 relative opacity-80 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute inset-0 border-2 border-dashed border-slate-300 rounded-lg group-hover:border-emerald-500 transition-colors"></div>
                             <p className="text-slate-900 font-bold text-center text-xs">
-                                QR CODE<br />WPPCONNECT<br />(AGUARDANDO INTEGRACAO)
+                                CLIQUE PARA<br />CONECTAR<br />WHATSAPP
                             </p>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-emerald-400">
@@ -247,13 +253,13 @@ export default function DashboardOverview() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                             </span>
-                            Aguardando Leitura
+                            Aguardando Configuração
                         </div>
-                        <p className="text-xs text-slate-500 mt-2 text-center max-w-[200px]">
-                            Abra o WhatsApp > Aparelhos Conectados > Conectar Aparelho
+                        <p className="text-xs text-slate-500 mt-2 text-center max-w-[200px] group-hover:text-slate-400 transition-colors">
+                            Toque para abrir painel de conexão
                         </p>
                     </div>
-                </div>
+                </Link>
 
                 {/* Active Chats Feed */}
                 <div className="md:col-span-2 bg-[#0B1120] border border-slate-800 rounded-xl p-6 relative overflow-hidden">
@@ -286,8 +292,8 @@ export default function DashboardOverview() {
                                 </div>
                                 <div className="text-right">
                                     <span className={`text-[10px] px-2 py-0.5 rounded uppercase tracking-wide font-semibold ${chat.status === 'closed' ? 'bg-emerald-500/10 text-emerald-400' :
-                                            chat.status === 'negotiating' ? 'bg-yellow-500/10 text-yellow-400' :
-                                                'bg-slate-500/10 text-slate-400'
+                                        chat.status === 'negotiating' ? 'bg-yellow-500/10 text-yellow-400' :
+                                            'bg-slate-500/10 text-slate-400'
                                         }`}>
                                         {chat.status}
                                     </span>
@@ -303,16 +309,20 @@ export default function DashboardOverview() {
             <div className="bg-slate-900/30 border border-slate-800 rounded-lg p-4 flex items-center justify-between text-xs text-slate-500">
                 <div className="flex gap-4">
                     <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        System: ONLINE
+                        <div className={`w-2 h-2 rounded-full ${getSystemStatus().color} animate-pulse`} />
+                        System: {getSystemStatus().label}
                     </span>
                     <span className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500" />
-                        Model: {health?.local_llm.model || 'Unknown'}
+                        <Database className="w-3 h-3" />
+                        DB: {(health as any)?.checks?.database?.latency_ms || 0}ms
+                    </span>
+                    <span className="flex items-center gap-2">
+                        <Cpu className="w-3 h-3" />
+                        AI: {(health as any)?.checks?.ai_engine?.latency_ms || 0}ms
                     </span>
                 </div>
                 <div>
-                    LX OPERATING SYSTEM v1.0
+                    LX OPERATING SYSTEM v3.1 (SENTINEL ACTIVE)
                 </div>
             </div>
         </div>

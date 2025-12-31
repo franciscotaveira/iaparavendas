@@ -363,7 +363,6 @@ export class PresenceCore {
             trustLevel: 0.3,
             lastInteraction: new Date(),
             emotionalTrajectory: [],
-            emotionalTrajectory: [],
             communicationPrefs: {
                 formalityLevel: 0.5,
                 emojiUsage: 0.5,
@@ -388,7 +387,7 @@ export class PresenceCore {
         const leadId = await this.resolveLeadId(sessionId);
         if (!leadId) {
             console.warn('[Presence] No lead ID found for session', sessionId);
-            return this.getFallbackResponse();
+            return this.getFallbackResponse() as any;
         }
 
         // 1. Carregar Estado
@@ -494,7 +493,8 @@ export class PresenceCore {
             subtextInsights: { detectedPatterns: [], overallSentiment: 'neutral', confidence: 0, actionRecommendations: [] },
             relevantMemories: [],
             timing: { delayMs: 1000, typingIndicator: true, preResponse: null },
-            relationshipState: this.getInitialState()
+            relationshipState: this.getInitialState(),
+            legacyMode: false
         };
     }
 
@@ -737,6 +737,8 @@ export class PresenceCore {
 
         return null;
     }
+
+    // Fim da classe
 }
 
 // ============================================

@@ -6,22 +6,22 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lux Growth IA | Automação Comercial Inteligente",
-  description: "IA que qualifica leads, não só responde. Instale um cérebro comercial no seu WhatsApp e pare de perder tempo com curiosos.",
-  keywords: ["automação comercial", "IA vendas", "chatbot whatsapp", "qualificação de leads", "agente de vendas IA"],
+  title: "LX Agent Factory | Governança e Infraestrutura de Agentes",
+  description: "Nós projetamos, validamos e operamos agentes de IA no WhatsApp com governança e infraestrutura oficial Meta Cloud API. Software compilado, não chatbot.",
+  keywords: ["agent factory", "infraestrutura IA", "meta cloud api", "governança de ia", "agentes whatsapp"],
   authors: [{ name: "Lux Growth IA" }],
   openGraph: {
-    title: "Lux Growth IA | O Fim do Lead Desqualificado",
-    description: "IA que qualifica leads, não só responde. Instale um cérebro comercial no seu WhatsApp.",
+    title: "LX Agent Factory | O Fim do Chatbot de Prompt",
+    description: "Nós projetamos, validamos e operamos agentes de IA no WhatsApp com governança e infraestrutura oficial Meta Cloud API.",
     url: "https://mycodingteam.com",
-    siteName: "Lux Growth IA",
+    siteName: "LX Agent Factory",
     locale: "pt_BR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lux Growth IA | Automação Comercial Inteligente",
-    description: "IA que qualifica leads, não só responde.",
+    title: "LX Agent Factory | Governança e Infraestrutura",
+    description: "Nós projetamos, validamos e operamos agentes de IA no WhatsApp.",
   },
   robots: {
     index: true,
@@ -38,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" className="light">
       <head>
         {/* Google Tag Manager */}
         <Script id="gtm-script" strategy="afterInteractive">

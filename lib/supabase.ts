@@ -53,7 +53,6 @@ export interface DBMessage {
     conversation_id: string;
     role: 'user' | 'assistant' | 'system';
     content: string;
-    intent_detected?: string;
     confidence_score?: number;
     response_time_ms?: number;
     was_fallback?: boolean;

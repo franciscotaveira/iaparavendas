@@ -1,0 +1,93 @@
+# DOSSIÊ PARA AUDITORIA EXTERNA (LX AGENT FACTORY OS)
+**Data:** 30/12/2025
+**Objetivo:** Auditoria Estratégica & Técnica Externa
+
+---
+
+## 1. A TESE DE NEGÓCIO (Pivotada Recente)
+**De:** "Software de Chatbot Humanizado" (Commodity)
+**Para:** "LX Agent Factory OS" (Infraestrutura de IA)
+
+**Definição:** Uma linha de produção de agentes governada por 37 sub-agentes especializados (Control Plane) que projeta, valida e entrega agentes de atendimento via WhatsApp (Data Plane).
+**Diferencial:** Não vendemos o chatbot; vendemos a governança, a metodologia de criação e a segurança auditada.
+**Pricing:** Setup (Custo da Fábrica) + Mensalidade (Governança Contínua).
+
+---
+
+## 2. ARQUITETURA TÉCNICA (O que já existe)
+
+### Stack
+- **Frontend/API:** Next.js (App Router)
+- **Database:** Supabase (PostgreSQL + Vetores)
+- **LLM Orchestration:** Vercel AI SDK + OpenAI/Anthropic/Local
+- **Integração:** Webhooks (N8N simulado) e QR Code Generator.
+
+### Core Modules (O Motor)
+
+1.  **The Council (Cérebro Estratégico):**
+    - Um sistema multi-agente (`core/council`) com 37 personas (Marketing, Dev, Sales, Security).
+    - Eles não atendem o cliente final. Eles auditam o sistema e tomam decisões de evolução.
+
+2.  **Presence Core (Memória & Humanização):**
+    - Sistema que gerencia estado emocional, timing de resposta (delay humano) e subtexto.
+    - Diferente de RAG simples, ele lembra "emoções" e contexto relacional.
+
+3.  **The Sentinel (Segurança):**
+    - Camada de sanitização de inputs (`core/security.ts`).
+    - Auditoria de logs em tempo real para detectar Jailbreak.
+
+4.  **Simulation & Arena:**
+    - Ferramenta de testes de estresse (`scripts/agent-arena.ts`) onde agentes lutam contra objeções para validar robustez.
+
+---
+
+## 3. ESTADO ATUAL DO PRODUTO (MVP)
+
+- **Landing Page:** Focada em conversão, com demo ao vivo.
+- **Dashboard:**
+    - `/dashboard`: Visão geral de métricas (Simuladas para MVP).
+    - `/dashboard/simulation`: Interface para testar personas (Haven/Sora) isoladamente.
+    - `/dashboard/connect`: Interface de conexão via QR Code (Simulada visualmente).
+- **Backend:**
+    - Rota `/api/chat` funcional, suportando injeção dinâmica de personalidade e regras de negócio via JSON.
+
+---
+
+## 4. PONTOS DE ATENÇÃO (Para o Auditor Bater)
+
+1.  **Complexidade x Valor:** O "Council" de 37 agentes é over-engineering? Ele realmente traz valor ou é só complexidade de código?
+2.  **Escalabilidade:** Como manter "personalidades únicas" para 1.000 clientes sem o prompt de sistema explodir o limite de tokens?
+3.  **Dependência:** O sistema hoje depende muito da qualidade do prompt (Engenharia de Prompt) em vez de Fine-Tuning. Isso é sustentável?
+4.  **Integração Real:** O "QR Code" e o "N8N" estão simulados/mockados no front. A complexidade de manter sessões de WhatsApp estáveis (WPPConnect/Baileys) foi subestimada?
+
+---
+
+## 5. CÓDIGO FONTE CHAVE (Amostras)
+
+### A. Roteador de Chat (`app/api/chat/route.ts` - Resumo)
+```typescript
+// Lógica que decide se o Agente é "Genérico" ou "Específico do Cliente"
+if (companyName === 'LXC') {
+    coreBehavior = ONBOARDING_PROMPT; // Vende a Fábrica
+} else {
+    coreBehavior = CLIENT_RULES_PROMPT; // Vende o Produto do Cliente
+}
+// Injeção de Segurança e Memória
+systemPrompt = identity + coreBehavior + SUPPORT_PROTOCOL + presenceInstructions;
+```
+
+### B. O Conselho (`core/council/definitions.ts` - Resumo)
+```typescript
+export const COUNCIL_AGENTS = [
+    { id: 'tycoon', role: 'Business Owner', primeDirective: 'Profitablity & Scale' },
+    { id: 'sentinel', role: 'Security', primeDirective: 'Zero Trust' },
+    // ... +35 agentes
+];
+```
+
+---
+
+## PERGUNTA AO CONSULTOR:
+1.  Essa narrativa de "Factory OS" para de pé tecnicamente com essa arquitetura?
+2.  Onde eu vou quebrar a cara quando tentar escalar para 50 clientes?
+3.  O que eu devo cortar AGORA para lançar mais rápido?

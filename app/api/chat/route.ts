@@ -21,10 +21,14 @@ import {
 } from '@/lib/humanization-engine';
 import { trackExternalInteraction } from '@/core/orchestrator';
 import { saveMessage, createConversation, getConversationBySessionId } from '@/lib/supabase';
-import { processForRapport, RapportResult } from '@/core/rapport/engine';
-PresenceCore,
-    EmotionalState
-} from '@/core/consciousness';
+import { processForRapport, type RapportResult } from '@/core/rapport/engine';
+import { PresenceCore, EmotionalState } from '@/core/consciousness';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 // Inicializar PRESENCE CORE global
 const presenceCore = new PresenceCore({
@@ -175,11 +179,37 @@ async function sendToN8n(payload: Record<string, unknown>) {
     }
 }
 
+import { sanitizeInput } from '@/core/security';
+
+// 🔵 ROUTING: Model Selector
+function selectModel(message: string): string {
+    const complexityRegex = /preço|comprar|problema|erro|analisar|explica|diferença/i;
+    const isComplex = message.length > 50 || complexityRegex.test(message);
+    const model = isComplex ? 'anthropic/claude-3.5-sonnet' : 'openai/gpt-3.5-turbo';
+    //console.log(`[Router] Selected: ${model} (Complex: ${isComplex})`);
+    return model;
+}
+
+// 🟡 UX: Typing Simulation
+async function notifyTypingStart(sessionId: string) {
+    // Placeholder para Webhook futuro
+}
+
 // ============================================
 // MAIN HANDLER
 // ============================================
 export async function POST(req: Request) {
-    const { messages, stream = true, sessionId, botName = 'Sofia', companyName = 'LXC' } = await req.json();
+    const json = await req.json();
+    const { messages, stream = true, sessionId } = json;
+
+    // Sanitiza Inputs e Captura Definições do Cliente (Simulação)
+    const botName = sanitizeInput(json.botName || 'Sofia');
+    const companyName = sanitizeInput(json.companyName || 'LXC');
+    const companyNiche = sanitizeInput(json.niche || '');
+    const companyTone = sanitizeInput(json.tone || '');
+    const companyOffer = sanitizeInput(json.offer || ''); // Produtos
+    const companyRules = sanitizeInput(json.rules || ''); // Regras personalizadas
+
     const lastUserMessage = messages.filter((m: Message) => m.role === 'user').pop();
     const lastUserContent = lastUserMessage?.content || '';
 
@@ -308,9 +338,10 @@ export async function POST(req: Request) {
             `;
         }
 
-        // Simular Human Delay (capado a 2000ms para evitar timeout em serverless)
+        // Simular Human Delay e Typing
         if (presenceContext.timing.delayMs > 0) {
             const safeDelay = Math.min(presenceContext.timing.delayMs, 2000);
+            await notifyTypingStart(currentSessionId);
             await new Promise(r => setTimeout(r, safeDelay));
         }
 
@@ -342,8 +373,8 @@ export async function POST(req: Request) {
                 baseURL: 'https://openrouter.ai/api/v1',
                 apiKey: process.env.OPENROUTER_API_KEY,
             });
-            modelName = 'anthropic/claude-3.5-sonnet';
-            console.log("Using OpenRouter (Claude 3.5 Sonnet)");
+            // Smart Routing
+            modelName = selectModel(lastUserContent);
         } else if (process.env.LUX_API_URL) {
             provider = createOpenAI({
                 baseURL: process.env.LUX_API_URL,
@@ -387,7 +418,7 @@ export async function POST(req: Request) {
 
         let systemPrompt = '';
 
-        if (onboardingFinished || messages.length > 20) {
+        if (companyName !== 'LXC' || onboardingFinished || messages.length > 20) {
             // Demo Mode - use Kernel com Niche Pack
             let contextSnapshot = {
                 niche: detectedNiche || "Genérico",
@@ -521,10 +552,33 @@ Se o usuário pedir para "falar com o suporte técnico", "atualizar o sistema", 
 `;
 
             const identityPrompt = `
-    IDENTIDADE: Seu nome é ${botName} e você representa a ${companyName}.
-    Nunca saia do personagem.
+    IDENTIDADE: Seu nome é ${botName}. Você trabalha na empresa ${companyName}.
+    SEU TOM DE VOZ: ${companyTone || 'Profissional e acolhedor'}
+    O QUE VOCÊ VENDE: ${companyOffer || 'Serviços gerais'}
+    SUA MISSÃO: Atender o cliente, tirar dúvidas e agendar/vender. Não faça onboarding. Venda!
+    REGRAS DA CASA: ${companyRules || 'Seja educado.'}
     `;
-            systemPrompt = identityPrompt + ONBOARDING_PROMPT + SUPPORT_PROTOCOL + rapportInstructions + presenceInstructions;
+
+            // SELEÇÃO DE MODO: 
+            // Se for a LXC (Padrão), roda onboarding.
+            // Se for cliente real (Haven, Sora), roda Modo de Venda.
+            let coreBehavior = '';
+
+            if (companyName === 'LXC') {
+                coreBehavior = ONBOARDING_PROMPT;
+            } else {
+                coreBehavior = `
+    # MODO DE ATENDIMENTO AO CLIENTE FINAL
+    Você NÃO é uma IA de teste. Você é o ATENDENTE RESPONSÁVEL da ${companyName}.
+    
+    1. Responda curto e direto.
+    2. Se o cliente perguntar preço e você não souber, peça para agendar avaliação.
+    3. Use o tom definido acima (${companyTone}).
+    4. Objetivo final: Agendamento ou Venda.
+    `;
+            }
+
+            systemPrompt = identityPrompt + coreBehavior + SUPPORT_PROTOCOL + rapportInstructions + presenceInstructions + councilDirectives + legacyInstruction;
         }
 
         // ============================================
