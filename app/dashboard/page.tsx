@@ -322,7 +322,7 @@ export default function DashboardOverview() {
                     </span>
                 </div>
                 <div>
-                    LX OPERATING SYSTEM v3.1 (SENTINEL ACTIVE)
+                    LUMAX OS v1.0 (ASSISTENTE ATIVO)
                 </div>
             </div>
         </div>

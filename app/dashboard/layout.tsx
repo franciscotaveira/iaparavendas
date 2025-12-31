@@ -16,7 +16,9 @@ import {
     MessageSquare,
     CheckSquare,
     BarChart3,
-    Smartphone
+    Smartphone,
+    ClipboardList,
+    MessageCircle
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -93,11 +95,19 @@ export default function DashboardLayout({
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                     <div className="pb-2">
                         <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                            Clientes & Produção
+                            Operação
                         </p>
                         <NavItem href="/dashboard" icon={<LayoutDashboard />} label="Visão Geral" onClick={() => setIsSidebarOpen(false)} />
-                        <NavItem href="/dashboard/clients" icon={<Users />} label="Carteira de Clientes" onClick={() => setIsSidebarOpen(false)} />
+                        <NavItem href="/dashboard/simulator" icon={<MessageCircle />} label="Simulador WhatsApp" onClick={() => setIsSidebarOpen(false)} />
                         <NavItem href="/dashboard/connect" icon={<Smartphone />} label="Conexões WABA" onClick={() => setIsSidebarOpen(false)} />
+                    </div>
+
+                    <div className="pt-4 pb-2 border-t border-slate-800/50">
+                        <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            Clientes
+                        </p>
+                        <NavItem href="/dashboard/clients" icon={<Users />} label="Carteira de Clientes" onClick={() => setIsSidebarOpen(false)} />
+                        <NavItem href="/dashboard/onboarding" icon={<ClipboardList />} label="Novo Onboarding" onClick={() => setIsSidebarOpen(false)} />
                     </div>
 
                     <div className="pt-4 pb-2 border-t border-slate-800/50">

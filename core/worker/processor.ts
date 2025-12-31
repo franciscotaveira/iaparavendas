@@ -341,10 +341,55 @@ async function markJobFailed(job: any, err: any) {
         .eq("id", job.id);
 }
 
-// --- OUTBOX SENDER ---
+// --- OUTBOX SENDER (MULTI-PROVIDER) ---
 
-async function sendMessageToMeta(outMsg: any) {
-    const { whatsapp_payload } = outMsg;
+async function sendOutboundMessage(outMsg: any) {
+    const { whatsapp_payload, tenant_id } = outMsg;
+
+    // 1. Buscar config do tenant
+    const { data: tenant } = await supabase
+        .from('tenants')
+        .select('evolution_instance, phone_number_id')
+        .eq('id', tenant_id)
+        .single();
+
+    // 2. Decidir provider
+    if (tenant?.evolution_instance) {
+        // --- EVOLUTION API ---
+        await sendViaEvolution(tenant.evolution_instance, whatsapp_payload);
+    } else {
+        // --- META CLOUD API ---
+        await sendViaMeta(whatsapp_payload);
+    }
+}
+
+async function sendViaEvolution(instanceName: string, payload: any) {
+    const baseUrl = process.env.EVOLUTION_API_URL || 'http://localhost:8080';
+    const apiKey = process.env.EVOLUTION_API_KEY || 'lx-evolution-secret-key-2024';
+
+    const number = payload.to?.replace(/\D/g, '');
+    const text = payload.text?.body;
+
+    if (!number || !text) {
+        throw new Error('Invalid payload for Evolution: missing number or text');
+    }
+
+    const res = await fetch(`${baseUrl}/message/sendText/${instanceName}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'apikey': apiKey,
+        },
+        body: JSON.stringify({ number, text })
+    });
+
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Evolution API Error (${res.status}): ${err}`);
+    }
+}
+
+async function sendViaMeta(payload: any) {
     const phoneId = process.env.META_PHONE_NUMBER_ID || process.env.META_PHONE_ID;
     const token = process.env.META_ACCESS_TOKEN || process.env.META_API_TOKEN;
 
@@ -354,14 +399,13 @@ async function sendMessageToMeta(outMsg: any) {
 
     const url = `https://graph.facebook.com/v18.0/${phoneId}/messages`;
 
-    // Fetch nativo do Node 18+
     const res = await fetch(url, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(whatsapp_payload)
+        body: JSON.stringify(payload)
     });
 
     if (!res.ok) {
@@ -417,7 +461,7 @@ async function runWorker() {
             if (outMsg) {
                 try {
                     console.log(`📤 Sending Msg [${outMsg.id}] to ${outMsg.conversation_id}...`);
-                    await sendMessageToMeta(outMsg);
+                    await sendOutboundMessage(outMsg);
                     await supabase.from("outbox_messages").update({ status: 'sent', locked_at: null, locked_by: null }).eq("id", outMsg.id);
                     console.log(`✅ Sent [${outMsg.id}]`);
                 } catch (err: any) {
