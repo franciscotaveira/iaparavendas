@@ -325,66 +325,124 @@ export default function LandingPage() {
                 <section id="precos" className="py-20 bg-white">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8">
                         <div className="text-center mb-16">
-                            <span className="text-blue-600 text-sm font-bold tracking-widest uppercase">Pricing Enterprise</span>
+                            <span className="text-blue-600 text-sm font-bold tracking-widest uppercase">Pricing</span>
                             <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6 text-slate-900">
-                                Infraestrutura + Service
+                                Escolha seu Modelo
                             </h2>
                             <p className="text-slate-600 max-w-2xl mx-auto">
-                                Modelo híbrido: Setup de Implantação + Governança recorrente.
+                                Setup completo + Governança recorrente. Comece rápido ou escale com suporte dedicado.
                             </p>
                         </div>
 
-                        <div className="max-w-xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                            {/* Plano Starter */}
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="p-8 rounded-2xl bg-white border border-slate-200 shadow-2xl relative overflow-hidden"
+                                className="p-8 rounded-2xl bg-white border border-slate-200 shadow-lg relative overflow-hidden"
                             >
-                                <div className="absolute top-4 right-4 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded">
-                                    HIGH TICKET
+                                <div className="absolute top-4 right-4 px-3 py-1 bg-teal-100 text-teal-700 text-xs font-bold rounded">
+                                    POPULAR
                                 </div>
 
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Factory Partnership</h3>
-                                <p className="text-slate-600 mb-6">Infraestrutura, Governança e Evolução.</p>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Starter</h3>
+                                <p className="text-slate-500 mb-6 text-sm">Para clínicas e consultórios iniciando</p>
 
                                 <div className="border-b border-slate-100 pb-6 mb-6">
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-slate-600">Setup White-glove</span>
-                                        <span className="text-slate-900 font-bold text-xl">R$ 5.000</span>
+                                        <span className="text-slate-600">Setup</span>
+                                        <span className="text-slate-900 font-bold text-2xl">R$ 2.500</span>
                                     </div>
-                                    <p className="text-xs text-slate-500">Pagamento único. Inclui provisionamento WABA, perfil, spec e agente v1.0.0 compilado.</p>
+                                    <p className="text-xs text-slate-500">Pagamento único. WABA configurado + Agente v1.0</p>
                                 </div>
 
                                 <div className="flex items-end gap-2 mb-6">
-                                    <span className="text-xl font-bold text-slate-900">Sob Consulta</span>
-                                    <span className="text-slate-500 mb-2">/mês (Governança)</span>
+                                    <span className="text-2xl font-bold text-slate-900">R$ 500</span>
+                                    <span className="text-slate-500 mb-1">/mês</span>
                                 </div>
 
                                 <div className="space-y-3 mb-8">
                                     {[
-                                        "Infraestrutura Meta Oficial (Cloud API)",
-                                        "Tenant WABA Dedicado",
-                                        "Governança Contínua (Sentinela)",
-                                        "Políticas e Guardrails Customizados",
-                                        "Relatórios de Auditoria Mensal"
+                                        "Meta Cloud API Oficial",
+                                        "Número próprio (WABA)",
+                                        "Agente compilado",
+                                        "Suporte via ticket",
+                                        "Atualizações mensais"
                                     ].map((feature, i) => (
-                                        <div key={i} className="flex items-center gap-3 text-slate-600">
-                                            <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                                        <div key={i} className="flex items-center gap-3 text-slate-600 text-sm">
+                                            <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0" />
                                             <span>{feature}</span>
                                         </div>
                                     ))}
                                 </div>
 
                                 <a
-                                    href="https://wa.me/5549988447562?text=Gostaria%20de%20ativar%20meu%20n%C3%BAmero%20oficial%20na%20Factory"
+                                    href="https://wa.me/5549988447562?text=Quero%20o%20plano%20Starter%20para%20minha%20clínica"
+                                    target="_blank"
+                                    className="block w-full py-4 bg-slate-900 text-white hover:bg-slate-800 font-bold rounded-xl transition-all text-center"
+                                >
+                                    Começar Agora
+                                </a>
+                            </motion.div>
+
+                            {/* Plano Enterprise */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.1 }}
+                                className="p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-teal-50 border-2 border-blue-200 shadow-xl relative overflow-hidden"
+                            >
+                                <div className="absolute top-4 right-4 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded">
+                                    RECOMENDADO
+                                </div>
+
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Enterprise</h3>
+                                <p className="text-slate-500 mb-6 text-sm">Para operações que exigem SLA e escala</p>
+
+                                <div className="border-b border-blue-200 pb-6 mb-6">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-slate-600">Setup White-glove</span>
+                                        <span className="text-slate-900 font-bold text-2xl">R$ 5.000</span>
+                                    </div>
+                                    <p className="text-xs text-slate-500">Pagamento único. Setup completo + onboarding dedicado</p>
+                                </div>
+
+                                <div className="flex items-end gap-2 mb-6">
+                                    <span className="text-2xl font-bold text-slate-900">Sob Consulta</span>
+                                    <span className="text-slate-500 mb-1">/mês</span>
+                                </div>
+
+                                <div className="space-y-3 mb-8">
+                                    {[
+                                        "Tudo do Starter +",
+                                        "Governança Contínua (Sentinela)",
+                                        "Guardrails Customizados",
+                                        "Relatórios de Auditoria",
+                                        "Suporte prioritário",
+                                        "SLA garantido"
+                                    ].map((feature, i) => (
+                                        <div key={i} className="flex items-center gap-3 text-slate-600 text-sm">
+                                            <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                                            <span>{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <a
+                                    href="https://wa.me/5549988447562?text=Quero%20o%20plano%20Enterprise%20com%20governança%20completa"
                                     target="_blank"
                                     className="block w-full py-4 bg-blue-600 text-white hover:bg-blue-700 font-bold rounded-xl transition-all text-center shadow-lg shadow-blue-200"
                                 >
-                                    Ativar Canal Oficial
+                                    Falar com Especialista
                                 </a>
                             </motion.div>
                         </div>
+
+                        <p className="text-center text-xs text-slate-400 mt-8">
+                            * Custos de conversação Meta (WhatsApp) são cobrados diretamente pela Meta ao cliente.
+                        </p>
                     </div>
                 </section>
 
