@@ -352,13 +352,19 @@ export default function LandingPage() {
                                 <div className="border-b border-slate-100 pb-6 mb-6">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-slate-600">Setup</span>
-                                        <span className="text-slate-900 font-bold text-2xl">R$ 2.500</span>
+                                        <div className="text-right">
+                                            <span className="text-xs text-slate-400 block">a partir de</span>
+                                            <span className="text-slate-900 font-bold text-2xl">R$ 2.500</span>
+                                        </div>
                                     </div>
                                     <p className="text-xs text-slate-500">Pagamento único. WABA configurado + Agente v1.0</p>
                                 </div>
 
                                 <div className="flex items-end gap-2 mb-6">
-                                    <span className="text-2xl font-bold text-slate-900">R$ 500</span>
+                                    <div>
+                                        <span className="text-xs text-slate-400 block">a partir de</span>
+                                        <span className="text-2xl font-bold text-slate-900">R$ 500</span>
+                                    </div>
                                     <span className="text-slate-500 mb-1">/mês</span>
                                 </div>
 
@@ -404,9 +410,9 @@ export default function LandingPage() {
                                 <div className="border-b border-blue-200 pb-6 mb-6">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-slate-600">Setup White-glove</span>
-                                        <span className="text-slate-900 font-bold text-2xl">R$ 5.000</span>
+                                        <span className="text-slate-900 font-bold text-2xl">Sob Consulta</span>
                                     </div>
-                                    <p className="text-xs text-slate-500">Pagamento único. Setup completo + onboarding dedicado</p>
+                                    <p className="text-xs text-slate-500">Definido conforme escopo e complexidade do projeto</p>
                                 </div>
 
                                 <div className="flex items-end gap-2 mb-6">
