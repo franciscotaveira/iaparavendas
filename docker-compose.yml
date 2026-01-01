@@ -1,39 +1,172 @@
+# ============================================
+# LX FACTORY OS - THE MOTHERSHIP (Full Stack)
+# ============================================
+# Serviços:
+# 1. LX App (Frontend/API)
+# 2. LX Worker (Cérebro/Telegram)
+# 3. Evolution API (WhatsApp)
+# 4. n8n (Automação Visual)
+# 5. Postgres (Banco de Dados Central)
+# 6. Listmonk (E-mail Marketing)
+# 7. Mixpost (Redes Sociais)
+# 8. Caddy (Gateway/SSL)
+# ============================================
+
 version: "3.8"
 
 services:
-  # O APP: Interface de Vendas (Next.js)
-  app:
-    build: .
-    container_name: lx-sales-engine
+  # --------------------------------------------
+  # CORE: LX SYSTEM
+  # --------------------------------------------
+  lx-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    container_name: lx-app
+    restart: unless-stopped
     ports:
-      - "4242:3000"
+      - "3300:3000"
     environment:
-      # MODO LOCAL (LUX-V1)
-      # Conecta ao host (seu Mac) onde o Ollama/LocalAI está rodando
-      # 'host.docker.internal' é a mágica que permite o Docker ver o Mac
-      - LUX_API_URL=http://host.docker.internal:11434/v1
-      - LUX_MODEL_ID=llama3
-      - LUX_API_KEY=lux-internal-key
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/lx_db
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+    networks:
+      - lx-network
+    depends_on:
+      - postgres
+      - evolution-api
 
-      # MODO NUVEM (Opcional - Descomente para testar OpenRouter)
-      # - OPENROUTER_API_KEY=sk-or-v1-....
+  lx-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: lx-worker
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/lx_db
+      - EVOLUTION_API_URL=http://evolution-api:8080
+      - EVOLUTION_API_KEY=${EVOLUTION_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_ADMIN_ID=${TELEGRAM_ADMIN_ID}
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+    networks:
+      - lx-network
+    depends_on:
+      - postgres
 
-    # Monta o código localmente para que edições apareçam sem rebuildar (HMR)
+  # --------------------------------------------
+  # COMMUNICATION LAYER
+  # --------------------------------------------
+  evolution-api:
+    image: atendai/evolution-api:latest
+    container_name: lx-evolution
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://postgres:postgres@postgres:5432/evolution
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY}
+    networks:
+      - lx-network
+    depends_on:
+      - postgres
+
+  listmonk:
+    image: listmonk/listmonk:latest
+    container_name: lx-email
+    restart: unless-stopped
+    ports:
+      - "9900:9000"
+    environment:
+      - LISTMONK_db__host=postgres
+      - LISTMONK_db__port=5432
+      - LISTMONK_db__user=postgres
+      - LISTMONK_db__password=postgres
+      - LISTMONK_db__database=listmonk
+      - LISTMONK_db__ssl_mode=disable
+    networks:
+      - lx-network
+    depends_on:
+      - postgres
+
+  # mixpost:
+  #   image: mixpost/mixpost:latest
+  #   # Mixpost requer configuração mais complexa (Laravel),
+  #   # deixei comentado para ativar num segundo passo.
+
+  # --------------------------------------------
+  # AUTOMATION & DATA
+  # --------------------------------------------
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: lx-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    networks:
+      - lx-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: lx-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      # Criar múltiplos bancos na inicialização exigiria um script,
+      # por padrão ele cria 1. O n8n e Evolution usam o mesmo PG.
     volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db:/docker-entrypoint-initdb.d # Script para criar DBs múltiplos
+    networks:
+      - lx-network
 
-    # Comando de Dev para hot-reload
-    command: npm run dev
+  # --------------------------------------------
+  # GATEWAY
+  # --------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: lx-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      - lx-network
 
-  # O CÉREBRO: OLLAMA (Opcional - Se quiser rodar a IA DENTRO do docker e não no Mac)
-  # Descomente abaixo se quiser isolar 100% (mas pesa 4GB+ de RAM)
-  # brain:
-  #   image: ollama/ollama:latest
-  #   ports:
-  #     - "11434:11434"
-  #   volumes:
-  #     - ollama_data:/root/.ollama
-# volumes:
-#   ollama_data:
+  # --------------------------------------------
+  # MCT-OS COCKPIT (Dashboard Admin)
+  # --------------------------------------------
+  mct-os-cockpit:
+    build:
+      context: .
+      dockerfile: Dockerfile.cockpit
+    container_name: mct-os-cockpit
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - API_URL=http://lx-app:3000
+    networks:
+      - lx-network
+    depends_on:
+      - lx-app
+
+volumes:
+  postgres_data:
+  caddy_data:
+
+networks:
+  lx-network:
+    driver: bridge

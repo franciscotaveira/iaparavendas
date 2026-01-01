@@ -56,6 +56,7 @@ export interface DBMessage {
     confidence_score?: number;
     response_time_ms?: number;
     was_fallback?: boolean;
+    intent_detected?: string;
     created_at?: string;
 }
 

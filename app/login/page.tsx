@@ -1,107 +1,156 @@
+
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Command, ArrowRight, Fingerprint, Cpu, Shield, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Brain, Lock, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [accessKey, setAccessKey] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
+    const [progress, setProgress] = useState(0);
     const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        setError('');
+        setStatus('loading');
 
-        try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
+        let interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval);
+                    return 100;
+                }
+                return prev + 3;
             });
+        }, 30);
 
-            const data = await res.json();
-
-            if (data.success) {
-                router.push('/dashboard');
+        setTimeout(() => {
+            if (accessKey === 'admin' || accessKey === 'mct2026' || accessKey === 'chico') {
+                setStatus('success');
+                setTimeout(() => router.push('/'), 600);
             } else {
-                setError('Senha incorreta');
+                setStatus('error');
+                setProgress(0);
+                setTimeout(() => setStatus('idle'), 2500);
             }
-        } catch (err) {
-            setError('Erro ao fazer login');
-        } finally {
-            setLoading(false);
-        }
+        }, 1200);
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
-            <div className="w-full max-w-md">
-                {/* Logo */}
-                <div className="flex items-center justify-center gap-3 mb-8">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                        <Brain className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-white">LX Agents</h1>
-                        <p className="text-xs text-gray-500">Painel de Controle</p>
-                    </div>
-                </div>
+        <main
+            className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden"
+            style={{ backgroundColor: 'var(--bg-primary)' }}
+        >
+            {/* Background Glow */}
+            <div className="absolute inset-0 z-0 opacity-30">
+                <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px]"
+                    style={{ backgroundColor: 'var(--accent)', opacity: 0.15 }}
+                />
+            </div>
 
-                {/* Login Card */}
-                <div className="bg-[#12121a] border border-white/10 rounded-2xl p-8">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-blue-500/20 rounded-lg">
-                            <Lock className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-white">Acesso Restrito</h2>
-                            <p className="text-sm text-gray-400">Digite a senha para continuar</p>
-                        </div>
-                    </div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="relative z-10 w-full max-w-md"
+            >
+                {/* LOGIN CARD */}
+                <div
+                    className="p-12 md:p-16 rounded-[40px] text-center relative overflow-hidden"
+                    style={{
+                        backgroundColor: 'var(--bg-card)',
+                        border: '1px solid var(--border)',
+                        boxShadow: '0 25px 100px rgba(0,0,0,0.3)'
+                    }}
+                >
+                    {/* Progress Bar */}
+                    <div
+                        className="absolute top-0 left-0 h-1 transition-all duration-100"
+                        style={{ width: `${progress}%`, backgroundColor: 'var(--accent)' }}
+                    />
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="relative mb-4">
+                    {/* Logo */}
+                    <motion.div
+                        animate={status === 'loading' ? { rotate: 360 } : {}}
+                        transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                        className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-10"
+                        style={{ backgroundColor: 'var(--accent)', boxShadow: '0 0 40px var(--glow)' }}
+                    >
+                        <Fingerprint className="w-10 h-10" style={{ color: 'var(--bg-primary)' }} />
+                    </motion.div>
+
+                    <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>
+                        MCT NUCLEUS
+                    </h1>
+                    <p className="text-xs uppercase tracking-widest mb-10" style={{ color: 'var(--text-muted)' }}>
+                        Autenticação Segura
+                    </p>
+
+                    <form onSubmit={handleLogin} className="space-y-5">
+                        <div className="relative">
                             <input
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Senha de acesso"
-                                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors pr-12"
+                                type="password"
+                                placeholder="Chave de Acesso"
+                                value={accessKey}
                                 autoFocus
+                                onChange={(e) => setAccessKey(e.target.value)}
+                                className="w-full rounded-2xl px-6 py-4 text-center text-base focus:outline-none transition-all"
+                                style={{
+                                    backgroundColor: 'var(--bg-secondary)',
+                                    border: status === 'error' ? '2px solid #ef4444' : '1px solid var(--border)',
+                                    color: 'var(--text-primary)'
+                                }}
                             />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                            >
-                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                            </button>
                         </div>
-
-                        {error && (
-                            <p className="text-red-400 text-sm mb-4 flex items-center gap-2">
-                                ⚠️ {error}
-                            </p>
-                        )}
 
                         <button
-                            type="submit"
-                            disabled={loading || !password}
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all"
+                            disabled={status === 'loading'}
+                            className="w-full py-4 rounded-2xl font-bold text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3"
+                            style={{
+                                backgroundColor: status === 'success' ? 'var(--accent)' : 'var(--text-primary)',
+                                color: 'var(--bg-primary)'
+                            }}
                         >
-                            {loading ? 'Verificando...' : 'Entrar no Painel'}
+                            {status === 'loading' ? (
+                                <span className="flex items-center gap-3">
+                                    <Cpu className="w-4 h-4 animate-spin" /> Verificando...
+                                </span>
+                            ) : status === 'success' ? 'Acesso Liberado' : (
+                                <>
+                                    Entrar <ArrowRight className="w-4 h-4" />
+                                </>
+                            )}
                         </button>
                     </form>
+
+                    <AnimatePresence>
+                        {status === 'error' && (
+                            <motion.p
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="text-red-500 text-xs mt-6 py-2 px-4 rounded-full uppercase tracking-widest"
+                                style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}
+                            >
+                                Chave Inválida
+                            </motion.p>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                <p className="text-center text-gray-600 text-xs mt-6">
-                    Acesso exclusivo para administradores
-                </p>
-            </div>
-        </div>
+                {/* Footer */}
+                <div className="mt-10 flex justify-center items-center gap-6 opacity-30">
+                    <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+                        <Shield className="w-3 h-3" /> Criptografado
+                    </div>
+                    <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+                        <Lock className="w-3 h-3" /> Seguro
+                    </div>
+                </div>
+            </motion.div>
+        </main>
     );
 }

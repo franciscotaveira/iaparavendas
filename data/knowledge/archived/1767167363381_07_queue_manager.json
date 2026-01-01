@@ -1,0 +1,262 @@
+{
+    "name": "07 - Queue Manager",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 5
+                        }
+                    ]
+                }
+            },
+            "id": "cron-queue",
+            "name": "Every 5 Minutes",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE walkin_queue SET status = 'expired', updated_at = NOW() WHERE status = 'queued' AND expires_at < NOW() RETURNING id, contact_id;"
+            },
+            "id": "expire-old",
+            "name": "Expire Old Queue Entries",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE walkin_queue SET status = 'no_show', updated_at = NOW() WHERE status = 'notified' AND response_deadline < NOW() RETURNING id, contact_id;"
+            },
+            "id": "timeout-notified",
+            "name": "Timeout Non-Responders",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                400
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT DISTINCT ON (category) q.*, c.phone, c.name, s.name as service_name FROM view_queue_live q JOIN contacts c ON q.contact_id = c.id JOIN services s ON q.service_id = s.id WHERE q.position_in_category = 1 AND NOT EXISTS (SELECT 1 FROM walkin_queue wq WHERE wq.category = q.category AND wq.status = 'notified');"
+            },
+            "id": "get-next",
+            "name": "Get Next in Each Category",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {},
+            "id": "split-notify",
+            "name": "Split",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE walkin_queue SET status = 'notified', notified_at = NOW(), response_deadline = NOW() + INTERVAL '10 minutes', updated_at = NOW() WHERE id = '{{ $json.id }}'::uuid;"
+            },
+            "id": "mark-notified",
+            "name": "Mark Notified",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1120,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"🔔 {{ $json.name || '' }}, sua vez está chegando!\\n\\nVocê tem 10 minutos para confirmar.\\n\\nResponda 'estou indo' para confirmar ou 'desistir' se não puder mais. ⏰\"}}"
+            },
+            "id": "send-notification",
+            "name": "Send Notification",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "agent_logs",
+                "columns": "event_type, contact_id, workflow_name, success"
+            },
+            "id": "log-queue-manager",
+            "name": "Log",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1560,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Every 5 Minutes": {
+            "main": [
+                [
+                    {
+                        "node": "Expire Old Queue Entries",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Timeout Non-Responders",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Expire Old Queue Entries": {
+            "main": [
+                [
+                    {
+                        "node": "Get Next in Each Category",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Timeout Non-Responders": {
+            "main": [
+                [
+                    {
+                        "node": "Get Next in Each Category",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Next in Each Category": {
+            "main": [
+                [
+                    {
+                        "node": "Split",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split": {
+            "main": [
+                [
+                    {
+                        "node": "Mark Notified",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark Notified": {
+            "main": [
+                [
+                    {
+                        "node": "Send Notification",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send Notification": {
+            "main": [
+                [
+                    {
+                        "node": "Log",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Log": {
+            "main": [
+                [
+                    {
+                        "node": "Split",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

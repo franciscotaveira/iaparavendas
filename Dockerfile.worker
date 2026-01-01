@@ -1,0 +1,26 @@
+# ============================================
+# LX FACTORY OS - Worker Dockerfile
+# ============================================
+# Roda o processador de mensagens em background
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build TypeScript (if needed)
+RUN npm run build || true
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 worker
+USER worker
+
+# Start the worker
+CMD ["npx", "tsx", "core/worker/processor.ts"]

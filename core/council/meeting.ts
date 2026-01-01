@@ -6,13 +6,21 @@
 import { generateText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { COUNCIL_AGENTS, CouncilAgent } from './definitions';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Setup Supabase & LLM
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy Supabase initialization - only create client when needed (runtime, not build time)
+let _supabase: SupabaseClient | null = null;
+function getSupabase() {
+    if (!_supabase) {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (!url || !key) {
+            throw new Error('Supabase credentials not configured');
+        }
+        _supabase = createClient(url, key);
+    }
+    return _supabase;
+}
 
 const provider = createOpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
@@ -175,7 +183,7 @@ export class CouncilMeeting {
         // Salvar em tabela de auditoria (lxc_council_logs)
         // Se a tabela não existir, o erro será capturado, mas idealmente criaríamos ela.
         try {
-            await supabase.from('lxc_council_logs').insert({
+            await getSupabase().from('lxc_council_logs').insert({
                 lead_id: leadId,
                 consensus: summary.consensus,
                 score: summary.overallScore,

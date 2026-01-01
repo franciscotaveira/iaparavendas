@@ -1,0 +1,214 @@
+{
+    "name": "05 - Cancel Flow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "cancel-flow",
+                "responseMode": "lastNode"
+            },
+            "id": "webhook-cancel",
+            "name": "Cancel Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT a.id, a.start_at, s.name as service_name, st.name as staff_name FROM appointments a JOIN services s ON a.service_id = s.id JOIN staff st ON a.staff_id = st.id WHERE a.contact_id = '{{ $json.contact_id }}'::uuid AND a.status IN ('tentative', 'confirmed') AND a.start_at > NOW() ORDER BY a.start_at LIMIT 3;"
+            },
+            "id": "find-appointments",
+            "name": "Find Appointments",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.length }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "has-appointment",
+            "name": "Has Appointments?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return {response_message: 'Não encontrei nenhum agendamento futuro no seu nome. 🤔\\n\\nQuer agendar um novo horário?'};"
+            },
+            "id": "no-appointment",
+            "name": "No Appointment",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT cancel_appointment('{{ $input.all()[0].json.id }}'::uuid, 'Cancelado pelo cliente via WhatsApp') as result;"
+            },
+            "id": "cancel-apt",
+            "name": "Cancel Appointment",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                900,
+                400
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const r=JSON.parse($input.first().json.result);\nif(!r.success)return{response_message:'Erro: '+r.error};\nlet msg='Cancelamento feito. ';\nif(r.penalty_applies){msg+='\\n\\n⚠️ Como faltam menos de 24h, nossa política prevê multa de R$'+r.penalty_amount+'.\\n\\nMas a gente entende imprevistos! Quer reagendar?';}else{msg+='✅\\n\\nSem multa porque você cancelou com antecedência. 👍\\n\\nQuer reagendar para outro dia?';}\nreturn{response_message:msg};"
+            },
+            "id": "format-cancel",
+            "name": "Format Cancel",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $('Cancel Webhook').first().json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_message }}\"}}"
+            },
+            "id": "send-wa",
+            "name": "Send WA",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Cancel Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Find Appointments",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Find Appointments": {
+            "main": [
+                [
+                    {
+                        "node": "Has Appointments?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Appointments?": {
+            "main": [
+                [
+                    {
+                        "node": "Cancel Appointment",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "No Appointment",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Cancel Appointment": {
+            "main": [
+                [
+                    {
+                        "node": "Format Cancel",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Cancel": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "No Appointment": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

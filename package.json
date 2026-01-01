@@ -1,7 +1,7 @@
 {
-  "name": "lx-demo-interface",
-  "version": "0.1.0",
-  "private": true,
+  "name": "mct-os",
+  "version": "2.0.0",
+  "description": "My Code Team OS - Unified Intelligence & Adaptive Interface",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,17 +19,23 @@
     "dotenv": "^17.2.3",
     "framer-motion": "^11.3.19",
     "lucide-react": "^0.417.0",
+    "mammoth": "^1.11.0",
     "next": "14.2.5",
     "openai": "^4.53.2",
+    "pdf-parse": "^2.4.5",
+    "phaser": "^3.90.0",
     "python-shell": "^5.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^9.0.1",
     "react-qr-code": "^2.0.18",
     "tailwind-merge": "^2.4.0",
-    "zod": "^3.23.8"
+    "telegraf": "^4.16.3",
+    "zod": "^3.23.8",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@google/jules": "^0.1.42",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

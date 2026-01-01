@@ -1,0 +1,81 @@
+{
+    "name": "99 - Health Check",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "health",
+                "responseMode": "lastNode"
+            },
+            "id": "webhook-health",
+            "name": "Health Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT NOW() as db_time, count(*) as contacts_count FROM contacts;"
+            },
+            "id": "check-db",
+            "name": "Check DB Connection",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "return {\n  status: 'ok',\n  service: 'Lx AgendaOps',\n  version: '2.0.1',\n  timestamp: new Date().toISOString(),\n  database: {\n    connected: true,\n    server_time: $input.first().json.db_time,\n    contacts: $input.first().json.contacts_count\n  }\n};"
+            },
+            "id": "format-response",
+            "name": "Format Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Health Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Check DB Connection",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check DB Connection": {
+            "main": [
+                [
+                    {
+                        "node": "Format Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

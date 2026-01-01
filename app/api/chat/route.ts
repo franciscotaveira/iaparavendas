@@ -23,12 +23,65 @@ import { trackExternalInteraction } from '@/core/orchestrator';
 import { saveMessage, createConversation, getConversationBySessionId } from '@/lib/supabase';
 import { processForRapport, type RapportResult } from '@/core/rapport/engine';
 import { PresenceCore, EmotionalState } from '@/core/consciousness';
+import { getAgentByRole, formatAgentPrompt } from '@/core/agents';
 import { createClient } from '@supabase/supabase-js';
+import fs from 'fs';
+import path from 'path';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Helper: Tenta carregar agente evoluído do JSON local (Sistema Antigravity)
+function getEvolvedAgent(role: string) {
+    try {
+        const dbPath = path.join(process.cwd(), 'data', 'agents_db.json');
+        if (fs.existsSync(dbPath)) {
+            const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+            if (db[role]) {
+                const evolved = db[role];
+                return {
+                    ...evolved,
+                    title: evolved.name, // Compatibilidade
+                    description: "Evolved Agent",
+                    category: 'sales'
+                };
+            }
+        }
+    } catch (e) {
+        // Silencioso em prod
+    }
+    // Fallback para estático
+    return getAgentByRole(role as Parameters<typeof getAgentByRole>[0]);
+}
+
+// Helper: Carrega base de conhecimento (RAG Lite)
+function loadKnowledgeBase(): string {
+    try {
+        const knowledgeDir = path.join(process.cwd(), 'data', 'knowledge');
+        if (!fs.existsSync(knowledgeDir)) return '';
+
+        const files = fs.readdirSync(knowledgeDir).filter(f => f.endsWith('.md') || f.endsWith('.txt'));
+        let content = '';
+
+        files.forEach(file => {
+            content += `\n---\nFONTE: ${file}\n` + fs.readFileSync(path.join(knowledgeDir, file), 'utf8') + '\n';
+        });
+
+        return content ? `\n\n## 📚 BASE DE CONHECIMENTO (Fatos Reais da Empresa)\nUse EXCLUSIVAMENTE estas informações para responder sobre preços, planos e empresa. Se não estiver aqui, diga que não sabe:\n${content}` : '';
+    } catch (e) {
+        return '';
+    }
+}
+
+// Lazy Supabase initialization (prevents build-time errors)
+let _supabase: ReturnType<typeof createClient> | null = null;
+function getSupabase() {
+    if (!_supabase) {
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        if (url && key) {
+            _supabase = createClient(url, key);
+        }
+    }
+    return _supabase;
+}
 
 // Inicializar PRESENCE CORE global
 const presenceCore = new PresenceCore({
@@ -209,6 +262,7 @@ export async function POST(req: Request) {
     const companyTone = sanitizeInput(json.tone || '');
     const companyOffer = sanitizeInput(json.offer || ''); // Produtos
     const companyRules = sanitizeInput(json.rules || ''); // Regras personalizadas
+    const forcedAgentRole = sanitizeInput(json.forced_agent_role || ''); // Sobrescrita para treinamento
 
     const lastUserMessage = messages.filter((m: Message) => m.role === 'user').pop();
     const lastUserContent = lastUserMessage?.content || '';
@@ -277,6 +331,8 @@ export async function POST(req: Request) {
     // PRESENCE CORE - Consciência Comercial
     // ============================================
     let presenceContext: Awaited<ReturnType<PresenceCore['processInteraction']>> | null = null;
+    let councilDirectives = '';
+    let legacyInstruction = '';
 
     try {
         // Converter histórico para formato PRESENCE
@@ -303,17 +359,17 @@ export async function POST(req: Request) {
 
         // A. Carregar Diretrizes do Conselho (Governança Diária)
         // Se houver uma "Lei do Dia" ativa, ela sobrepõe comportamentos padrão
-        let councilDirectives = '';
         try {
             // Função simplificada para pegar direto do banco ou cache
-            const { data: directive } = await supabase
-                .rpc('get_active_directive');
+            const { data: directive } = await getSupabase()
+                ?.rpc('get_active_directive') ?? { data: null };
 
-            if (directive && directive[0]) {
+            if (directive && (directive as any)[0]) {
+                const d = (directive as any)[0];
                 councilDirectives = `
                  📢 DIRETRIZ ESTRATÉGICA DO DIA (DO CONSELHO):
-                 FOCO: ${directive[0].global_focus}
-                 AJUSTE DE TOM: ${directive[0].tone_modifier}
+                 FOCO: ${d.global_focus}
+                 AJUSTE DE TOM: ${d.tone_modifier}
                  (Esta diretriz tem prioridade máxima sobre o estilo padrão).
                  `;
             }
@@ -323,7 +379,6 @@ export async function POST(req: Request) {
         }
 
         // B. Configurar Modo Legacy (1960s Mode) se necessário
-        let legacyInstruction = '';
         if (presenceContext.legacyMode) {
             legacyInstruction = `
             🎞️ MODO LEGACY ATIVO (Detecção de Senioridade - 1960/70s):
@@ -418,7 +473,29 @@ export async function POST(req: Request) {
 
         let systemPrompt = '';
 
-        if (companyName !== 'LXC' || onboardingFinished || messages.length > 20) {
+        if (forcedAgentRole) {
+            // 0. TRAIN MODE: Forçar comportamento de agente específico do Registry (Evoluído se disponível)
+            const agent = getEvolvedAgent(forcedAgentRole as any);
+            console.log(`[TRAIN] Agente Carregado: ${agent?.name} (Evolved: ${agent?.description === 'Evolved Agent'})`);
+            if (agent) {
+                const agentContext = {
+                    session: {
+                        lead_name: 'Lead Teste',
+                        lead_niche: detectedNiche,
+                        current_intent: intent,
+                        message_count: messages.length,
+                        risk_level: risk.level
+                    },
+                    message: lastUserContent
+                };
+                systemPrompt = formatAgentPrompt(agent, agentContext as any);
+                console.log(`[TRAIN] Forced Agent: ${agent.name} (${agent.role})`);
+            } else {
+                systemPrompt = ONBOARDING_PROMPT; // Fallback
+                console.warn(`[TRAIN] Agent ${forcedAgentRole} not found, falling back.`);
+            }
+
+        } else if (companyName !== 'LXC' || onboardingFinished || messages.length > 20) {
             // Demo Mode - use Kernel com Niche Pack
             let contextSnapshot = {
                 niche: detectedNiche || "Genérico",

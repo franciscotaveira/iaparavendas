@@ -1,0 +1,50 @@
+{
+    "name": "00 - WhatsApp Validation Fixed",
+    "active": true,
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "whatsapp",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                0,
+                0
+            ],
+            "id": "webhook-validation-fixed",
+            "name": "Webhook Validation"
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "={{ $json.query['hub.challenge'] }}",
+                "options": {}
+            },
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                220,
+                0
+            ],
+            "id": "respond-challenge-fixed",
+            "name": "Respond Challenge"
+        }
+    ],
+    "connections": {
+        "Webhook Validation": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Challenge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

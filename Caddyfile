@@ -1,0 +1,41 @@
+# ============================================
+# MYCODINGTEAM: LX CONSCIOUSNESS OS
+# ============================================
+
+# Suporte ao IP (Temporário para propagação)
+:80 {
+    handle /* {
+        reverse_proxy lx-app:3000
+    }
+}
+
+# Domínio Principal
+mycodingteam.com {
+    handle /* {
+        reverse_proxy lx-app:3000
+    }
+}
+
+www.mycodingteam.com {
+    redir https://mycodingteam.com{uri} permanent
+}
+
+# Automações (n8n)
+n8n.mycodingteam.com {
+    reverse_proxy n8n:5678
+}
+
+# WhatsApp (Evolution API)
+wa.mycodingteam.com {
+    reverse_proxy evolution-api:8080
+}
+
+# E-mail Marketing (Listmonk)
+mail.mycodingteam.com {
+    reverse_proxy listmonk:9000
+}
+
+# Cockpit Antigravity (MCT-OS)
+cockpit.mycodingteam.com {
+    reverse_proxy mct-os-cockpit:80
+}

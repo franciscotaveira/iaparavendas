@@ -1,0 +1,220 @@
+'use client';
+
+import React, { useEffect, useRef } from 'react';
+
+// Phaser precisa ser importado dinamicamente no client-side
+let Phaser: typeof import('phaser') | null = null;
+
+// ═══════════════════════════════════════════════════
+// LX CONSCIOUSNESS HQ — VIRTUAL OFFICE
+// Phaser-based AI Management Interface
+// ═══════════════════════════════════════════════════
+
+interface AgentConfig {
+    id: string;
+    name: string;
+    role: string;
+    x: number;
+    y: number;
+    color: number;
+    status: 'idle' | 'working' | 'thinking';
+}
+
+interface SectorConfig {
+    id: string;
+    name: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: number;
+    url: string;
+}
+
+const AGENTS: AgentConfig[] = [
+    { id: 'ceo', name: 'CEO Agent', role: 'Strategic AI', x: 200, y: 150, color: 0xf59e0b, status: 'working' },
+    { id: 'cto', name: 'CTO Agent', role: 'Tech Lead', x: 400, y: 150, color: 0x3b82f6, status: 'working' },
+    { id: 'worker', name: 'Worker Prime', role: 'Backend Engine', x: 150, y: 350, color: 0x10b981, status: 'working' },
+    { id: 'whatsapp', name: 'WhatsApp Agent', role: 'Sales SDR', x: 350, y: 350, color: 0x22c55e, status: 'idle' },
+    { id: 'llm', name: 'LLM Router', role: 'AI Intelligence', x: 550, y: 350, color: 0x8b5cf6, status: 'thinking' },
+    { id: 'rag', name: 'Memory RAG', role: 'Knowledge Base', x: 550, y: 500, color: 0x06b6d4, status: 'idle' },
+];
+
+const SECTORS: SectorConfig[] = [
+    { id: 'command', name: 'Command Center', x: 300, y: 100, width: 250, height: 120, color: 0xf59e0b, url: '/dashboard' },
+    { id: 'engineering', name: 'Engineering Lab', x: 100, y: 280, width: 200, height: 150, color: 0x3b82f6, url: '/dashboard' },
+    { id: 'sales', name: 'Sales Floor', x: 320, y: 280, width: 180, height: 150, color: 0x10b981, url: '/dashboard' },
+    { id: 'intelligence', name: 'AI Research', x: 520, y: 280, width: 180, height: 200, color: 0x8b5cf6, url: '/dashboard' },
+];
+
+export default function NeuralOfficePage() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const gameRef = useRef<Phaser.Game | null>(null);
+
+    useEffect(() => {
+        // Importar Phaser dinamicamente (apenas no client)
+        import('phaser').then((PhaserModule) => {
+            const Phaser = PhaserModule.default;
+
+            // Definir a classe Scene DENTRO do callback para garantir que Phaser existe
+            class MainOfficeScene extends Phaser.Scene {
+                private agents: Map<string, Phaser.GameObjects.Container> = new Map();
+                private statusTexts: Map<string, Phaser.GameObjects.Text> = new Map();
+
+                constructor() {
+                    super({ key: 'MainOffice' });
+                }
+
+                create() {
+                    this.cameras.main.setBackgroundColor(0x030308);
+                    this.createGrid();
+                    SECTORS.forEach(sector => this.createSector(sector));
+                    AGENTS.forEach(agent => this.createAgent(agent));
+
+                    this.add.text(20, 20, 'MY CODE TEAM - NEURAL OFFICE', { fontSize: '24px', color: '#00f2ff', fontFamily: 'monospace', fontStyle: 'bold' });
+                    this.add.text(20, 50, 'Click on agents or sectors to interact', { fontSize: '14px', color: '#ffffff80', fontFamily: 'monospace' });
+                    this.add.text(600, 20, '● SYSTEM ONLINE', { fontSize: '14px', color: '#10b981', fontFamily: 'monospace' });
+
+                    this.time.addEvent({ delay: 4000, callback: () => this.animateRandomAgent(), loop: true });
+                    this.time.addEvent({ delay: 3000, callback: () => this.updateRandomAgentStatus(), loop: true });
+                }
+
+                private createGrid() {
+                    const graphics = this.add.graphics();
+                    graphics.lineStyle(1, 0x00f2ff, 0.05);
+                    for (let x = 0; x < 800; x += 40) graphics.lineBetween(x, 0, x, 600);
+                    for (let y = 0; y < 600; y += 40) graphics.lineBetween(0, y, 800, y);
+                }
+
+                private createSector(config: SectorConfig) {
+                    const { x, y, width, height, color, name, url } = config;
+                    const bg = this.add.graphics();
+                    bg.fillStyle(color, 0.1);
+                    bg.fillRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+                    bg.lineStyle(2, color, 0.3);
+                    bg.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+
+                    this.add.text(x, y - height / 2 + 20, name, { fontSize: '14px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold' }).setOrigin(0.5);
+
+                    const zone = this.add.zone(x, y, width, height).setInteractive({ cursor: 'pointer' });
+                    zone.on('pointerover', () => {
+                        bg.clear(); bg.fillStyle(color, 0.2); bg.fillRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+                        bg.lineStyle(3, color, 0.6); bg.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+                    });
+                    zone.on('pointerout', () => {
+                        bg.clear(); bg.fillStyle(color, 0.1); bg.fillRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+                        bg.lineStyle(2, color, 0.3); bg.strokeRoundedRect(x - width / 2, y - height / 2, width, height, 16);
+                    });
+                    zone.on('pointerdown', () => window.open(url, '_blank'));
+                }
+
+                private createAgent(config: AgentConfig) {
+                    const { id, name, role, x, y, color, status } = config;
+                    const container = this.add.container(x, y);
+
+                    const glow = this.add.graphics(); glow.fillStyle(color, 0.3); glow.fillCircle(0, 0, 35); container.add(glow);
+                    const body = this.add.graphics(); body.fillStyle(color, 1); body.fillCircle(0, 0, 25); body.lineStyle(3, 0xffffff, 0.8); body.strokeCircle(0, 0, 25); container.add(body);
+                    container.add(this.add.text(0, 0, this.getAgentIcon(role), { fontSize: '20px' }).setOrigin(0.5));
+                    container.add(this.add.text(0, -45, name, { fontSize: '12px', color: '#ffffff', fontFamily: 'monospace', backgroundColor: '#000000cc', padding: { x: 6, y: 3 } }).setOrigin(0.5));
+
+                    const statusIndicator = this.add.graphics(); statusIndicator.fillStyle(this.getStatusColor(status), 1); statusIndicator.fillCircle(20, -15, 6); container.add(statusIndicator);
+                    const statusText = this.add.text(0, 40, status.toUpperCase(), { fontSize: '10px', color: this.getStatusHexColor(status), fontFamily: 'monospace' }).setOrigin(0.5);
+                    this.statusTexts.set(id, statusText); container.add(statusText);
+
+                    container.setSize(60, 60).setInteractive({ cursor: 'pointer' });
+                    container.on('pointerover', () => this.tweens.add({ targets: container, scaleX: 1.1, scaleY: 1.1, duration: 200 }));
+                    container.on('pointerout', () => this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 200 }));
+                    container.on('pointerdown', () => this.showAgentModal(config));
+
+                    this.tweens.add({ targets: container, y: y - 5, duration: 1500 + Math.random() * 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+                    this.agents.set(id, container);
+                }
+
+                private getAgentIcon(role: string): string {
+                    const icons: Record<string, string> = { 'Strategic AI': '👑', 'Tech Lead': '💻', 'Backend Engine': '⚙️', 'Sales SDR': '📱', 'AI Intelligence': '🧠', 'Knowledge Base': '📚' };
+                    return icons[role] || '🤖';
+                }
+
+                private getStatusColor(status: string): number {
+                    // Phaser expects hex numbers (0xRRGGBB), not strings ('#RRGGBB')
+                    const colors: any = { idle: 0x6b7280, working: 0x10b981, thinking: 0xf59e0b };
+                    return colors[status] || 0x6b7280;
+                }
+
+                private getStatusHexColor(status: string): string {
+                    const colors: any = { idle: '#6b7280', working: '#10b981', thinking: '#f59e0b' };
+                    return colors[status] || '#6b7280';
+                }
+
+                private animateRandomAgent() {
+                    const agentIds = Array.from(this.agents.keys());
+                    if (agentIds.length === 0) return;
+                    const randomId = agentIds[Math.floor(Math.random() * agentIds.length)];
+                    const agent = this.agents.get(randomId);
+                    if (agent) {
+                        const originalX = agent.x; const originalY = agent.y;
+                        this.tweens.add({ targets: agent, x: originalX + (Math.random() - 0.5) * 60, y: originalY + (Math.random() - 0.5) * 40, duration: 1500, ease: 'Power2', onComplete: () => this.tweens.add({ targets: agent, x: originalX, y: originalY, duration: 1500, ease: 'Power2' }) });
+                    }
+                }
+
+                private updateRandomAgentStatus() {
+                    if (this.statusTexts.size === 0) return;
+                    const statuses = ['idle', 'working', 'thinking'];
+                    const agentIds = Array.from(this.statusTexts.keys());
+                    const randomId = agentIds[Math.floor(Math.random() * agentIds.length)];
+                    const statusText = this.statusTexts.get(randomId);
+                    if (statusText) {
+                        const newStatus = statuses[Math.floor(Math.random() * statuses.length)] as any;
+                        statusText.setText(newStatus.toUpperCase());
+                        statusText.setColor(this.getStatusHexColor(newStatus));
+                    }
+                }
+
+                private showAgentModal(agent: AgentConfig) {
+                    const overlay = this.add.graphics(); overlay.fillStyle(0x000000, 0.8); overlay.fillRect(0, 0, 800, 600);
+                    overlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, 800, 600), Phaser.Geom.Rectangle.Contains);
+
+                    const modal = this.add.graphics(); modal.fillStyle(0x0a0a14, 1); modal.fillRoundedRect(200, 150, 400, 300, 20);
+                    modal.lineStyle(2, agent.color, 0.5); modal.strokeRoundedRect(200, 150, 400, 300, 20);
+
+                    const objs = [
+                        overlay, modal,
+                        this.add.text(400, 200, this.getAgentIcon(agent.role), { fontSize: '48px' }).setOrigin(0.5),
+                        this.add.text(400, 260, agent.name, { fontSize: '24px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold' }).setOrigin(0.5),
+                        this.add.text(400, 290, agent.role, { fontSize: '14px', color: '#ffffff80', fontFamily: 'monospace' }).setOrigin(0.5),
+                        this.add.text(400, 330, `Status: ${agent.status.toUpperCase()}`, { fontSize: '16px', color: this.getStatusHexColor(agent.status), fontFamily: 'monospace' }).setOrigin(0.5)
+                    ];
+
+                    const closeBtn = this.add.text(400, 400, '[ CLOSE ]', { fontSize: '14px', color: '#ffffff', fontFamily: 'monospace', backgroundColor: '#ffffff20', padding: { x: 20, y: 10 } }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
+                    closeBtn.on('pointerdown', () => objs.concat(closeBtn).forEach(o => o.destroy()));
+                }
+            }
+
+            if (containerRef.current && !gameRef.current) {
+                const config: Phaser.Types.Core.GameConfig = {
+                    type: Phaser.AUTO,
+                    parent: containerRef.current,
+                    width: 800,
+                    height: 600,
+                    backgroundColor: '#030308',
+                    scene: [MainOfficeScene],
+                    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }
+                };
+                gameRef.current = new Phaser.Game(config);
+            }
+        });
+
+        return () => {
+            if (gameRef.current) {
+                gameRef.current.destroy(true);
+                gameRef.current = null;
+            }
+        };
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-[#030308] flex items-center justify-center">
+            <div ref={containerRef} className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl" style={{ width: 800, height: 600 }} />
+        </div>
+    );
+}

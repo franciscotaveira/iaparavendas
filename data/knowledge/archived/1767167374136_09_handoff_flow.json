@@ -1,0 +1,159 @@
+{
+    "name": "09 - Handoff Flow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "handoff-flow",
+                "responseMode": "lastNode"
+            },
+            "id": "webhook-handoff",
+            "name": "Handoff Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "handoff_queue",
+                "columns": "conversation_id, contact_id, reason, trigger_type, priority"
+            },
+            "id": "create-handoff",
+            "name": "Create Handoff",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE conversations SET status = 'handoff', updated_at = NOW() WHERE id = '{{ $('Handoff Webhook').first().json.conversation_id }}'::uuid;"
+            },
+            "id": "update-conv",
+            "name": "Update Conversation",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $('Handoff Webhook').first().json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"Entendi que você precisa de uma ajuda mais especial. 💜\\n\\nVou chamar uma das nossas atendentes para conversar com você.\\n\\nEm instantes alguém vai te responder, tá? 🙏\"}}"
+            },
+            "id": "send-wa",
+            "name": "Send WA",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                900,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "agent_logs",
+                "columns": "event_type, conversation_id, contact_id, workflow_name, output_data, success"
+            },
+            "id": "log-handoff",
+            "name": "Log Handoff",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1120,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Handoff Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Create Handoff",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create Handoff": {
+            "main": [
+                [
+                    {
+                        "node": "Update Conversation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Conversation": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send WA": {
+            "main": [
+                [
+                    {
+                        "node": "Log Handoff",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

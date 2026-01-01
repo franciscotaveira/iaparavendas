@@ -1,0 +1,292 @@
+{
+    "name": "03 - Booking Flow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "booking-flow",
+                "responseMode": "lastNode"
+            },
+            "id": "webhook-booking",
+            "name": "Booking Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.service_id }}",
+                            "rightValue": "unknown",
+                            "operator": {
+                                "type": "string",
+                                "operation": "notEquals"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "check-service",
+            "name": "Has Service?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return {...$input.first().json, response_message: 'Qual serviço você gostaria de agendar?\\n\\n💇 Cabelo: escova lisa, escova modelada, hidratação, penteado, tranças\\n💅 Unhas: manicure, pedicure, gel mãos+pés\\n💄 Make: maquiagem', awaiting: 'service'};"
+            },
+            "id": "ask-service",
+            "name": "Ask Service",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                680,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.date }}",
+                            "operator": {
+                                "type": "exists",
+                                "operation": "exists"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "check-date",
+            "name": "Has Date?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                680,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "let d = $input.first().json.date || new Date(Date.now()+86400000).toISOString().split('T')[0];\nif(d==='hoje')d=new Date().toISOString().split('T')[0];\nif(d.includes('amanha'))d=new Date(Date.now()+86400000).toISOString().split('T')[0];\nreturn {...$input.first().json, target_date: d};"
+            },
+            "id": "parse-date",
+            "name": "Parse Date",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM find_available_slots('{{ $json.service_id }}', '{{ $json.target_date }}'::date, NULL, 3);"
+            },
+            "id": "find-slots",
+            "name": "Find Slots",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1120,
+                400
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const slots=$input.all().map(i=>i.json);const inp=$('Parse Date').first().json;\nif(!slots.length)return{...inp,response_message:'Poxa, não encontrei horários para esse dia. 😔\\n\\nQuer outro dia?',awaiting:'date'};\nlet msg='Achei esses horários:\\n\\n';['A','B','C'].forEach((l,i)=>{if(slots[i]){const d=new Date(slots[i].slot_start);msg+=l+') '+d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' com '+slots[i].staff_name+'\\n';}});\nmsg+='\\nQual prefere? A, B ou C 😊';return{...inp,slots,response_message:msg,awaiting:'slot_choice'};"
+            },
+            "id": "format-slots",
+            "name": "Format Slots",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT create_appointment('{{ $json.contact_id }}'::uuid, '{{ $json.conversation_id }}'::uuid, '{{ $json.slots[0].staff_id }}', '{{ $json.service_id }}', '{{ $json.slots[0].slot_start }}'::timestamptz) as appointment_id;"
+            },
+            "id": "create-apt",
+            "name": "Create Appointment",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1560,
+                400
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const s=$('Format Slots').first().json.slots[0];const d=new Date(s.slot_start);\nreturn{response_message:'Prontinho! ✅\\n\\n📅 '+d.toLocaleDateString('pt-BR')+'\\n⏰ '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'\\n👩 Com '+s.staff_name+'\\n\\nVou te lembrar! 💜'};"
+            },
+            "id": "confirm",
+            "name": "Confirmation",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1780,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $('Booking Webhook').first().json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_message }}\"}}"
+            },
+            "id": "send-wa",
+            "name": "Send WA",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2000,
+                400
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Booking Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Has Service?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Service?": {
+            "main": [
+                [
+                    {
+                        "node": "Has Date?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Ask Service",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Date?": {
+            "main": [
+                [
+                    {
+                        "node": "Parse Date",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Ask Service",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parse Date": {
+            "main": [
+                [
+                    {
+                        "node": "Find Slots",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Find Slots": {
+            "main": [
+                [
+                    {
+                        "node": "Format Slots",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Slots": {
+            "main": [
+                [
+                    {
+                        "node": "Create Appointment",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create Appointment": {
+            "main": [
+                [
+                    {
+                        "node": "Confirmation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Confirmation": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

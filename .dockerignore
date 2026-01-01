@@ -1,0 +1,44 @@
+# ============================================
+# LX FACTORY OS - Docker Ignore
+# ============================================
+
+# Dependencies
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment (não copiar secrets para a imagem)
+.env
+.env.local
+.env.production
+.env*.local
+
+# Logs
+logs
+*.log
+
+# Tests
+coverage
+.nyc_output
+
+# Misc
+README.md
+*.md
+docs/

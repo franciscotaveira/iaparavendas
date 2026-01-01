@@ -1,0 +1,585 @@
+{
+    "name": "01 - Inbound WhatsApp Router",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "whatsapp",
+                "responseMode": "responseNode"
+            },
+            "id": "webhook-node",
+            "name": "WhatsApp Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "OK"
+            },
+            "id": "response-node",
+            "name": "Respond 200",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.entry[0].changes[0].value.messages }}",
+                            "operator": {
+                                "type": "exists",
+                                "operation": "exists"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "filter-messages",
+            "name": "Has Messages?",
+            "type": "n8n-nodes-base.filter",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const entry = $input.first().json.entry[0];\nconst change = entry.changes[0].value;\nconst message = change.messages[0];\nconst contact = change.contacts[0];\nreturn {\n  phone: message.from,\n  wa_message_id: message.id,\n  timestamp: new Date(parseInt(message.timestamp) * 1000).toISOString(),\n  message_type: message.type,\n  content: message.text?.body || message.interactive?.button_reply?.title || message.interactive?.list_reply?.title || '[mídia não suportada]',\n  contact_name: contact.profile?.name || null,\n  phone_number_id: change.metadata.phone_number_id\n};"
+            },
+            "id": "normalize-payload",
+            "name": "Normalize Payload",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "upsert",
+                "schema": "public",
+                "table": "contacts",
+                "columns": "phone, name",
+                "conflictColumns": "phone"
+            },
+            "id": "upsert-contact",
+            "name": "Upsert Contact",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1120,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "WITH contact AS (SELECT id FROM contacts WHERE phone = '{{ $json.phone }}'), existing_conv AS (SELECT id FROM conversations WHERE contact_id = (SELECT id FROM contact) AND status = 'open' ORDER BY created_at DESC LIMIT 1), new_conv AS (INSERT INTO conversations (contact_id, status) SELECT id, 'open' FROM contact WHERE NOT EXISTS (SELECT 1 FROM existing_conv) RETURNING id) SELECT COALESCE((SELECT id FROM existing_conv), (SELECT id FROM new_conv)) as conversation_id, (SELECT id FROM contact) as contact_id;"
+            },
+            "id": "get-conversation",
+            "name": "Get Conversation",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "messages",
+                "columns": "conversation_id, direction, content, wa_message_id"
+            },
+            "id": "insert-message",
+            "name": "Insert Message",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1560,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:5678/webhook/intent-classifier",
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "message",
+                            "value": "={{ $json.content }}"
+                        },
+                        {
+                            "name": "conversation_id",
+                            "value": "={{ $('Get Conversation').item.json.conversation_id }}"
+                        },
+                        {
+                            "name": "contact_id",
+                            "value": "={{ $('Get Conversation').item.json.contact_id }}"
+                        },
+                        {
+                            "name": "phone",
+                            "value": "={{ $json.phone }}"
+                        }
+                    ]
+                }
+            },
+            "id": "call-intent",
+            "name": "Call Intent Classifier",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1780,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "rules": [
+                        {
+                            "outputKey": "booking",
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.intent }}",
+                                        "rightValue": "booking",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "outputKey": "queue",
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.intent }}",
+                                        "rightValue": "queue",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "outputKey": "cancel",
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.intent }}",
+                                        "rightValue": "cancel",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "outputKey": "handoff",
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.intent }}",
+                                        "rightValue": "handoff",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "outputKey": "checkin",
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.intent }}",
+                                        "rightValue": "checkin",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "outputKey": "info",
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.intent }}",
+                                        "rightValue": "info",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "fallbackOutput": "greeting"
+                }
+            },
+            "id": "switch-intent",
+            "name": "Route by Intent",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3,
+            "position": [
+                2000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:5678/webhook/booking-flow",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json) }}"
+            },
+            "id": "call-booking",
+            "name": "To Booking Flow",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2220,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:5678/webhook/queue-flow",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json) }}"
+            },
+            "id": "call-queue",
+            "name": "To Queue Flow",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2220,
+                220
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:5678/webhook/cancel-flow",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json) }}"
+            },
+            "id": "call-cancel",
+            "name": "To Cancel Flow",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2220,
+                340
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:5678/webhook/handoff-flow",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json) }}"
+            },
+            "id": "call-handoff",
+            "name": "To Handoff Flow",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2220,
+                460
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:5678/webhook/checkin-flow",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify($json) }}"
+            },
+            "id": "call-checkin",
+            "name": "To Checkin Flow",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2220,
+                520
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return {...$input.first().json, response_message: 'Oi! 👋\\n\\nSou a assistente do Haven. Posso ajudar com:\\n📅 Agendamento\\n⏱️ Fila (agora)\\nℹ️ Informações\\n\\nO que você precisa?'};"
+            },
+            "id": "gen-response",
+            "name": "Generate Response",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2220,
+                640
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_message }}\"}}"
+            },
+            "id": "send-wa",
+            "name": "Send WhatsApp",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2440,
+                640
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "agent_logs",
+                "columns": "event_type, conversation_id, contact_id, workflow_name, success"
+            },
+            "id": "log-event",
+            "name": "Log Event",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                2660,
+                640
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "WhatsApp Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Respond 200",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Has Messages?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Messages?": {
+            "main": [
+                [
+                    {
+                        "node": "Normalize Payload",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Normalize Payload": {
+            "main": [
+                [
+                    {
+                        "node": "Upsert Contact",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upsert Contact": {
+            "main": [
+                [
+                    {
+                        "node": "Get Conversation",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Conversation": {
+            "main": [
+                [
+                    {
+                        "node": "Insert Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Insert Message": {
+            "main": [
+                [
+                    {
+                        "node": "Call Intent Classifier",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Call Intent Classifier": {
+            "main": [
+                [
+                    {
+                        "node": "Route by Intent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Route by Intent": {
+            "main": [
+                [
+                    {
+                        "node": "To Booking Flow",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "To Queue Flow",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "To Cancel Flow",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "To Handoff Flow",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "To Checkin Flow",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Generate Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Generate Response",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate Response": {
+            "main": [
+                [
+                    {
+                        "node": "Send WhatsApp",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send WhatsApp": {
+            "main": [
+                [
+                    {
+                        "node": "Log Event",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

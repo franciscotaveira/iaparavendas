@@ -18,7 +18,8 @@ import {
     BarChart3,
     Smartphone,
     ClipboardList,
-    MessageCircle
+    MessageCircle,
+    Sword
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -122,6 +123,9 @@ export default function DashboardLayout({
                             <BrainCircuit className="w-4 h-4 group-hover:animate-pulse" />
                             Consultar o Conselho
                         </button>
+
+                        <NavItem href="/dashboard/training" icon={<Sword />} label="Training Dojo" onClick={() => setIsSidebarOpen(false)} />
+
                         <NavItem href="/dashboard/marketing" icon={<BarChart3 />} label="Marketing Ops" onClick={() => setIsSidebarOpen(false)} />
                         <NavItem href="/dashboard/tasks" icon={<CheckSquare />} label="Tarefas Internas" onClick={() => setIsSidebarOpen(false)} />
                     </div>

@@ -1,0 +1,42 @@
+# ============================================
+# LX FACTORY OS - Caddy Configuration
+# ============================================
+# Reverse Proxy com SSL Automático (Let's Encrypt)
+# 
+# Substitua {$DOMAIN} pelo seu domínio real antes de usar
+# Exemplo: lxfactory.com.br
+# ============================================
+
+# Para desenvolvimento local (sem SSL)
+:80 {
+    # Rota principal -> Next.js App
+    handle /api/* {
+        reverse_proxy lx-app:3000
+    }
+    
+    handle {
+        reverse_proxy lx-app:3000
+    }
+}
+
+# Para produção (com SSL automático)
+# Descomente e configure quando tiver domínio:
+#
+# {$DOMAIN} {
+#     # Next.js App (Frontend + API)
+#     handle /api/* {
+#         reverse_proxy lx-app:3000
+#     }
+#     
+#     handle {
+#         reverse_proxy lx-app:3000
+#     }
+# }
+# 
+# n8n.{$DOMAIN} {
+#     reverse_proxy n8n:5678
+# }
+# 
+# wa.{$DOMAIN} {
+#     reverse_proxy evolution-api:8080
+# }

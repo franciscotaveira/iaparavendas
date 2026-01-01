@@ -1,0 +1,247 @@
+{
+    "name": "10 - Checkin Flow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "checkin-flow",
+                "responseMode": "lastNode"
+            },
+            "id": "webhook-checkin",
+            "name": "Checkin Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM walkin_queue WHERE contact_id = '{{ $json.contact_id }}'::uuid AND status = 'notified' AND response_deadline > NOW();"
+            },
+            "id": "check-queue-status",
+            "name": "Check Queue Status",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.length }}",
+                            "rightValue": 0,
+                            "operator": {
+                                "type": "number",
+                                "operation": "gt"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "is-valid-checkin",
+            "name": "Is Valid Checkin?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE walkin_queue SET status = 'checked_in', checked_in_at = NOW(), updated_at = NOW() WHERE id = '{{ $input.first().json.id }}'::uuid RETURNING position_global;"
+            },
+            "id": "confirm-checkin",
+            "name": "Confirm Checkin",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                900,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "return {response_message: 'Perfeito! 🎉\\n\\nTe esperamos no Haven. Pode vir que sua vez está garantida!'};"
+            },
+            "id": "msg-success",
+            "name": "Success Message",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return {response_message: 'Ops! Não encontrei sua vez na fila ou seu tempo expirou. 😔\\n\\nQuer entrar na fila novamente?'};"
+            },
+            "id": "msg-fail",
+            "name": "Fail Message",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $('Checkin Webhook').first().json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.response_message }}\"}}"
+            },
+            "id": "send-wa",
+            "name": "Send WA",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1340,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "agent_logs",
+                "columns": "event_type, conversation_id, contact_id, workflow_name, output_data, success"
+            },
+            "id": "log-checkin",
+            "name": "Log Checkin",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1560,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Checkin Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Check Queue Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Queue Status": {
+            "main": [
+                [
+                    {
+                        "node": "Is Valid Checkin?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Valid Checkin?": {
+            "main": [
+                [
+                    {
+                        "node": "Confirm Checkin",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Fail Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Confirm Checkin": {
+            "main": [
+                [
+                    {
+                        "node": "Success Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Success Message": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fail Message": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send WA": {
+            "main": [
+                [
+                    {
+                        "node": "Log Checkin",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

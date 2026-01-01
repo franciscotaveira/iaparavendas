@@ -1,0 +1,259 @@
+{
+    "name": "06 - Followup Dispatcher",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 5
+                        }
+                    ]
+                }
+            },
+            "id": "cron-followup",
+            "name": "Every 5 Minutes",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT fj.id, fj.appointment_id, fj.contact_id, fj.followup_type, fj.retry_count, c.phone, c.name, a.start_at, s.name as service_name, st.name as staff_name FROM followup_jobs fj JOIN contacts c ON fj.contact_id = c.id LEFT JOIN appointments a ON fj.appointment_id = a.id LEFT JOIN services s ON a.service_id = s.id LEFT JOIN staff st ON a.staff_id = st.id WHERE fj.status = 'queued' AND fj.scheduled_for <= NOW() AND fj.retry_count < fj.max_retries LIMIT 10;"
+            },
+            "id": "get-pending",
+            "name": "Get Pending Jobs",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {},
+            "id": "split-items",
+            "name": "Split Items",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const j=$input.first().json;let msg='';const d=new Date(j.start_at);\nif(j.followup_type==='confirmation_24h'){msg='Oi, '+(j.name||'')+'! Lembrando do seu horário amanhã:\\n\\n📅 '+d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'\\n💇 '+j.service_name+'\\n\\nTudo certo? Responda \"confirmo\" ou me avisa se precisar cancelar. 💜';}\nelse if(j.followup_type==='reminder_2h'){msg=(j.name||'')+', seu horário é daqui a 2 horinhas! ⏰\\n\\n📅 Hoje às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'\\n💇 '+j.service_name+'\\n👩 Com '+j.staff_name+'\\n\\nTe esperamos no Haven! 💜';}\nreturn{...j,message:msg};"
+            },
+            "id": "build-message",
+            "name": "Build Message",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "=https://graph.facebook.com/v18.0/{{ $env.WA_PHONE_NUMBER_ID }}/messages",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "httpHeaderAuth",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={\"messaging_product\":\"whatsapp\",\"to\":\"{{ $json.phone }}\",\"type\":\"text\",\"text\":{\"body\":\"{{ $json.message }}\"}}"
+            },
+            "id": "send-wa",
+            "name": "Send WA",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1120,
+                300
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "WA_AUTH_CRED_ID",
+                    "name": "WhatsApp Token"
+                }
+            },
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.error }}",
+                            "operator": {
+                                "type": "exists",
+                                "operation": "notExists"
+                            }
+                        }
+                    ]
+                }
+            },
+            "id": "check-success",
+            "name": "Success?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE followup_jobs SET status = 'sent', sent_at = NOW(), wa_message_id = '{{ $json.messages[0].id }}' WHERE id = '{{ $('Build Message').first().json.id }}'::uuid;"
+            },
+            "id": "mark-sent",
+            "name": "Mark Sent",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1560,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE followup_jobs SET retry_count = retry_count + 1, error_message = '{{ $json.error?.message || \"Unknown error\" }}', status = CASE WHEN retry_count + 1 >= max_retries THEN 'failed' ELSE 'queued' END WHERE id = '{{ $('Build Message').first().json.id }}'::uuid;"
+            },
+            "id": "mark-failed",
+            "name": "Mark Retry/Failed",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                1560,
+                400
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Every 5 Minutes": {
+            "main": [
+                [
+                    {
+                        "node": "Get Pending Jobs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Pending Jobs": {
+            "main": [
+                [
+                    {
+                        "node": "Split Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split Items": {
+            "main": [
+                [
+                    {
+                        "node": "Build Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Message": {
+            "main": [
+                [
+                    {
+                        "node": "Send WA",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Send WA": {
+            "main": [
+                [
+                    {
+                        "node": "Success?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Success?": {
+            "main": [
+                [
+                    {
+                        "node": "Mark Sent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Mark Retry/Failed",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark Sent": {
+            "main": [
+                [
+                    {
+                        "node": "Split Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark Retry/Failed": {
+            "main": [
+                [
+                    {
+                        "node": "Split Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

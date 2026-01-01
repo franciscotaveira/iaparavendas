@@ -1,0 +1,1 @@
+Parece que o arquivo que você forneceu está vazio. Por favor, envie um documento com conteúdo para que eu possa convertê-lo em Soro de Inteligência.

@@ -1,0 +1,95 @@
+{
+    "name": "08 - Metrics Aggregator",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "cronExpression",
+                            "expression": "0 1 * * *"
+                        }
+                    ]
+                }
+            },
+            "id": "cron-daily",
+            "name": "Daily 01:00",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "INSERT INTO metrics_daily (date, total_conversations, total_messages_in, total_messages_out, total_bookings, total_cancellations, total_no_shows, total_queue_entries, total_queue_completed, total_queue_expired, total_handoffs, llm_tokens_used, revenue_booked, penalties_collected) SELECT (CURRENT_DATE - 1) as date, (SELECT COUNT(*) FROM conversations WHERE DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM messages WHERE direction = 'inbound' AND DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM messages WHERE direction = 'outbound' AND DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM appointments WHERE DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM appointments WHERE status = 'cancelled' AND DATE(cancelled_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM appointments WHERE status = 'no_show' AND DATE(start_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM walkin_queue WHERE DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM walkin_queue WHERE status = 'completed' AND DATE(completed_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM walkin_queue WHERE status = 'expired' AND DATE(updated_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COUNT(*) FROM handoff_queue WHERE DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COALESCE(SUM(tokens_used), 0) FROM agent_logs WHERE DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1), (SELECT COALESCE(SUM(price_brl), 0) FROM appointments WHERE DATE(created_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1 AND status IN ('confirmed', 'completed')), (SELECT COALESCE(SUM(penalty_amount), 0) FROM appointments WHERE penalty_applied = true AND DATE(cancelled_at AT TIME ZONE 'America/Sao_Paulo') = CURRENT_DATE - 1) ON CONFLICT (date) DO UPDATE SET total_conversations = EXCLUDED.total_conversations, total_messages_in = EXCLUDED.total_messages_in, total_messages_out = EXCLUDED.total_messages_out, total_bookings = EXCLUDED.total_bookings, total_cancellations = EXCLUDED.total_cancellations, total_no_shows = EXCLUDED.total_no_shows, total_queue_entries = EXCLUDED.total_queue_entries, total_queue_completed = EXCLUDED.total_queue_completed, total_queue_expired = EXCLUDED.total_queue_expired, total_handoffs = EXCLUDED.total_handoffs, llm_tokens_used = EXCLUDED.llm_tokens_used, revenue_booked = EXCLUDED.revenue_booked, penalties_collected = EXCLUDED.penalties_collected, updated_at = NOW();"
+            },
+            "id": "aggregate-metrics",
+            "name": "Aggregate Yesterday Metrics",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                460,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "schema": "public",
+                "table": "agent_logs",
+                "columns": "event_type, workflow_name, success"
+            },
+            "id": "log-metrics",
+            "name": "Log Metrics Run",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.3,
+            "position": [
+                680,
+                300
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "SUPABASE_CRED_ID",
+                    "name": "Supabase PostgreSQL"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Daily 01:00": {
+            "main": [
+                [
+                    {
+                        "node": "Aggregate Yesterday Metrics",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Aggregate Yesterday Metrics": {
+            "main": [
+                [
+                    {
+                        "node": "Log Metrics Run",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

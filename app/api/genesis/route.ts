@@ -5,9 +5,16 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { COUNCIL_AGENTS } from '@/core/council/definitions';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Lazy initialization - only create client when actually needed (runtime, not build time)
+function getSupabase() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+        throw new Error('Supabase credentials not configured');
+    }
+    return createClient(supabaseUrl, supabaseKey);
+}
 
 const provider = createOpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
@@ -76,7 +83,7 @@ export async function GET(req: Request) {
         // (Em uma aplicação real, salvaríamos no banco de vetores RAG)
 
         // Vamos salvar no daily_directives como o "Primeiro Aprendizado da História"
-        await supabase.from('lxc_daily_directives').insert({
+        await getSupabase().from('lxc_daily_directives').insert({
             valid_date: new Date().toISOString().split('T')[0],
             yesterday_learnings: "Fundação da Empresa (Simulada desde 1968)",
             global_focus: "Honrar o Legado: Solidez de 1960 com a Humanidade de Hoje.",

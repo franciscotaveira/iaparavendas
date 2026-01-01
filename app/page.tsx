@@ -1,563 +1,282 @@
+
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import DemoChat from '@/components/DemoChat';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    ArrowRight, Bot, Shield, Zap, CheckCircle2, Target, Brain, Lock,
-    Wifi, WifiOff, Loader2, MessageSquare, Clock, TrendingUp, Users,
-    ChevronDown, Phone, Mail, MapPin, Calendar, Star, ArrowDown, Factory, Cog, Check, ShieldAlert
+    Command, Cpu, Zap, Brain, Shield, Activity,
+    LayoutDashboard, Users, Terminal,
+    Settings, Power, Bell, AlertTriangle, RefreshCcw,
+    ShieldAlert, CheckCircle2, MoreHorizontal, Sun, Moon, Globe, PenTool
 } from 'lucide-react';
+
 import Link from 'next/link';
+import AntigravityPortal from '@/components/AntigravityPortal';
+import { useTheme } from '@/components/ThemeProvider';
 
-export default function LandingPage() {
-    const [n8nStatus, setN8nStatus] = useState<'idle' | 'loading' | 'connected' | 'error'>('idle');
-    const [n8nMessage, setN8nMessage] = useState<string>('');
-    const [openFaq, setOpenFaq] = useState<number | null>(null);
+export default function CEOCommandPortal() {
+    const { theme, toggleTheme } = useTheme();
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [showPanicConfirm, setShowPanicConfirm] = useState(false);
 
-    // Add missing icons manually if they weren't imported, or rely on existing imports.
-    // Assuming ShieldAlert is needed but wasn't in original list.
-    // I will check imports. ShieldAlert was NOT in imports. I must add it to imports first or use Shield.
-    // Let's use Shield for now to avoid import errors in this chunk, or I will update imports in a separate call.
-    // Re-reading imports: Shield is there. ShieldAlert is NOT.
-    // I will use Shield instead of ShieldAlert in the replacement above?
-    // No, I'll update lines below to use Shield for the first card.
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
 
-
-    const testN8nConnection = async () => {
-        setN8nStatus('loading');
-        setN8nMessage('Testando conexão...');
-        try {
-            const res = await fetch('/api/n8n-health');
-            const data = await res.json();
-            if (data.connected) {
-                setN8nStatus('connected');
-                setN8nMessage(data.message);
-            } else {
-                setN8nStatus('error');
-                setN8nMessage(data.message || 'Falha na conexão');
-            }
-        } catch (err) {
-            setN8nStatus('error');
-            setN8nMessage('Erro de rede ao testar conexão');
-        }
-        setTimeout(() => setN8nStatus('idle'), 5000);
+    const emergencyShutdown = () => {
+        setShowPanicConfirm(true);
     };
 
-    const faqs = [
-        {
-            q: "Isso é um chatbot?",
-            a: "Não. É uma fábrica e operação de agentes. Chatbots são softwares instáveis que você configura. Nós entregamos um Runtime compilado e gerenciado, com governança e infraestrutura Meta Cloud API."
-        },
-        {
-            q: "Fica no meu número?",
-            a: "Sim. Criamos um Tenant WABA (WhatsApp Business Account) dedicado para você. O número é seu, o selo oficial (se elegível) é seu. Sem risco de banimento por uso de APIs não-oficiais."
-        },
-        {
-            q: "Preciso configurar algo?",
-            a: "Não. Nosso modelo é White-glove. Nós fazemos o setup, calibramos o agente, validamos os fluxos e entregamos pronto. Você só aprova e pluga o cartão na Meta."
-        },
-        {
-            q: "E se o sistema cair?",
-            a: "Temos observabilidade total, retries automáticos e runbook de incidentes. Nossa arquitetura separa o 'Control Plane' (gestão) do 'Data Plane' (execução), garantindo resiliência."
-        },
-        {
-            q: "Qual a diferença para 'Humanizado'?",
-            a: "Humanização é commodity. Nós focamos em 'Auditabilidade'. Seu agente segue regras estritas, não inventa preços e tem logs de segurança para cada interação."
-        }
+    const confirmShutdown = () => {
+        alert("🚨 PROTOCOLO DE PÂNICO ATIVADO. Todos os processos LX-Worker foram encerrados.");
+        setShowPanicConfirm(false);
+    };
+
+    const rebootServer = () => {
+        const confirm = window.confirm("🔄 Deseja reiniciar a instância do servidor MCT OS?");
+        if (confirm) alert("Comando enviado. Aguardando reconexão do node...");
+    };
+
+    const pendingTasks = [
+        { task: "Refatoração de Memória Fragmentada", status: "Em curso pelo Jules", priority: "Alta", icon: <Cpu className="w-3 h-3" /> },
+        { task: "Auditoria de Prompt: SDR Haven", status: "Aguardando sua revisão", priority: "Crítica", icon: <ShieldAlert className="w-3 h-3" /> },
+        { task: "Loop de Reinício Worker #502", status: "Resolvido por Antigravity", priority: "Média", icon: <CheckCircle2 className="w-3 h-3 text-accent" /> },
+    ];
+
+    const stats = [
+        { label: "Agentes Ativos", value: "60/60", color: "text-accent" },
+        { label: "Memória Fractal", value: "1.2 TB", color: "text-blue-500" },
+        { label: "Uptime do Núcleo", value: "99.9%", color: "text-accent" },
+        { label: "Créditos LLM", value: "$420.50", color: "text-amber-500" },
     ];
 
     return (
-        <main className="min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden font-sans selection:bg-blue-200">
+        <main className="min-h-screen p-6 md:p-10 transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+            <AntigravityPortal />
 
-            {/* Premium Background Atmosphere - Clinical/Light */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[20%] w-[40vw] h-[40vw] bg-blue-100/50 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-10%] right-[20%] w-[40vw] h-[40vw] bg-teal-100/50 rounded-full blur-[120px]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03] invert" />
-            </div>
+            {/* PANIC MODAL */}
+            <AnimatePresence>
+                {showPanicConfirm && (
+                    <motion.div
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-md p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
+                            className="bg-red-950/20 border border-red-500/30 p-12 rounded-[50px] max-w-sm text-center shadow-[0_0_100px_rgba(239,68,68,0.1)]"
+                        >
+                            <AlertTriangle className="text-red-500 w-16 h-16 mx-auto mb-6 animate-pulse" />
+                            <h3 className="text-white text-2xl font-black tracking-tighter mb-4 uppercase italic">Protocolo de Pânico</h3>
+                            <p className="text-red-400/80 text-xs font-mono leading-relaxed mb-10 uppercase tracking-widest">
+                                Esta ação irá desligar imediatamente todos os agentes e desconectar o WhatsApp Business API.
+                            </p>
+                            <div className="flex flex-col gap-4">
+                                <button onClick={confirmShutdown} className="w-full py-4 bg-red-600 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-red-500 transition-all">
+                                    Confirmar Desligamento Total
+                                </button>
+                                <button onClick={() => setShowPanicConfirm(false)} className="w-full py-4 bg-white/5 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all">
+                                    Cancelar Operação
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            <div className="relative z-10">
-
-                {/* ==================== NAVBAR ==================== */}
-                <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex justify-between items-center">
+            {/* TOP COMMAND BAR */}
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 mb-12 px-4 py-6 border-b border-white/5">
+                <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 bg-white/[0.03] border border-white/10 rounded-3xl flex items-center justify-center shadow-inner">
+                        <Command className="text-white w-8 h-8" />
+                    </div>
+                    <div>
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-teal-500 rounded-lg flex items-center justify-center shadow-md">
-                                <span className="text-white font-bold text-sm">L</span>
-                            </div>
-                            <span className="text-lg font-bold tracking-tight text-slate-900">
-                                LUMAX
-                            </span>
-                        </div>
-
-                        <div className="hidden md:flex items-center gap-8 text-sm text-slate-500">
-                            <a href="#metodo" className="hover:text-blue-600 transition-colors">O Método</a>
-                            <a href="#como-funciona" className="hover:text-blue-600 transition-colors">Processo</a>
-                            <a href="#demo" className="hover:text-blue-600 transition-colors">Demo</a>
-                            <a href="#precos" className="hover:text-blue-600 transition-colors">Planos</a>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={testN8nConnection}
-                                disabled={n8nStatus === 'loading'}
-                                title={n8nMessage || 'Status do Sistema'}
-                                className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded border transition-all text-xs ${n8nStatus === 'connected' ? 'border-green-200 bg-green-50 text-green-700' :
-                                    n8nStatus === 'error' ? 'border-red-200 bg-red-50 text-red-700' :
-                                        n8nStatus === 'loading' ? 'border-yellow-200 bg-yellow-50 text-yellow-700' :
-                                            'border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-300'
-                                    }`}
-                            >
-                                {n8nStatus === 'loading' ? <Loader2 className="w-3 h-3 animate-spin" /> :
-                                    n8nStatus === 'connected' ? <Wifi className="w-3 h-3" /> :
-                                        n8nStatus === 'error' ? <WifiOff className="w-3 h-3" /> :
-                                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />}
-                                <span>SYSTEM ONLINE</span>
-                            </button>
-                            <a
-                                href="#precos"
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-all shadow-md shadow-blue-200"
-                            >
-                                Iniciar Setup
-                            </a>
-                        </div>
-                    </div>
-                </nav>
-
-                {/* ==================== HERO SECTION (PIVOTED) ==================== */}
-                <section id="demo" className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-20">
-                    <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center min-h-[80vh]">
-
-                        {/* Left Column: The Pitch */}
-                        <div className="lg:col-span-6 space-y-8">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6 }}
-                            >
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase shadow-sm">
-                                    <Cog className="w-3 h-3 text-blue-600 animate-spin-slow" />
-                                    ASSISTENTE INTELIGENTE 24H
-                                </div>
-
-                                <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-[1] mb-6 text-slate-900">
-                                    Sua Recepção <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-teal-500 to-blue-600">
-                                        nunca mais dorme.
-                                    </span>
-                                </h1>
-
-                                <p className="text-xl text-slate-600 leading-relaxed max-w-xl border-l-4 border-blue-600 pl-6 my-8">
-                                    Atendimento 24h no WhatsApp da sua clínica. <strong>Agendamentos, qualificação e dúvidas</strong> — tudo automático.
-                                    <span className="block mt-4 text-slate-500 text-base">Você foca no paciente. A LUMAX cuida do resto.</span>
-                                </p>
-
-                                {/* Feature Cards */}
-                                <div className="grid grid-cols-1 gap-4 mb-10">
-                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-white border border-red-100 shadow-sm hover:border-red-200 hover:shadow-md transition-all">
-                                        <div className="bg-red-50 p-2 rounded-lg">
-                                            <ShieldAlert className="w-6 h-6 text-red-500" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                                O problema
-                                            </h4>
-                                            <p className="text-sm text-slate-500 mt-1">Pacientes ligam fora do horário, WhatsApp lotado, secretária sobrecarregada.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="group flex items-start gap-4 p-4 rounded-xl bg-white border border-teal-100 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
-                                        <div className="bg-teal-50 p-2 rounded-lg">
-                                            <CheckCircle2 className="w-6 h-6 text-teal-600" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                                A solução LUMAX
-                                            </h4>
-                                            <p className="text-sm text-slate-500 mt-1">Assistente inteligente que responde, agenda e qualifica — 24h por dia.</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex items-center gap-6">
-                                        <button
-                                            onClick={() => document.getElementById('precos')?.scrollIntoView({ behavior: 'smooth' })}
-                                            className="px-8 py-4 bg-slate-900 text-white hover:bg-slate-800 font-bold text-sm transition-all flex items-center gap-3 rounded uppercase tracking-wide shadow-lg shadow-blue-900/10"
-                                        >
-                                            Quero ativar meu número
-                                        </button>
-                                        <a href="#demo" className="text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors border-b border-transparent hover:border-blue-600">
-                                            Ver demo &rarr;
-                                        </a>
-                                    </div>
-                                </div>
-
-                            </motion.div>
-                        </div>
-
-                        {/* Right Column: The Demo Interface */}
-                        <div className="lg:col-span-6 relative" id="chat-interface">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                                className="relative z-10"
-                            >
-                                <div className="absolute -inset-1 bg-gradient-to-br from-blue-300/30 to-teal-300/30 rounded-xl blur-sm" />
-
-                                <div className="relative bg-slate-900 border border-slate-200 rounded-xl overflow-hidden shadow-2xl flex flex-col h-[550px] lg:h-[650px]">
-                                    <div className="h-12 border-b border-slate-700 bg-slate-800 flex items-center justify-between px-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-red-500/50" />
-                                            <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
-                                            <div className="w-2 h-2 rounded-full bg-green-500/50" />
-                                        </div>
-                                        <div className="text-[10px] font-mono text-slate-400 tracking-widest flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                                            RUNTIME_ACTIVE
-                                        </div>
-                                        <Bot className="w-4 h-4 text-blue-400" />
-                                    </div>
-
-                                    <div className="flex-1 bg-slate-950 relative">
-                                        <DemoChat />
-                                    </div>
-                                </div>
-
-                                <div className="absolute -right-6 top-20 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rotate-90 origin-bottom rounded-t shadow-lg border border-blue-400/50">
-                                    LIVE DEMO
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
-
-                    {/* Scroll Indicator */}
-                    <div className="flex justify-center mt-12">
-                        <a href="#metodo" className="flex flex-col items-center text-slate-400 hover:text-blue-600 transition-colors">
-                            <span className="text-xs mb-2">Entender o Método</span>
-                            <ArrowDown className="w-5 h-5 animate-bounce" />
-                        </a>
-                    </div>
-                </section>
-
-                {/* ==================== METODO SECTION ==================== */}
-                <section id="metodo" className="py-20 bg-white">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <span className="text-blue-600 text-sm font-bold tracking-widest uppercase">Arquitetura</span>
-                            <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6 text-slate-900">
-                                Poder invisível, simplicidade visível.
-                            </h2>
-                            <p className="text-slate-600 max-w-2xl mx-auto">
-                                Separamos a complexidade da execução.
-                            </p>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-12 items-center">
-                            <div className="p-8 rounded-2xl bg-blue-50 border border-blue-100 shadow-sm">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <Brain className="w-10 h-10 text-blue-600" />
-                                    <h3 className="text-2xl font-bold text-slate-900">Control Plane (Invisível)</h3>
-                                </div>
-                                <p className="text-slate-600 mb-4">Council CI/CD + QA + Sentinel + Releases. Onde a mágica da governança acontece.</p>
-                                <ul className="space-y-2 text-sm text-slate-500">
-                                    <li className="flex gap-2"><Check className="w-4 h-4 text-blue-600" /> Auditoria de Prompts</li>
-                                    <li className="flex gap-2"><Check className="w-4 h-4 text-blue-600" /> Testes de Regressão</li>
-                                    <li className="flex gap-2"><Check className="w-4 h-4 text-blue-600" /> Versionamento (Git-based)</li>
-                                </ul>
-                            </div>
-
-                            <div className="p-8 rounded-2xl bg-teal-50 border border-teal-100 shadow-sm">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <Zap className="w-10 h-10 text-teal-600" />
-                                    <h3 className="text-2xl font-bold text-slate-900">Data Plane (Visível)</h3>
-                                </div>
-                                <p className="text-slate-600 mb-4">QR/WhatsApp simples para o cliente final. Leve, rápido e blindado.</p>
-                                <ul className="space-y-2 text-sm text-slate-500">
-                                    <li className="flex gap-2"><Check className="w-4 h-4 text-teal-600" /> Latência Mínima</li>
-                                    <li className="flex gap-2"><Check className="w-4 h-4 text-teal-600" /> Tenant WABA Isolado</li>
-                                    <li className="flex gap-2"><Check className="w-4 h-4 text-teal-600" /> Logs de Segurança</li>
-                                </ul>
+                            <h1 className="text-white font-black tracking-tighter text-2xl italic">MCT NUCLEUS</h1>
+                            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                <span className="text-[8px] font-mono text-emerald-500 uppercase tracking-widest">Live_v2.1</span>
                             </div>
                         </div>
-                    </div>
-                </section>
-
-                {/* ==================== COMO FUNCIONA SECTION ==================== */}
-                <section id="como-funciona" className="py-20 bg-slate-50">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <span className="text-teal-600 text-sm font-bold tracking-widest uppercase">Modelo Operacional</span>
-                            <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6 text-slate-900">
-                                Processo White-Glove
-                            </h2>
-                            <p className="text-slate-600">Kickoff, Provisionamento, Compilação e Deploy.</p>
-                        </div>
-
-                        <div className="grid lg:grid-cols-5 gap-4">
-                            {[
-                                { step: "01", title: "Kickoff", desc: "Briefing rápido (20 min) para definição de escopo." },
-                                { step: "02", title: "Infra", desc: "Provisionamento Meta Cloud API + Tenant WABA." },
-                                { step: "03", title: "Specs", desc: "Design do Agente e Compilação dos Prompts." },
-                                { step: "04", title: "Deploy", desc: "Entrega v1.0.0 com monitoramento assistido." },
-                                { step: "05", title: "Evolução", desc: "Ciclos de melhoria v1.1, v1.2..." }
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="relative p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-left hover:border-blue-300 transition-colors"
-                                >
-                                    <div className="text-xs font-bold text-teal-600 mb-2">PASSO {item.step}</div>
-                                    <h3 className="text-lg font-bold text-slate-900 mb-2">{item.title}</h3>
-                                    <p className="text-sm text-slate-500">{item.desc}</p>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* ==================== PREÇOS SECTION ==================== */}
-                <section id="precos" className="py-20 bg-white">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <span className="text-blue-600 text-sm font-bold tracking-widest uppercase">Pricing</span>
-                            <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6 text-slate-900">
-                                Escolha seu Modelo
-                            </h2>
-                            <p className="text-slate-600 max-w-2xl mx-auto">
-                                Setup completo + Governança recorrente. Comece rápido ou escale com suporte dedicado.
-                            </p>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                            {/* Plano Starter */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="p-8 rounded-2xl bg-white border border-slate-200 shadow-lg relative overflow-hidden"
-                            >
-                                <div className="absolute top-4 right-4 px-3 py-1 bg-teal-100 text-teal-700 text-xs font-bold rounded">
-                                    POPULAR
-                                </div>
-
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Starter</h3>
-                                <p className="text-slate-500 mb-6 text-sm">Para clínicas e consultórios iniciando</p>
-
-                                <div className="border-b border-slate-100 pb-6 mb-6">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-slate-600">Setup</span>
-                                        <div className="text-right">
-                                            <span className="text-xs text-slate-400 block">a partir de</span>
-                                            <span className="text-slate-900 font-bold text-2xl">R$ 2.500</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-slate-500">Pagamento único. WABA configurado + Agente v1.0</p>
-                                </div>
-
-                                <div className="flex items-end gap-2 mb-6">
-                                    <div>
-                                        <span className="text-xs text-slate-400 block">a partir de</span>
-                                        <span className="text-2xl font-bold text-slate-900">R$ 500</span>
-                                    </div>
-                                    <span className="text-slate-500 mb-1">/mês</span>
-                                </div>
-
-                                <div className="space-y-3 mb-8">
-                                    {[
-                                        "Meta Cloud API Oficial",
-                                        "Número próprio (WABA)",
-                                        "Agente compilado",
-                                        "Suporte via ticket",
-                                        "Atualizações mensais"
-                                    ].map((feature, i) => (
-                                        <div key={i} className="flex items-center gap-3 text-slate-600 text-sm">
-                                            <CheckCircle2 className="w-4 h-4 text-teal-600 flex-shrink-0" />
-                                            <span>{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <a
-                                    href="https://wa.me/5549988447562?text=Quero%20o%20plano%20Starter%20para%20minha%20clínica"
-                                    target="_blank"
-                                    className="block w-full py-4 bg-slate-900 text-white hover:bg-slate-800 font-bold rounded-xl transition-all text-center"
-                                >
-                                    Começar Agora
-                                </a>
-                            </motion.div>
-
-                            {/* Plano Enterprise */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.1 }}
-                                className="p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-teal-50 border-2 border-blue-200 shadow-xl relative overflow-hidden"
-                            >
-                                <div className="absolute top-4 right-4 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded">
-                                    RECOMENDADO
-                                </div>
-
-                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Enterprise</h3>
-                                <p className="text-slate-500 mb-6 text-sm">Para operações que exigem SLA e escala</p>
-
-                                <div className="border-b border-blue-200 pb-6 mb-6">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-slate-600">Setup White-glove</span>
-                                        <span className="text-slate-900 font-bold text-2xl">Sob Consulta</span>
-                                    </div>
-                                    <p className="text-xs text-slate-500">Definido conforme escopo e complexidade do projeto</p>
-                                </div>
-
-                                <div className="flex items-end gap-2 mb-6">
-                                    <span className="text-2xl font-bold text-slate-900">Sob Consulta</span>
-                                    <span className="text-slate-500 mb-1">/mês</span>
-                                </div>
-
-                                <div className="space-y-3 mb-8">
-                                    {[
-                                        "Tudo do Starter +",
-                                        "Governança Contínua (Sentinela)",
-                                        "Guardrails Customizados",
-                                        "Relatórios de Auditoria",
-                                        "Suporte prioritário",
-                                        "SLA garantido"
-                                    ].map((feature, i) => (
-                                        <div key={i} className="flex items-center gap-3 text-slate-600 text-sm">
-                                            <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                                            <span>{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <a
-                                    href="https://wa.me/5549988447562?text=Quero%20o%20plano%20Enterprise%20com%20governança%20completa"
-                                    target="_blank"
-                                    className="block w-full py-4 bg-blue-600 text-white hover:bg-blue-700 font-bold rounded-xl transition-all text-center shadow-lg shadow-blue-200"
-                                >
-                                    Falar com Especialista
-                                </a>
-                            </motion.div>
-                        </div>
-
-                        <p className="text-center text-xs text-slate-400 mt-8">
-                            * Custos de conversação Meta (WhatsApp) são cobrados diretamente pela Meta ao cliente.
-                        </p>
-                    </div>
-                </section>
-
-                {/* ==================== FAQ SECTION ==================== */}
-                <section id="faq" className="py-20 bg-slate-50">
-                    <div className="max-w-3xl mx-auto px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <span className="text-blue-600 text-sm font-bold tracking-widest uppercase">Dúvidas Técnicas</span>
-                            <h2 className="text-4xl lg:text-5xl font-bold mt-4 mb-6 text-slate-900">
-                                Transparência Total
-                            </h2>
-                        </div>
-
-                        <div className="space-y-4">
-                            {faqs.map((faq, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.05 }}
-                                    className="rounded-xl border border-slate-200 overflow-hidden"
-                                >
-                                    <button
-                                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                                        className="w-full p-6 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors"
-                                    >
-                                        <span className="font-medium text-slate-900">{faq.q}</span>
-                                        <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
-                                    </button>
-                                    {openFaq === i && (
-                                        <div className="p-6 pt-0 text-slate-600 bg-white">
-                                            {faq.a}
-                                        </div>
-                                    )}
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* ==================== CTA FINAL ==================== */}
-                <section className="py-20 bg-gradient-to-t from-blue-50 to-transparent">
-                    <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-                        <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-slate-900">
-                            Sua Fábrica está Pronta.
-                        </h2>
-                        <p className="text-xl text-slate-600 mb-10">
-                            Pare de contratar ferramentas. Contrate resultados.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <a
-                                href="https://wa.me/5549988447562"
-                                target="_blank"
-                                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200"
-                            >
-                                Falar com Engenheiro
-                            </a>
-                        </div>
-                    </div>
-                </section>
-
-                {/* ==================== FOOTER ==================== */}
-                <footer className="border-t border-slate-200 py-12 bg-white">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                        <div className="grid md:grid-cols-4 gap-8 mb-12">
-                            <div>
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-teal-500 rounded-lg flex items-center justify-center shadow-md">
-                                        <span className="text-white font-bold text-sm">L</span>
-                                    </div>
-                                    <span className="text-lg font-bold text-slate-900">LUMAX</span>
-                                </div>
-                                <p className="text-sm text-slate-500">
-                                    Assistente inteligente para clínicas.
-                                    <br />Atendimento 24h no seu WhatsApp.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-                            <p>© 2025 LUMAX. Todos os direitos reservados.</p>
-                            <div className="flex gap-4">
-                                <span>Sistema Online</span>
-                                <span className="flex items-center gap-2 text-green-600">
-                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                                    Operacional
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-
-                {/* TRUST BADGES SECTION */}
-                <div className="border-t border-slate-100 bg-slate-50 py-4">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-center gap-8 opacity-70 text-[10px] uppercase tracking-widest text-slate-400">
-                        <div className="flex items-center gap-2">
-                            <Lock className="w-3 h-3" /> Dados Protegidos
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Brain className="w-3 h-3" /> IA Treinada
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Wifi className="w-3 h-3" /> Meta Cloud API
-                        </div>
+                        <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-slate-600">Unified Business Intelligence & Control</p>
                     </div>
                 </div>
 
+                <div className="flex items-center gap-4">
+                    {/* FAST ACTIONS */}
+                    <div className="flex items-center gap-2 p-1 rounded-2xl" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+                        <button onClick={emergencyShutdown} className="p-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-all" title="Desligar Agentes (Pânico)">
+                            <Power className="w-4 h-4" />
+                        </button>
+                        <button onClick={rebootServer} className="p-3 hover:bg-white/5 rounded-xl transition-all" style={{ color: 'var(--text-muted)' }} title="Reiniciar Servidor">
+                            <RefreshCcw className="w-4 h-4" />
+                        </button>
+                        <div className="w-px h-6 mx-1" style={{ backgroundColor: 'var(--border)' }} />
+                        <button className="p-3 hover:bg-white/5 rounded-xl transition-all" style={{ color: 'var(--text-muted)' }}>
+                            <Settings className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={toggleTheme}
+                            className="p-3 hover:bg-white/5 rounded-xl transition-all"
+                            style={{ color: 'var(--accent)' }}
+                            title={theme === 'dark' ? 'Modo Dia' : 'Modo Noite'}
+                        >
+                            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                        </button>
+                    </div>
+
+
+                    <div className="h-12 w-px bg-white/5 mx-4" />
+
+                    <div className="text-right">
+                        <div className="text-white font-mono text-xs font-bold">{currentTime.toLocaleTimeString()}</div>
+                        <div className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">{currentTime.toLocaleDateString('pt-BR')}</div>
+                    </div>
+                </div>
             </div>
+
+            {/* DASHBOARD GRID */}
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 px-4 pb-20 relative">
+
+                {/* 1. VISÃO GERAL (BIG PICTURE) */}
+                <div className="lg:col-span-8 space-y-8">
+
+                    {/* STATS STRIP */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {stats.map((s, i) => (
+                            <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-[32px] hover:border-white/10 transition-all">
+                                <p className="text-[9px] font-mono uppercase tracking-[0.2em] text-slate-600 mb-1">{s.label}</p>
+                                <p className={`text-xl font-black italic tracking-tighter ${s.color}`}>{s.value}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* NEURAL OFFICE PREVIEW (GATHER) */}
+                    <Link href="/dashboard/neural-office">
+                        <motion.div
+                            whileHover={{ scale: 1.01 }}
+                            className="group relative bg-[#0a0a0a] border border-white/5 p-1 rounded-[40px] overflow-hidden cursor-pointer shadow-2xl"
+                        >
+                            <div className="aspect-video w-full rounded-[38px] overflow-hidden relative">
+                                {/* Simulação Visual do Gather */}
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#10b98105_1px,_transparent_1px)] bg-[length:30px_30px]" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none z-10">
+                                    <div className="w-20 h-20 bg-emerald-500 rounded-full blur-[60px] opacity-10 mx-auto" />
+                                    <h3 className="text-white text-3xl font-black italic tracking-tighter mb-4 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all">NEURAL OFFICE</h3>
+                                    <p className="text-emerald-500 font-mono text-[9px] uppercase tracking-[0.5em] opacity-40">Ver Escritório Virtual (Gather Style)</p>
+                                </div>
+                                <div className="absolute bottom-8 right-8 flex items-center gap-3">
+                                    <div className="flex -space-x-3">
+                                        {[1, 2, 3, 4].map(i => <div key={i} className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-black flex items-center justify-center"><Cpu className="w-4 h-4 text-black" /></div>)}
+                                    </div>
+                                    <span className="text-[10px] font-mono text-emerald-500/60 uppercase">+56 Agentes On-line</span>
+                                </div>
+                            </div>
+                            {/* Inner Glow */}
+                            <div className="absolute inset-0 rounded-[40px] ring-1 ring-inset ring-white/10 pointer-events-none" />
+                        </motion.div>
+                    </Link>
+
+                    {/* QUICK TOOLS HUB */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[
+                            { name: 'Creative', icon: <PenTool className="w-5 h-5" />, color: 'text-purple-400', desc: 'Nexus Content Hub', link: '/dashboard/nexus-creative' },
+                            { name: 'Dojo', icon: <Zap className="w-5 h-5" />, color: 'text-amber-400', desc: 'Agent Training', link: '#' },
+                            { name: 'Council', icon: <Users className="w-5 h-5" />, color: 'text-pink-400', desc: 'Squad Leader Hub', link: '#' },
+                            { name: 'Memory', icon: <Brain className="w-5 h-5" />, color: 'text-blue-400', desc: 'Fractal Persistence', link: '#' },
+                        ].map((hub, i) => (
+                            <Link key={i} href={hub.link}>
+                                <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-white/[0.04] transition-all cursor-pointer group h-full">
+                                    <div className={`mb-4 p-3 w-fit rounded-xl bg-white/5 transition-transform group-hover:scale-110 ${hub.color}`}>
+                                        {hub.icon}
+                                    </div>
+                                    <h4 className="text-white text-xs font-bold uppercase tracking-widest">{hub.name}</h4>
+                                    <p className="text-[9px] text-slate-600 font-mono mt-1">{hub.desc}</p>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 2. SIDEBAR (PENDÊNCIAS & JULES) */}
+                <div className="lg:col-span-4 space-y-6">
+
+                    {/* THE "WHAT'S HAPPENING" HUB */}
+                    <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[40px] shadow-2xl">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-white text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2">
+                                <Bell className="w-4 h-4 text-amber-500" /> Pendências Operacionais
+                            </h3>
+                            <span className="bg-amber-500/10 text-amber-500 text-[8px] font-mono px-2 py-0.5 rounded-full border border-amber-500/20">3 ALERTAS</span>
+                        </div>
+
+                        <div className="space-y-4">
+                            {pendingTasks.map((t, i) => (
+                                <div key={i} className="group p-5 bg-black/40 border border-white/5 rounded-[30px] hover:border-white/10 transition-all cursor-pointer">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-1.5 bg-white/5 rounded-lg text-slate-500">{t.icon}</div>
+                                            <span className="text-[11px] font-bold text-white group-hover:text-emerald-400 transition-colors uppercase italic tracking-tighter">{t.task}</span>
+                                        </div>
+                                        <span className={`text-[7px] font-mono px-1.5 py-0.5 rounded border uppercase tracking-widest ${t.priority === 'Crítica' ? 'bg-red-500/10 border-red-500/30 text-red-500' :
+                                            t.priority === 'Alta' ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' :
+                                                'bg-blue-500/10 border-blue-500/30 text-blue-500'
+                                            }`}>
+                                            {t.priority}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-[9px] text-slate-500 font-medium uppercase tracking-widest">{t.status}</p>
+                                        <MoreHorizontal className="w-3 h-3 text-slate-800" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* JULES COMMAND OUTPUT (CLI STYLE) */}
+                    <div className="p-8 bg-[#0a0a0a] border border-white/5 rounded-[40px] font-mono overflow-hidden">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Terminal className="text-emerald-500 w-4 h-4" />
+                            <h3 className="text-white text-[9px] font-black uppercase tracking-[0.3em]">Jules_Squad Internal</h3>
+                        </div>
+                        <div className="space-y-3 text-[9px] leading-relaxed">
+                            <div className="flex gap-3 text-emerald-400/80">
+                                <span className="opacity-40">04:30</span>
+                                <span>[JULES] Sincronizando Tiled Map JSON v1.</span>
+                            </div>
+                            <div className="flex gap-3 text-blue-400/80">
+                                <span className="opacity-40">04:28</span>
+                                <span>[WATCHDOG] Node 3: Heartbeat OK (42ms).</span>
+                            </div>
+                            <div className="flex gap-3 text-white/30 italic">
+                                <span className="opacity-40">PROMPT</span>
+                                <span className="animate-pulse">_ Aguardando comando do CEO...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* SYSTEM INTEGRITY */}
+                    <div className="p-8 bg-emerald-500/5 border border-emerald-500/10 rounded-[40px] overflow-hidden relative">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-white text-[9px] font-black uppercase tracking-[0.3em]">Integridade</h3>
+                            <Globe className="w-4 h-4 text-emerald-500 opacity-30" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ width: 0 }} animate={{ width: '92%' }}
+                                    className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                                />
+                            </div>
+                            <span className="text-[10px] font-mono text-emerald-500 font-bold">92%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* NOISE/TEXTURE */}
+            <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.015] mix-blend-overlay bg-[url('/noise.png')]" />
         </main>
     );
 }

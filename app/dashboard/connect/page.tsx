@@ -79,7 +79,7 @@ export default function ConnectPage() {
                                 </span>
                             </div>
                             <p className="text-[10px] text-center text-slate-500 mt-4">
-                                Abra o WhatsApp > Configurações > Dispositivos Conectados
+                                Abra o WhatsApp &gt; Configurações &gt; Dispositivos Conectados
                             </p>
                         </div>
                     )}

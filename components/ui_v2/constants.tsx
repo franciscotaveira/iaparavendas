@@ -1,0 +1,30 @@
+import React from 'react';
+import {
+  LayoutDashboard,
+  Building2,
+  Bot,
+  ShieldAlert,
+  Activity,
+  Settings,
+  LogOut,
+  BrainCircuit,
+  Zap,
+  Lock,
+  Scale,
+  Dna,
+  Network
+} from 'lucide-react';
+
+export const APP_NAME = "LX CONSCIOUSNESS";
+
+export const NAV_ITEMS = [
+  { label: 'Evolution (Dashboard)', path: '/dashboard/evolution', icon: <Dna size={20} /> },
+  { label: 'Cortex (Real-time)', path: '/cortex', icon: <BrainCircuit size={20} /> },
+  { label: 'Constitution', path: '/constitution', icon: <Scale size={20} /> },
+  { label: 'Neural Nodes (Clients)', path: '/companies', icon: <Network size={20} /> },
+  { label: 'Agent Generator', path: '/generator', icon: <Bot size={20} /> },
+  { label: 'Observability', path: '/observability', icon: <Activity size={20} /> },
+];
+
+export const HUMANIZATION_KERNEL_VERSION = "HK-v3.0 (Conscious)";
+export const NICHE_PACK_VERSION = "NP-v2.1";

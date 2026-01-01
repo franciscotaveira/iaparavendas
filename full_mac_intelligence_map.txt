@@ -1,0 +1,93 @@
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/MANUAL_DO_DESENVOLVEDOR.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/node_modules/tslib/CopyrightNotice.txt
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/business/ONBOARDING_PLAYBOOK.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/business/BLUEPRINT_DE_SERVICO.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/master_plan/LX_CONVERSION_PROTOCOL_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/PLAYBOOK_ONBOARDING_WHATSAPP.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/core_prompts/system_conversion_handoff.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/proposals/PROPOSTA_JADIEL_MASSA_PROMOTORA.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/proposals/TEMPLATE_PROPOSTA_COMERCIAL.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/public/playbooks/LUMAX_Playbook_v2025-12-31.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/knowledge/LX_MASTER_BLUEPRINT.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/knowledge/AUDITORIA_TREINAMENTO_EQUIPE.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/knowledge/URE_UNIVERSAL_RAPPORT_ENGINE.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/GTM_STRATEGY.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/MANUAL_DO_CEO.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/intelligence_BLUEPRINT_POLYGLOT_OS_V2.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/intelligence_Método_Infalível_de_Vendas.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/reclaimed_TEMPLATE_PROPOSTA_COMERCIAL.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/intelligence_VIRAL_MARKETING_PLAN.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/intelligence_PROPOSTA_COMERCIAL_Sistema_Inteligente_de_Prospecção_via_WhatsApp.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/reclaimed_GTM_STRATEGY.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/intelligence_scripts.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/reclaimed_URE_UNIVERSAL_RAPPORT_ENGINE.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/intelligence_PRICING_ANALYSIS.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/archived/1767166427812_PRICING_ANALYSIS.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/archived/1767166435603_PROPOSTA_COMERCIAL_Sistema_Inteligente_de_Prospecção_via_WhatsApp.docx
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/archived/1767166161398_scripts.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/archived/1767166148276_VIRAL_MARKETING_PLAN.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/archived/1767166421101_BLUEPRINT_POLYGLOT_OS_V2.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/raw/TEMPLATE_PROPOSTA_COMERCIAL.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/raw/GTM_STRATEGY.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/raw/MANUAL_DO_CEO.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/raw/URE_UNIVERSAL_RAPPORT_ENGINE.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/reclaimed_MANUAL_DO_CEO.md
+/Users/franciscotaveira.ads/.gemini/antigravity/playground/solar-orion/LAUNCH_MANUAL.md
+/Users/franciscotaveira.ads/.gemini/antigravity/scratch/rh-edu/docs/blueprint.md
+/Users/franciscotaveira.ads/.gemini/antigravity/scratch/lux-meta-system/BLUEPRINT.md
+/Users/franciscotaveira.ads/.gemini/antigravity/scratch/ai_agents_lab/TRANSCRIPT_ANALYSIS.md
+/Users/franciscotaveira.ads/.gemini/antigravity/code_tracker/active/lx-demo-interface_c4109585fa854dcfeb37c149e495ed9223b2d8ba/5d2ae4e385400a947b1144a052b91eef_PLAYBOOK_ONBOARDING_WHATSAPP.md
+/Users/franciscotaveira.ads/.gemini/antigravity/code_tracker/active/lx-demo-interface_c4109585fa854dcfeb37c149e495ed9223b2d8ba/e2e855d67cdc6cc86a7d4dc65db7101d_MANUAL_DO_DESENVOLVEDOR.md
+/Users/franciscotaveira.ads/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Playbook Interno de Estruturação Comercial - Oficial.pdf
+/Users/franciscotaveira.ads/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Temas/Análise Estratégica Digital e Plano de Marketing.pdf
+/Users/franciscotaveira.ads/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Temas/Blueprint mql.pdf
+/Users/franciscotaveira.ads/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Temas/Diagnóstico de Marketing 360° — Desbravador Software.pdf
+/Users/franciscotaveira.ads/Library/Mobile Documents/com~apple~CloudDocs/Downloads/Temas/Diagnóstico de Custos e Projeção de Investimento em Marketing.pdf
+/Users/franciscotaveira.ads/torre-comando-landing/torre-comando-landing/node_modules/tslib/CopyrightNotice.txt
+/Users/franciscotaveira.ads/one-button-hell/Lx_AgendaOps_Haven_HybridOps_Blueprint.md
+/Users/franciscotaveira.ads/one-button-hell/VIRAL_MARKETING_PLAN.md
+/Users/franciscotaveira.ads/dyad-apps/luma-os/node_modules/tslib/CopyrightNotice.txt
+/Users/franciscotaveira.ads/Documents/Projects/n8n-inicial/Documentation/marketing-advertising-automation.md
+/Users/franciscotaveira.ads/Documents/Projects/Antigravity_Stack/antigravity-ecosystem/LX_AGENDA_HAVEN_CONVERSATION_SCRIPT.md
+/Users/franciscotaveira.ads/Documents/Projects/Antigravity_Stack/Antigravity/LX_AGENDA_HAVEN_CONVERSATION_SCRIPT.md
+/Users/franciscotaveira.ads/Documents/Projects/Antigravity_Stack/Antigravity/docs/NICHE_TEAM_SYSTEM_BLUEPRINT.md
+/Users/franciscotaveira.ads/Documents/Projects/Antigravity_Stack/Antigravity/.agent/ANTIGRAVITY_CAPABILITIES_PLAYBOOK.md
+/Users/franciscotaveira.ads/Documents/Projects/dyad/e2e-tests/snapshots/copy_app.spec.ts_app.txt
+/Users/franciscotaveira.ads/Documents/Projects/dyad/e2e-tests/fixtures/execute-sql-no-description.md
+/Users/franciscotaveira.ads/Documents/Projects/IA/drive-download-20251111T135747Z-1-001/Fase 04 - Vendas/Vendas.docx
+/Users/franciscotaveira.ads/Documents/Projects/IA/drive-download-20251111T135747Z-1-001/Fase 03 - Preços e Planos ofertados/Como cobrar, qual plano vender e como fechar vendas.docx
+/Users/franciscotaveira.ads/Documents/Projects/Luma_Stack/lumaos.2/DEPLOY_MANUAL.md
+/Users/franciscotaveira.ads/Documents/EXTRACTOR LUX/data/antigravity_manifesto.md
+/Users/franciscotaveira.ads/Documents/EXTRACTOR LUX/data/library/MARKETING_GENIUS.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/BLUEPRINT_POLYGLOT_OS_V2.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/PRICING_ANALYSIS.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/MANUAL_DE_OPERACOES_V3.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/PLAYBOOK.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/polyglot-os/node_modules/tslib/CopyrightNotice.txt
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/CASES_STRATEGY.md
+/Users/franciscotaveira.ads/Documents/investigador-global-br/lumen-global/MANUAL.md
+/Users/franciscotaveira.ads/GENIUM-LX/artifacts/ANTIGRAVITY_MANIFESTO_V2.md
+/Users/franciscotaveira.ads/Downloads/NOVAS FOTOS/Processo-de-vendas-v01a-30-06-2021.pdf
+/Users/franciscotaveira.ads/Downloads/PROPOSTA_COMERCIAL_Sistema_Inteligente_de_Prospecção_via_WhatsApp.docx
+/Users/franciscotaveira.ads/Downloads/ABORDAGEM 1ª VENDA.docx
+/Users/franciscotaveira.ads/Downloads/PROPOSTA COMERCIAL Sistema Inteligente de Prospecção via WhatsApp - Jadiel Farias.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/lux_saas_blueprint.md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Método Infalível de Vendas.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/screencapture-iaparavenda-hero-lovable-app-2025-11-19-11_35_23.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Currículo - Francisco Taveira - Marketing Digital.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Desbravador_Analise_Estrategica_e_Plano_de_Marketing.docx
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Roteiro_de_Conteúdo_e_Estratégia_de_Lançamento_Sōra_Headspa.docx
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/PROPOSTA COMERCIAL - JUDSON OLIVEIRA.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Cópia de TREINAMENTO - MEU SISTEMA LUCRATIVO - Documentos Google.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Diagnóstico_Estratégico_de_Marketing_Desbravador_Software.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/PROPOSTA COMERCIAL - JUDSON OLIVEIRA (1).pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/PROPOSTA - Cotas Patrocínio - Outubro Rosa JANTAR (1).pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Roteiro_de_Conteúdo_e_Estratégia_de_Lançamento_Sōra_Headspa.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Diagnostico_360_Marketing_Desbravador_Versao_Lux.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Suzana proposta $510.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Suzana Proposta de $450mil.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/MANUAL DE INTEGRAÇÃO - RECEPCIONISTA.docx
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Currículo - Francisco Taveira - Marketing.pdf
+/Users/franciscotaveira.ads/Downloads/Proposta - D360 + Aplicação - Adri.pdf
+/Users/franciscotaveira.ads/.antigravity/extensions/ms-mssql.mssql-1.9.0-universal/node_modules/reflect-metadata/CopyrightNotice.txt
+/Users/franciscotaveira.ads/lxagendaops/docs/scripts.md

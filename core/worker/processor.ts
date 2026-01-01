@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import path from 'path';
+import { startTelegramBot } from './telegram';
 
 // Carrega .env.local (prioridade no Next.js)
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
@@ -416,8 +417,28 @@ async function sendViaMeta(payload: any) {
 
 // --- MAIN LOOP ---
 
+async function sendHeartbeat(status: 'idle' | 'working', currentTask?: string) {
+    try {
+        await supabase.rpc('heartbeat_service', {
+            p_service_id: WORKER_ID,
+            p_service_name: 'My Code Worker Primary',
+            p_service_type: 'worker',
+            p_status: status,
+            p_current_task: currentTask
+        });
+    } catch (e) {
+        // Silencioso para não travar o worker se o schema não estiver pronto
+    }
+}
+
 async function runWorker() {
-    console.log(`👷 LX WORKER [${WORKER_ID}] STARTING (HARDENED V1.1)...`);
+    console.log(`👷 LX WORKER [${WORKER_ID}] STARTING (MY CODE TEAM)...`);
+
+    // Heartbeat inicial
+    await sendHeartbeat('idle', 'Aguardando jobs...');
+
+    // Inicia o Bot do Telegram em paralelo (v1.1)
+    startTelegramBot().catch(err => console.error("❌ Erro ao iniciar Telegram Bot:", err));
 
     while (true) {
         try {
@@ -435,6 +456,7 @@ async function runWorker() {
             if (jobWithPayload) {
                 try {
                     console.log(`⚡ Processing Job [${jobWithPayload.id}]...`);
+                    await sendHeartbeat('working', `Processando inbound: ${jobWithPayload.id.substring(0, 8)}`);
                     await processInboundJob(jobWithPayload);
 
                     // Se o status da queue ainda for 'locked', marcamos como completo.
@@ -461,6 +483,7 @@ async function runWorker() {
             if (outMsg) {
                 try {
                     console.log(`📤 Sending Msg [${outMsg.id}] to ${outMsg.conversation_id}...`);
+                    await sendHeartbeat('working', `Enviando resposta para ${outMsg.conversation_id}`);
                     await sendOutboundMessage(outMsg);
                     await supabase.from("outbox_messages").update({ status: 'sent', locked_at: null, locked_by: null }).eq("id", outMsg.id);
                     console.log(`✅ Sent [${outMsg.id}]`);
@@ -485,6 +508,7 @@ async function runWorker() {
 
             // Idle (só dorme se não tiver nada em nenhuma fila)
             if (!jobWithPayload && !outMsg) {
+                await sendHeartbeat('idle', 'Aguardando novas demandas...');
                 await sleep(500);
             }
 

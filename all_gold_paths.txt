@@ -1,0 +1,45 @@
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/business/BLUEPRINT_DE_SERVICO.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/master_plan/LX_CONVERSION_PROTOCOL_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/master_plan/LX_CONFIDENCE_CALIBRATION_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/master_plan/LX_ONBOARDING_ENGINE_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/master_plan/LX_DEMO_ENGINE_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/core_prompts/system_conversion_handoff.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/proposals/PROPOSTA_JADIEL_MASSA_PROMOTORA.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/docs/proposals/TEMPLATE_PROPOSTA_COMERCIAL.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/knowledge/LX_MASTER_BLUEPRINT.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/knowledge/LX_OPERATIONAL_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/knowledge/LX_CONSCIOUSNESS_MASTER.md
+/Users/franciscotaveira.ads/IAPARAVENDAS/lx-demo-interface/data/knowledge/reclaimed_TEMPLATE_PROPOSTA_COMERCIAL.md
+/Users/franciscotaveira.ads/.gemini/antigravity/playground/silent-juno/master_plan.md
+/Users/franciscotaveira.ads/.gemini/antigravity/playground/glowing-bohr/MASTER_PROJECT_PLAN.md
+/Users/franciscotaveira.ads/.gemini/antigravity/scratch/lux-meta-system/BLUEPRINT.md
+/Users/franciscotaveira.ads/one-button-hell/Lx_AgendaOps_Haven_HybridOps_Blueprint.md
+/Users/franciscotaveira.ads/dyad-apps/luma-os/ai-agents/MASTER_OVERVIEW.md
+/Users/franciscotaveira.ads/Documents/Projects/LAILA - SORA/files (1)/LUX_AGENTIS_INDICE_MASTER.md
+/Users/franciscotaveira.ads/Documents/Projects/LAILA - SORA/files (2)/LUX_AGENTIS_INDICE_MASTER.md
+/Users/franciscotaveira.ads/Documents/Projects/LAILA - SORA/files (2)/INDICE_MASTER_COMPLETO.md
+/Users/franciscotaveira.ads/Documents/Projects/LAILA - SORA/files (2)/LUX_GENESIS_FRAMEWORK_COMPLETO.md
+/Users/franciscotaveira.ads/Documents/Projects/MASTER_PROJECTS.md
+/Users/franciscotaveira.ads/Documents/EXTRACTOR LUX/prompts/MASTER_EXTRACTOR.md
+/Users/franciscotaveira.ads/Documents/EXTRACTOR LUX/data/antigravity_manifesto.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/BLUEPRINT_POLYGLOT_OS_V2.md
+/Users/franciscotaveira.ads/Documents/POLYGLOT DOS/PRICING_ANALYSIS.md
+/Users/franciscotaveira.ads/GENIUM-LX/artifacts/ANTIGRAVITY_MANIFESTO_V2.md
+/Users/franciscotaveira.ads/GENIUM-LX/knowledge/LXC_Master_Document.md
+/Users/franciscotaveira.ads/Downloads/NOVAS FOTOS/Processo-de-vendas-v01a-30-06-2021.pdf
+/Users/franciscotaveira.ads/Downloads/PROPOSTA_COMERCIAL_Sistema_Inteligente_de_Prospecção_via_WhatsApp.docx
+/Users/franciscotaveira.ads/Downloads/PROPOSTA COMERCIAL Sistema Inteligente de Prospecção via WhatsApp - Jadiel Farias.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/lux_saas_blueprint.md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/REFACTORIA_MASTER (1).md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/REFACTORIA_MASTER (3).md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/REFACTORIA_MASTER (2).md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/REFACTORIA_MASTER.md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Code/REFACTORIA_MASTER_PLAN.md
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Método Infalível de Vendas.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/PROPOSTA COMERCIAL - JUDSON OLIVEIRA.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/PROPOSTA COMERCIAL - JUDSON OLIVEIRA (1).pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/PROPOSTA - Cotas Patrocínio - Outubro Rosa JANTAR (1).pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Suzana proposta $510.pdf
+/Users/franciscotaveira.ads/Downloads/Organized_2025/Documents/Suzana Proposta de $450mil.pdf
+/Users/franciscotaveira.ads/Downloads/Proposta - D360 + Aplicação - Adri.pdf
+/Users/franciscotaveira.ads/Downloads/Polyglot_Delivery_OS_Master_Spec_v1.md

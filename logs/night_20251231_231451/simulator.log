@@ -1,0 +1,644 @@
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Camila (mkt_social) | Social Media Manager
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767233759766-1prh0lsjs
+============================================================
+
+👤 Lead: Oi, quero contratar o serviço
+🤖 Camila: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Camila: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Camila: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Camila: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 16.2s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Diego (scheduler) | Scheduler - Coordenador de Agenda
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767233779015-0at6tg49j
+============================================================
+
+👤 Lead: Olá! Vocês tem vaga?
+🤖 Diego: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Diego: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Diego: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Diego: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 12.8s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Felipe (product_analyst) | Product Analyst
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767233794792-q0i0jss18
+============================================================
+
+👤 Lead: Olá! Vocês tem vaga?
+🤖 Felipe: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Felipe: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Felipe: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Felipe: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 13.8s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Ricardo (ops_ceo) | CEO / Chief Strategy Officer
+🎭 Lead: Lead Curioso
+🆔 Session: TRAIN-1767233956290-rj6d40n3q
+============================================================
+
+👤 Lead: Boa tarde
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E como é a entrega?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Demora muito?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem garantia?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E o suporte?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 19.4s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Marina (dev_devops) | DevOps / SRE Engineer
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767233978722-ak3sf122a
+============================================================
+
+👤 Lead: Olá! Vocês tem vaga?
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Perfeito, vamos fechar
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 19.8s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Eduardo (qualifier) | Qualifier - Análise Técnica de Fit
+🎭 Lead: Lead Curioso
+🆔 Session: TRAIN-1767234001500-ze9prox7j
+============================================================
+
+👤 Lead: Oi, queria saber mais sobre como funciona
+🤖 Eduardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E como é a entrega?
+🤖 Eduardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Demora muito?
+🤖 Eduardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem garantia?
+🤖 Eduardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E o suporte?
+🤖 Eduardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 17.7s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Marcelo (ops_cfo) | CFO / Head of Finance
+🎭 Lead: Lead Cético
+🆔 Session: TRAIN-1767234151841-0fjqegp7w
+============================================================
+
+👤 Lead: Olá, é confiável?
+🤖 Marcelo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Achei caro
+🤖 Marcelo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem desconto?
+🤖 Marcelo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Vou pensar
+🤖 Marcelo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 15.9s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Rafael (dev_architect) | Arquiteto de Software
+🎭 Lead: Lead Curioso
+🆔 Session: TRAIN-1767234170710-4g2oxqo8j
+============================================================
+
+👤 Lead: Olá! Tenho algumas dúvidas
+🤖 Rafael: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E como é a entrega?
+🤖 Rafael: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Demora muito?
+🤖 Rafael: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem garantia?
+🤖 Rafael: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 16.4s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Ricardo (ops_ceo) | CEO / Chief Strategy Officer
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234190108-eviqbhgnv
+============================================================
+
+👤 Lead: Preciso de solução urgente
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 10.8s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Carol (support) | Atendimento - Suporte ao Cliente
+🎭 Lead: Lead Curioso
+🆔 Session: TRAIN-1767234275520-im8yymztk
+============================================================
+
+👤 Lead: Oi, queria saber mais sobre como funciona
+🤖 Carol: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E como é a entrega?
+🤖 Carol: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Demora muito?
+🤖 Carol: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem garantia?
+🤖 Carol: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E o suporte?
+🤖 Carol: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 18.4s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Amanda (product_ux) | UX Designer
+🎭 Lead: Lead Cético
+🆔 Session: TRAIN-1767234296909-oaqlruxfm
+============================================================
+
+👤 Lead: Olá, é confiável?
+🤖 Amanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Achei caro
+🤖 Amanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem desconto?
+🤖 Amanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Vou pensar
+🤖 Amanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Não sei não...
+🤖 Amanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 20.0s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Paulo (dev_dba) | Database Specialist
+🎭 Lead: Lead Curioso
+🆔 Session: TRAIN-1767234319905-8mmh1xwih
+============================================================
+
+👤 Lead: Oi, queria saber mais sobre como funciona
+🤖 Paulo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E como é a entrega?
+🤖 Paulo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Demora muito?
+🤖 Paulo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem garantia?
+🤖 Paulo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E o suporte?
+🤖 Paulo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 17.6s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Marina (dev_devops) | DevOps / SRE Engineer
+🎭 Lead: Lead Cético
+🆔 Session: TRAIN-1767234480232-4u978yjsj
+============================================================
+
+👤 Lead: Olá, é confiável?
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Achei caro
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem desconto?
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Vou pensar
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Não sei não...
+🤖 Marina: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 21.3s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Ana (sdr) | SDR - Qualificação de Leads
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234504518-01ng0y4fm
+============================================================
+
+👤 Lead: Oi, quero contratar o serviço
+🤖 Ana: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Ana: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Ana: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Ana: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Perfeito, vamos fechar
+🤖 Ana: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 16.6s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Ricardo (mkt_ads) | Performance Marketing Specialist
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234524122-twghcntef
+============================================================
+
+👤 Lead: Preciso de solução urgente
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Ricardo: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 11.5s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Letícia (ops_cs) | Head of Customer Success
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234701035-aw41ws6n3
+============================================================
+
+👤 Lead: Olá! Vocês tem vaga?
+🤖 Letícia: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Letícia: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Letícia: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Letícia: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 15.8s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Marcos (mkt_seo) | SEO Specialist
+🎭 Lead: Lead Cético
+🆔 Session: TRAIN-1767234719850-wp1hmuu5r
+============================================================
+
+👤 Lead: Oi, qual o valor?
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Achei caro
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem desconto?
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Vou pensar
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 15.0s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Fernanda (dev_security) | Security Engineer
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234737834-8dg21okbq
+============================================================
+
+👤 Lead: Olá! Vocês tem vaga?
+🤖 Fernanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Fernanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Fernanda: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 10.6s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
+
+
+╔══════════════════════════════════════════════════════════╗
+║           LUMAX MULTI-AGENT TRAINER v2.0                 ║
+║           Treinamento de Enxame de Agentes               ║
+╠══════════════════════════════════════════════════════════╣
+║  Modo: CICLO ÚNICO                                      ║
+║  Agente Focado: TODOS (Random)                             ║
+║  Cenários por ciclo: 3                                  ║
+║  API: http://localhost:3000                      ║
+╚══════════════════════════════════════════════════════════╝
+
+🚀 Iniciando simulação...
+
+
+📊 === CICLO 1 ===
+🤖 24 agentes carregados para rodízio de treinamento.
+
+============================================================
+🤖 Agente: Thiago (mkt_growth) | Growth Lead
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234825898-lkgjcw0m9
+============================================================
+
+👤 Lead: Preciso de solução urgente
+🤖 Thiago: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Thiago: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Thiago: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Thiago: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Perfeito, vamos fechar
+🤖 Thiago: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 21.4s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Marcos (mkt_seo) | SEO Specialist
+🎭 Lead: Lead Curioso
+🆔 Session: TRAIN-1767234850286-xzpr6fvgc
+============================================================
+
+👤 Lead: Oi, queria saber mais sobre como funciona
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E como é a entrega?
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Demora muito?
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Tem garantia?
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: E o suporte?
+🤖 Marcos: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 19.1s
+⚠️  Supabase não configurado - dados não salvos
+
+⏳ Aguardando 3s antes da próxima conversa...
+
+============================================================
+🤖 Agente: Daniel (product_ui) | UI Designer
+🎭 Lead: Lead Decidido
+🆔 Session: TRAIN-1767234872424-9q9q5tgd1
+============================================================
+
+👤 Lead: Olá! Vocês tem vaga?
+🤖 Daniel: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Pode ser hoje?
+🤖 Daniel: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Qual o preço?
+🤖 Daniel: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+👤 Lead: Aceita cartão?
+🤖 Daniel: Olá! Sou o Agente de Vendas da Lux. Para criar uma demonstração personalizada, qual é o seu tipo de negócio? 
+
+✅ Conversa concluída em 16.5s
+⚠️  Supabase não configurado - dados não salvos
+
+📈 Ciclo 1 concluído. Total de conversas: 3
+
+✨ Treinamento concluído!
+📊 Total de conversas simuladas: 3
