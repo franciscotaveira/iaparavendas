@@ -90,22 +90,44 @@ async function generateOpenRouter(prompt: string, system: string) {
 // --- CORE LOGIC ---
 
 async function loadRuntimeContext(tenantId: string, conversationId: string) {
-    // 1. Memory Context
-    const leadContext = await recallLeadContext(conversationId);
+    try {
+        // 1. Memory Context
+        const leadContext = await recallLeadContext(conversationId);
 
-    // 2. Local LLM status
-    const llmHealth = await getLocalLLMHealth();
+        // 2. Local LLM status
+        const llmHealth = await getLocalLLMHealth();
 
-    return {
-        tenantId,
-        conversationId,
-        agentVersion: 'v1.1.0',
-        lead: leadContext || { name: 'Visitante', history_summary: 'Primeiro contato' },
-        llm: llmHealth
-    };
+        return {
+            tenantId,
+            conversationId,
+            agentVersion: 'v1.1.0',
+            lead: leadContext || { name: 'Visitante', history_summary: 'Primeiro contato' },
+            llm: llmHealth,
+            error: null
+        };
+    } catch (error) {
+        console.error(`[Context] Erro ao carregar contexto para ${conversationId}:`, error);
+        return {
+            tenantId,
+            conversationId,
+            agentVersion: 'v1.1.0',
+            lead: { name: 'Visitante', history_summary: 'Erro de contexto' },
+            llm: { status: 'error', models: [] },
+            error: 'Failed to load runtime context'
+        };
+    }
 }
 
 async function runInference(context: any, userMessage: string) {
+    if (context.error) {
+        console.error(`[Inference] Interrompido devido a erro de contexto: ${context.error}`);
+        return {
+            text: "Desculpe, estou com problemas para acessar meu sistema interno. A equipe já foi notificada.",
+            tokens: 0,
+            latency_ms: 0,
+            error: context.error
+        };
+    }
     console.log(`[Think] Context: ${context.lead.name}, Msg: "${userMessage}"`);
 
     const systemPrompt = `${HUMANIZATION_KERNEL}
@@ -275,6 +297,21 @@ async function processInboundJob(job: any) {
         // B. Inferência
         const runtime = await loadRuntimeContext(tenantId, conversationId);
         const inference = await runInference(runtime, userText);
+
+        // Se a inferência falhar (devido ao erro de contexto), paramos aqui.
+        // A falha já foi logada dentro do runInference.
+        if (inference.error) {
+            // Log do erro no banco de dados para auditoria.
+            await supabase.from("audit_events").insert({
+                tenant_id: tenantId,
+                event_type: "inference_failed",
+                metadata: { conversation_id: conversationId, job_id: job.id, error: inference.error }
+            });
+            // TODO: Opcionalmente, enviar uma mensagem de erro padrão para o usuário.
+            // Por enquanto, apenas retornamos para evitar que o job fique em loop.
+            return;
+        }
+
         const policy = await policyCheck(tenantId, inference.text);
 
         if (!policy.ok) {
